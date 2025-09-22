@@ -1,1 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+/* ========== Browser reset ========== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif; /* default font */
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #f8f9fa; /* light background */
+  color: #212529; /* default text color */
+  scroll-behavior: smooth;
+}
+
+/* ========== Links ========== */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ========== Lists ========== */
+ul, ol {
+  list-style: none;
+}
+
+/* ========== Media elements ========== */
+img, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ========== Form elements ========== */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* ========== Flex helpers ========== */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1 1 auto;
+}
+
+/* ========== Container helper ========== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}

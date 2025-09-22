@@ -1,0 +1,18 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  height: 100vh;
+
+  a {
+    text-decoration: none;
+    color: #111827;
+    padding: 0.25rem 0;
+
+    &:hover {
+      color: #25ebb3;
+    }
+  }
+}
