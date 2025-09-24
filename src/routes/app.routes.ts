@@ -21,5 +21,10 @@ export const routes: Routes = [
     { path: 'transactions', component: Transactions, canActivate: [AuthGuard] },
     { path: 'payments', component: Payments, canActivate: [AuthGuard] },
     { path: 'analytics', component: Analytics, canActivate: [AuthGuard] },
+
     { path: 'admin', component: Admin, canActivate: [AuthGuard] },
+    { path: 'admin/users', loadComponent: () => import('../pages/admin/users/users').then(m => m.UsersAdminPage) },
+    { path: 'admin/roles', loadComponent: () => import('../pages/admin/roles/roles').then(m => m.RolesAdminPage) },
+    { path: 'admin/settings', loadComponent: () => import('../pages/admin/settings/settings').then(m => m.SettingsAdminPage) },
+    { path: 'admin/logs', loadComponent: () => import('../pages/admin/logs/logs').then(m => m.LogsAdminPage) },
 ];

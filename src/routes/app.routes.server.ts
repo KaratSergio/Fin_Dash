@@ -14,6 +14,10 @@ export const serverRoutes: ServerRoute[] = [
 
   // admin
   { path: 'admin', renderMode: RenderMode.Prerender },
+  { path: 'admin/users', renderMode: RenderMode.Prerender },
+  { path: 'admin/logs', renderMode: RenderMode.Prerender },
+  { path: 'admin/roles', renderMode: RenderMode.Prerender },
+  { path: 'admin/settings', renderMode: RenderMode.Prerender },
 
   // fallback
   { path: '**', renderMode: RenderMode.Prerender },
