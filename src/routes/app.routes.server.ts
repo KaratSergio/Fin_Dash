@@ -1,12 +1,20 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
+  // enter App
+  { path: 'login', renderMode: RenderMode.Prerender },
+
+  // SPA
   { path: '', renderMode: RenderMode.Prerender },
   { path: 'overview', renderMode: RenderMode.Prerender },
   { path: 'accounts', renderMode: RenderMode.Prerender },
   { path: 'transactions', renderMode: RenderMode.Prerender },
   { path: 'payments', renderMode: RenderMode.Prerender },
   { path: 'analytics', renderMode: RenderMode.Prerender },
+
+  // admin
   { path: 'admin', renderMode: RenderMode.Prerender },
+
+  // fallback
   { path: '**', renderMode: RenderMode.Prerender },
 ];

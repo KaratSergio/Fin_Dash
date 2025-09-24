@@ -1,0 +1,19 @@
+<div class="login-container">
+  <form (submit)="login(); $event.preventDefault()">
+    <div>
+      <label>Username:</label>
+      <input type="text" [value]="username()" (input)="username.set($event.target.value)">
+    </div>
+
+    <div>
+      <label>Password:</label>
+      <input type="password" [value]="password()" (input)="password.set($event.target.value)">
+    </div>
+
+    @if (error()) {
+      <div class="error">{{ error() }}</div>
+    }
+
+    <button type="submit">Login</button>
+  </form>
+</div>
