@@ -27,7 +27,7 @@
               <td><input [value]="u.firstname" (input)="updateUserField(u, 'firstname', $event.target.value)"></td>
               <td><input [value]="u.lastname" (input)="updateUserField(u, 'lastname', $event.target.value)"></td>
               <td><input [value]="u.email" (input)="updateUserField(u, 'email', $event.target.value)"></td>
-              <td>{{ u.roles?.join(', ') }}</td>
+              <td>{{ u?.roles?.join(', ') }}</td>
               <td>
                 <button (click)="updateUser(u)">Save</button>
                 <button (click)="deleteUser(u.id)">Delete</button>

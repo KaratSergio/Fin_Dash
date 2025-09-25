@@ -45,6 +45,7 @@ export class UsersAdminPage {
     this.users.update(list => list.map(u => u.id === user.id ? { ...u, [field]: value } : u));
   }
 
+  // Methods
   createUser() {
     this.usersService.createUser(this.newUser()).subscribe({
       next: (user) => {
