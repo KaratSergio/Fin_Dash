@@ -1,54 +1,145 @@
 #title {
-  position: absolute;
-  top: 20%;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 50px;
-  font-weight: 300;
-  letter-spacing: 10px;
-  color: #fff;
-  z-index: 5;
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 300;
+    letter-spacing: 10px;
+    color: #fff;
+    z-index: 5;
 
-  span {
-    background: linear-gradient(white, #38495a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
+    span {
+        background: linear-gradient(white, #38495a);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
 }
 
 .login-container {
-  position: relative;
-  z-index: 10;
-  max-width: 400px;
-  margin: 0 auto;
-  top: 55%;
-  transform: translateY(-50%);
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.156);
-  border-radius: 10px;
-  color: #fff;
-
-  input,
-  button {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border-radius: 5px;
-    border: none;
-  }
-
-  button {
-    background: #0000004b;
+    position: relative;
+    z-index: 10;
+    max-width: 400px;
+    margin: 0 auto;
+    top: 55%;
+    transform: translateY(-50%);
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.156);
+    border-radius: 10px;
     color: #fff;
-    letter-spacing: 0.12rem;
-    font-weight: bold;
-    cursor: pointer;
-  }
 
-  .error {
-    color: #ff6b6b;
-  }
+    input,
+    button {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+        border: none;
+    }
+
+    button {
+        background: #0000004b;
+        color: #fff;
+        letter-spacing: 0.12rem;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .error {
+        color: #ff6b6b;
+    }
+}
+
+
+// ============= Parallax stars ============ //
+
+// n is number of stars required
+@function multiple-box-shadow($n, $max: 2000) {
+    $value: '#{random($max)}px #{random($max)}px #FFF';
+
+    @for $i from 2 through $n {
+        $value: '#{$value} , #{random($max)}px #{random($max)}px #FFF';
+    }
+
+    @return unquote($value);
+}
+
+$shadows-small: multiple-box-shadow(700, 2400);
+$shadows-medium: multiple-box-shadow(200, 2400);
+$shadows-big: multiple-box-shadow(100, 2400);
+
+:host {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    overflow: hidden;
+}
+
+#stars {
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    box-shadow: $shadows-small;
+    animation: animStar 50s linear infinite;
+
+    &:after {
+        content: " ";
+        position: absolute;
+        top: 2000px;
+        width: 1px;
+        height: 1px;
+        background: transparent;
+        box-shadow: $shadows-small;
+    }
+}
+
+#stars2 {
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: $shadows-medium;
+    animation: animStar 100s linear infinite;
+
+    &:after {
+        content: " ";
+        position: absolute;
+        top: 2000px;
+        width: 2px;
+        height: 2px;
+        background: transparent;
+        box-shadow: $shadows-medium;
+    }
+}
+
+#stars3 {
+    width: 3px;
+    height: 3px;
+    background: transparent;
+    box-shadow: $shadows-big;
+    animation: animStar 150s linear infinite;
+
+    &:after {
+        content: " ";
+        position: absolute;
+        top: 2000px;
+        width: 3px;
+        height: 3px;
+        background: transparent;
+        box-shadow: $shadows-big;
+    }
+}
+
+@keyframes animStar {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: translateY(-2000px);
+    }
 }
