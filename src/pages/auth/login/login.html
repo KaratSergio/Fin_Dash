@@ -1,5 +1,5 @@
 <div id="title">
-  <span>PURE CSS</span><br/>
+  <span>PURE CSS</span><br />
   <span>PARALLAX PIXEL STARS</span>
 </div>
 
@@ -7,12 +7,12 @@
   <form (submit)="login(); $event.preventDefault()">
     <div>
       <label>Username:</label>
-      <input type="text" [value]="username()" (input)="username.set($event.target.value)">
+      <input type="text" [value]="username()" (input)="username.set($event.target.value)" />
     </div>
 
     <div>
       <label>Password:</label>
-      <input type="password" [value]="password()" (input)="password.set($event.target.value)">
+      <input type="password" [value]="password()" (input)="password.set($event.target.value)" />
     </div>
 
     @if (error()) {

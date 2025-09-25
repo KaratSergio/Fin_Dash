@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
-    private isBrowser = typeof window !== 'undefined';
+  private isBrowser = typeof window !== 'undefined';
 
-    getItem(key: string): string | null {
-        return this.isBrowser ? localStorage.getItem(key) : null;
-    }
+  getItem(key: string): string | null {
+    return this.isBrowser ? localStorage.getItem(key) : null;
+  }
 
-    setItem(key: string, value: string): void {
-        if (this.isBrowser) {
-            localStorage.setItem(key, value);
-        }
+  setItem(key: string, value: string): void {
+    if (this.isBrowser) {
+      localStorage.setItem(key, value);
     }
+  }
 
-    removeItem(key: string): void {
-        if (this.isBrowser) {
-            localStorage.removeItem(key);
-        }
+  removeItem(key: string): void {
+    if (this.isBrowser) {
+      localStorage.removeItem(key);
     }
+  }
 }

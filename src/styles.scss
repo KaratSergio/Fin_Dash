@@ -8,16 +8,16 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-family: 'Lato', sans-serif; /* default font */
   font-size: 16px;
   line-height: 1.5;
-  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
   color: #ffffff; /* default text color */
   scroll-behavior: smooth;
 }
-
 
 /* ========== Links ========== */
 a {
@@ -30,19 +30,26 @@ a:hover {
 }
 
 /* ========== Lists ========== */
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
 /* ========== Media elements ========== */
-img, video, canvas, svg {
+img,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
 /* ========== Form elements ========== */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 

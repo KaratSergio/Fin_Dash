@@ -13,6 +13,6 @@ bootstrapApplication(App, {
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
     provideZonelessChangeDetection(),
-    provideRouter(routes)
-  ]
-}).catch(err => console.error(err));
+    provideRouter(routes),
+  ],
+}).catch((err) => console.error(err));

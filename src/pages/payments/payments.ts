@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-payments',
   imports: [],
   templateUrl: './payments.html',
-  styleUrl: './payments.scss'
+  styleUrl: './payments.scss',
 })
-export class Payments {
-
-}
+export class Payments {}

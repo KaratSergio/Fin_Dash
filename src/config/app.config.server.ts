@@ -5,10 +5,7 @@ import { appConfig } from './app.config';
 import { serverRoutes } from '../routes/app.routes.server';
 
 const serverConfig: ApplicationConfig = {
-  providers: [
-    provideHttpClient(withFetch()),
-    provideServerRendering(withRoutes(serverRoutes))
-  ]
+  providers: [provideHttpClient(withFetch()), provideServerRendering(withRoutes(serverRoutes))],
 };
 
 export const config = mergeApplicationConfig(appConfig, serverConfig);
