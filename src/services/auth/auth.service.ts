@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { env } from '../env/env.dev';
+import { env } from '../../env/env.dev';
 import { tap } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 
@@ -20,9 +20,7 @@ export class AuthService {
     private storage: StorageService,
   ) {
     const saved = this.storage.getItem('user');
-    if (saved) {
-      this.user.set(JSON.parse(saved));
-    }
+    if (saved) this.user.set(JSON.parse(saved));
   }
 
   login(username: string, password: string) {

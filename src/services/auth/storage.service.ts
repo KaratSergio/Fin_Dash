@@ -9,14 +9,10 @@ export class StorageService {
   }
 
   setItem(key: string, value: string): void {
-    if (this.isBrowser) {
-      localStorage.setItem(key, value);
-    }
+    if (this.isBrowser) localStorage.setItem(key, value);
   }
 
   removeItem(key: string): void {
-    if (this.isBrowser) {
-      localStorage.removeItem(key);
-    }
+    if (this.isBrowser) localStorage.removeItem(key);
   }
 }
