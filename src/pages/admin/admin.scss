@@ -10,7 +10,7 @@
     .card {
       display: block;
       padding: 1rem;
-      border: 1px solid #ccc;
+      border: 1px solid #cccccc89;
       border-radius: 8px;
       text-decoration: none;
       color: inherit;
@@ -18,7 +18,7 @@
       transition: box-shadow 0.2s;
 
       &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 8px rgba(251, 251, 251, 0.397);
       }
 
       h2 {
@@ -28,7 +28,7 @@
       p {
         margin: 0;
         font-size: 0.9rem;
-        color: #666;
+        color: #a7a7a7;
       }
     }
   }

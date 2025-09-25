@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700');
 /* ========== Browser reset ========== */
 *,
 *::before,
@@ -9,13 +10,14 @@
 
 html, body {
   height: 100%;
-  font-family: 'Inter', sans-serif; /* default font */
+  font-family: 'Lato', sans-serif; /* default font */
   font-size: 16px;
   line-height: 1.5;
-  background-color: #f8f9fa; /* light background */
-  color: #212529; /* default text color */
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  color: #ffffff; /* default text color */
   scroll-behavior: smooth;
 }
+
 
 /* ========== Links ========== */
 a {
