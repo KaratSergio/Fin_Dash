@@ -1,66 +1,79 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { tap, catchError, of } from 'rxjs';
 import { env } from '../env/env.dev';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Role } from './roles.service';
 
 export interface AppUser {
-    id: number;
-    username: string;
-    firstname?: string;
-    lastname?: string;
-    email?: string;
-    password: string;
-    officeId: number,
-    roles: string[];
+    id: number;                   // User ID
+    username: string;             // Login name
+    firstname?: string;           // First name
+    lastname?: string;            // Last name
+    email?: string;               // Email
+    password?: string;            // Password (only on create/change)
+    officeId: number;             // Office ID the user belongs to
+    selectedRoles: Role[];      // List of assigned roles
 }
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-    private http = inject(HttpClient)
+    private http = inject(HttpClient);
+    private baseUrl = `${env.apiBase}/users`;
 
+    // Signals
     users = signal<AppUser[]>([]);
     loading = signal(false);
+    error = signal<string | null>(null);
 
-    // Get all users list in office
-    getUsers(): Observable<AppUser[]> {
+    // Fetch all users
+    private fetchUsers() {
         this.loading.set(true);
-        return this.http.get<AppUser[]>(`${env.apiBase}/users`).pipe(
-            tap({
-                next: (list) => this.users.set(list),
-                complete: () => this.loading.set(false),
-            })
-        );
+
+        this.http.get<AppUser[]>(this.baseUrl)
+            .pipe(
+                tap(list => this.users.set(list)),
+                catchError(err => {
+                    this.error.set(err.message || 'Failed to load users');
+                    return of([]);
+                }),
+                tap(() => this.loading.set(false))
+            )
+            .subscribe();
     }
 
-    // Create new user in office
-    createUser(user: Partial<AppUser>): Observable<AppUser> {
-        return this.http.post<AppUser>(`${env.apiBase}/users`, user).pipe(
-            tap(() => this.getUsers())
+    // Public getter for users
+    getUsers() {
+        this.fetchUsers();
+    }
+
+    // Get user by ID
+    getUser(userId: number) {
+        return this.http.get<AppUser>(`${this.baseUrl}/${userId}`);
+    }
+
+    // Create new user
+    createUser(user: Partial<AppUser>) {
+        return this.http.post<AppUser>(this.baseUrl, user).pipe(
+            tap(() => this.fetchUsers())
         );
     }
 
     // Update user
-    updateUser(userId: number, user: Partial<AppUser>): Observable<AppUser> {
-        return this.http.put<AppUser>(`${env.apiBase}/users/${userId}`, user).pipe(
-            tap(() => this.getUsers())
+    updateUser(userId: number, user: Partial<AppUser>) {
+        return this.http.put<AppUser>(`${this.baseUrl}/${userId}`, user).pipe(
+            tap(() => this.fetchUsers())
         );
     }
 
-    // Remove user
-    deleteUser(userId: number): Observable<void> {
-        return this.http.delete<void>(`${env.apiBase}/users/${userId}`).pipe(
-            tap(() => this.getUsers())
+    // Delete user
+    deleteUser(userId: number) {
+        return this.http.delete<void>(`${this.baseUrl}/${userId}`).pipe(
+            tap(() => this.fetchUsers())
         );
     }
 
-    // Change user password
-    changePassword(userId: number, newPassword: string): Observable<void> {
-        return this.http.post<void>(`${env.apiBase}/users/${userId}/pwd`, { password: newPassword });
-    }
-
-    // Get user by ID
-    getUser(userId: number): Observable<AppUser> {
-        return this.http.get<AppUser>(`${env.apiBase}/users/${userId}`);
+    // Change password
+    changePassword(userId: number, newPassword: string) {
+        return this.http.post<void>(`${this.baseUrl}/${userId}/pwd`, { password: newPassword });
     }
 }

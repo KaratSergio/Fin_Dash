@@ -1,81 +1,99 @@
-import { Component, signal, inject } from '@angular/core';
-import { UsersService, AppUser } from '../../../services/user.service';
+import { Component, signal, inject, effect } from "@angular/core";
+import { RouterModule } from '@angular/router';
+import { UsersService, AppUser } from "../../../services/user.service";
+import { PasswordModal } from "../../../components/modals/password-modal";
 
 @Component({
-  selector: 'app-users-admin',
+  selector: "app-admin-users",
   standalone: true,
-  imports: [],
-  templateUrl: './users.html',
-  styleUrls: ['./users.scss'],
+  imports: [RouterModule, PasswordModal],
+  templateUrl: "./users.html",
+  styleUrls: ["./users.scss"]
 })
 export class UsersAdminPage {
   usersService = inject(UsersService);
-  loading = signal(false);
-  error = signal<string | null>(null);
 
-  users = signal<AppUser[]>([]);
+  // Signals
+  users = this.usersService.users;
+  loading = this.usersService.loading;
+  error = this.usersService.error;
+  passwordModalVisible = signal(false);
+  modalUserId?: number;
+
   newUser = signal<Partial<AppUser>>({
     username: '',
     firstname: '',
     lastname: '',
-    officeId: -1, // !!!
-    roles: [''],
     email: '',
-    password: ''
+    password: '',
+    officeId: 1,   // !!! swap on select input type
+    selectedRoles: []
   });
 
-  constructor() {
-    this.getUsers();
-  }
-
-  getUsers() {
-    this.loading.set(true);
+  private loadUsers = effect(() => {
     this.usersService.getUsers();
-    this.users.set(this.usersService.users());
-    this.loading.set(false);
-  }
+  });
 
-  // for update fields new user
+  // Update fields of new user
   updateNewUserField(field: keyof AppUser, value: any) {
-    this.newUser.update(u => ({ ...u, [field]: value }));
+    this.newUser.set({ ...this.newUser(), [field]: value });
   }
 
-  // for update user fields
-  updateUserField(user: AppUser, field: keyof AppUser, value: any) {
-    this.users.update(list => list.map(u => u.id === user.id ? { ...u, [field]: value } : u));
+  // User roles
+  getRoleNames(user: AppUser): string {
+    return user.selectedRoles?.map(r => r.name).join(', ') ?? '';
+  }
+
+  // Change Password Modal
+  openPasswordModal(userId: number) {
+    this.modalUserId = userId;
+    this.passwordModalVisible.set(true);
+  }
+
+  handleSavePassword(event: { userId: number; password: string }) {
+    this.changePassword(event.userId, event.password);
+    this.passwordModalVisible.set(false);
+    this.modalUserId = undefined;
+  }
+
+  handleCloseModal() {
+    this.passwordModalVisible.set(false);
+    this.modalUserId = undefined;
   }
 
   // Methods
   createUser() {
     this.usersService.createUser(this.newUser()).subscribe({
-      next: (user) => {
-        this.users.update(list => [...list, user]);
-        this.newUser.set({ username: '', firstname: '', lastname: '', email: '', password: '' }); // !!! add more fields
+      next: () => {
+        this.newUser.set({
+          username: '',
+          firstname: '',
+          lastname: '',
+          email: '',
+          password: '',
+          officeId: 1,
+          selectedRoles: []
+        });
       },
       error: (err) => this.error.set(err.message || 'Failed to create user'),
     });
   }
 
+  updateUser(user: AppUser) {
+    this.usersService.updateUser(user.id, user).subscribe({
+      error: err => this.error.set(err.message || "Failed to update user")
+    });
+  }
+
   deleteUser(userId: number) {
     this.usersService.deleteUser(userId).subscribe({
-      next: () => this.users.update(list => list.filter(u => u.id !== userId)),
-      error: (err) => this.error.set(err.message || 'Failed to delete user'),
+      error: err => this.error.set(err.message || "Failed to delete user")
     });
   }
 
   changePassword(userId: number, newPassword: string) {
     this.usersService.changePassword(userId, newPassword).subscribe({
-      next: () => this.newUser.update(u => ({ ...u, password: '' })),
-      error: (err) => this.error.set(err.message || 'Failed to change password'),
-    });
-  }
-
-  updateUser(user: AppUser) {
-    this.usersService.updateUser(user.id, user).subscribe({
-      next: (updated) => {
-        this.users.update(list => list.map(u => u.id === updated.id ? updated : u));
-      },
-      error: (err) => this.error.set(err.message || 'Failed to update user'),
+      error: err => this.error.set(err.message || "Failed to change password")
     });
   }
 }

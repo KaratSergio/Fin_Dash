@@ -1,59 +1,33 @@
-# FinDash
+# FinDash — Admin & User Dashboard for Apache Fineract
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
 
-## Development server
 
-To start a local development server, run:
+## Project Overview
 
-```bash
-ng serve
-```
+**FinDash** is a frontend application built with **Angular 20** for interacting with the **Apache Fineract REST API** (v1.13.0-SNAPSHOT).  
+The project is designed to fully leverage all available Fineract endpoints, providing a complete interface for managing users, roles, offices, and other platform entities.  
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## Code scaffolding
+> Demo credentials (for testing purposes):
+> - **Username:** `mifos`
+> - **Password:** `password`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## Technology Stack
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- **Frontend:** Angular 20 (Standalone Components, Signals)  
+- **Server-side rendering:** Angular SSR + Express  
+- **State & HTTP:** RxJS + Angular HttpClient  
+- **Styling:** CSS / SCSS  
+- **Testing:** Jasmine + Karma  
+- **Formatting:** Prettier  
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## Useful Links
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Official Apache Fineract Documentation (current)](https://fineract.apache.org/docs/current/)
+- [Official Apache Fineract Documentation (homepage)](https://fineract.apache.org/)
+- [Swagger / OpenAPI Specification](https://sandbox.mifos.community/fineract-provider/swagger-ui/index.html#/)
+- [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0)

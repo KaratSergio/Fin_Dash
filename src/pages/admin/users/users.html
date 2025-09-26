@@ -1,57 +1,69 @@
 <div class="users-admin">
-  <h1>Users Admin Panel</h1>
+  <h1>Users <span [routerLink]="['/admin']">[admin]</span></h1>
 
   @if (loading()) {
-    <div>Loading...</div>
+  <div>Loading...</div>
   } @else {
-    @if (error()) {
-      <div class="error">{{ error() }}</div>
-    } @else {
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Roles</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (u of users(); track u.id) {
-            <tr>
-              <td>{{ u.id }}</td>
-              <td><input [value]="u.username" (input)="updateUserField(u, 'username', $event.target.value)"></td>
-              <td><input [value]="u.firstname" (input)="updateUserField(u, 'firstname', $event.target.value)"></td>
-              <td><input [value]="u.lastname" (input)="updateUserField(u, 'lastname', $event.target.value)"></td>
-              <td><input [value]="u.email" (input)="updateUserField(u, 'email', $event.target.value)"></td>
-              <td>{{ u?.roles?.join(', ') }}</td>
-              <td>
-                <button (click)="updateUser(u)">Save</button>
-                <button (click)="deleteUser(u.id)">Delete</button>
-                <input type="password" placeholder="New Password" 
-                       [value]="newUser().password" 
-                       (input)="updateNewUserField('password', $event.target.value)">
-                <button (click)="changePassword(u.id, newUser().password || '')">Change Password</button>
-              </td>
-            </tr>
-          } @empty {
-            <tr><td colspan="7">No users found</td></tr>
-          }
-        </tbody>
-      </table>
+  @if (error()) {
+  <div class="error">{{ error() }}</div>
+  } @else {
 
-      <h2>Create New User</h2>
-      <div class="create-user">
-        <input placeholder="Username" [value]="newUser().username" (input)="updateNewUserField('username', $event.target.value)">
-        <input placeholder="First Name" [value]="newUser().firstname" (input)="updateNewUserField('firstname', $event.target.value)">
-        <input placeholder="Last Name" [value]="newUser().lastname" (input)="updateNewUserField('lastname', $event.target.value)">
-        <input placeholder="Email" [value]="newUser().email" (input)="updateNewUserField('email', $event.target.value)">
-        <input type="password" placeholder="Password" [value]="newUser().password" (input)="updateNewUserField('password', $event.target.value)">
-        <button (click)="createUser()">Create User</button>
-      </div>
-    }
+  <h2 class="title">Create New User</h2>
+  <div class="create-user">
+    <input placeholder="Username" #usernameInput [value]="newUser().username"
+      (input)="updateNewUserField('username', usernameInput.value)">
+    <input placeholder="First Name" #firstInput [value]="newUser().firstname"
+      (input)="updateNewUserField('firstname', firstInput.value)">
+    <input placeholder="Last Name" #lastInput [value]="newUser().lastname"
+      (input)="updateNewUserField('lastname', lastInput.value)">
+    <input placeholder="Email" #emailInput [value]="newUser().email"
+      (input)="updateNewUserField('email', emailInput.value)">
+    <input type="password" placeholder="Password" #pwdInput [value]="newUser().password"
+      (input)="updateNewUserField('password', pwdInput.value)">
+    <button (click)="createUser()">Create User</button>
+  </div>
+
+  <h2 class="title">List Of Users</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Roles</th>
+        <th>Office</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.id) {
+      <tr>
+        <td><input [value]="user.username" #username (input)="user.username = username.value"></td>
+        <td><input [value]="user.firstname" #firstname (input)="user.firstname = firstname.value"></td>
+        <td><input [value]="user.lastname" #lastname (input)="user.lastname = lastname.value"></td>
+        <td><input [value]="user.email" #email (input)="user.email = email.value"></td>
+        <td>{{ getRoleNames(user) }}</td>
+        <td>{{ user.officeId }}</td>
+        <td>
+          <button (click)="updateUser(user)">Update</button>
+          <button (click)="deleteUser(user.id)">Delete</button>
+          <button (click)="openPasswordModal(user.id)">Change Password</button>
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="7">No users found</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+  }
+
+  <!-- Password Modal -->
+  @if (passwordModalVisible()) {
+  <app-password-modal [userId]="modalUserId" (save)="handleSavePassword($event)" (close)="handleCloseModal()">
+  </app-password-modal>
   }
 </div>
