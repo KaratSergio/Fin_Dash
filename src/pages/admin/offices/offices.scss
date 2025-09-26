@@ -5,6 +5,8 @@
 
     span {
         font-size: 0.8rem;
+        cursor: pointer;
+        color: #c3eb25;
     }
 
     table {
@@ -39,6 +41,10 @@
         input {
             padding: 0.25rem 0.5rem;
             flex: 1;
+        }
+
+        button {
+            padding: 0 0.25rem;
         }
     }
 

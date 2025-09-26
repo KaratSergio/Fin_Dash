@@ -1,10 +1,11 @@
 import { Component, signal, inject, effect } from "@angular/core";
+import { RouterModule } from '@angular/router';
 import { OfficesService, Office } from "../../../services/office.service";
 
 @Component({
     selector: "app-admin-offices",
     standalone: true,
-    imports: [],
+    imports: [RouterModule],
     templateUrl: "./offices.html",
     styleUrls: ["./offices.scss"]
 })
