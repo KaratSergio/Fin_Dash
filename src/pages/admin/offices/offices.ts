@@ -1,4 +1,4 @@
-import { Component, signal, inject } from "@angular/core";
+import { Component, signal, inject, effect } from "@angular/core";
 import { OfficesService, Office } from "../../../services/office.service";
 
 @Component({
@@ -9,8 +9,7 @@ import { OfficesService, Office } from "../../../services/office.service";
     styleUrls: ["./offices.scss"]
 })
 export class OfficesAdminPage {
-    // DI
-    officeService = inject(OfficesService)
+    officeService = inject(OfficesService);
 
     // Signals
     offices = this.officeService.offices;
@@ -26,6 +25,14 @@ export class OfficesAdminPage {
         openingDate: new Date().toISOString().split('T')[0]
     });
 
+    private loadOffices = effect(() => {
+        this.officeService.getOffices({
+            fields: 'externalId,name,openingDate,parentId',
+            orderBy: 'name',
+            sortOrder: 'ASC'
+        });
+    });
+
     // Utils
     formatDateForApi(value: string): string {
         const d = new Date(value);
@@ -36,7 +43,7 @@ export class OfficesAdminPage {
         ];
         const month = months[d.getMonth()];
         const year = d.getFullYear();
-        return `${day} ${month} ${year}`; // "25 September 2025"
+        return `${day} ${month} ${year}`; // "26 September 2025"
     }
 
     updateNewOfficeField(field: keyof Office, value: string | number) {
@@ -44,15 +51,6 @@ export class OfficesAdminPage {
     }
 
     // Methods
-    getOffices() {
-        this.loading.set(true);
-        this.officeService.getOffices().subscribe({
-            next: (list) => this.offices.set(list),
-            error: (err) => this.error.set(err.message || 'Failed to load offices'),
-            complete: () => this.loading.set(false),
-        });
-    }
-
     createOffice() {
         const payload: Partial<Office> = {
             ...this.newOffice(),
@@ -60,10 +58,7 @@ export class OfficesAdminPage {
         };
 
         this.officeService.createOffice(payload).subscribe({
-            next: (office) => {
-                this.offices.set([...this.offices(), office]);
-
-                // reset form
+            next: () => {
                 this.newOffice.set({
                     name: '',
                     externalId: '',
@@ -75,11 +70,7 @@ export class OfficesAdminPage {
             },
             error: (err) => this.error.set(err.message || 'Failed to create office'),
         });
-
-        // refetch list
-        this.getOffices()
     }
-
 
     updateOffice(office: Office) {
         this.officeService.updateOffice(office.id, office).subscribe({
@@ -88,8 +79,7 @@ export class OfficesAdminPage {
     }
 
     deleteOffice(officeId: number) {
-        this.officeService.updateOffice(officeId, { name: '' }).subscribe({
-            next: () => this.getOffices(),
+        this.officeService.deleteOffice(officeId).subscribe({
             error: err => this.error.set(err.message || "Failed to delete office")
         });
     }

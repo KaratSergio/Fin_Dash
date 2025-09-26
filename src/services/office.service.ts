@@ -1,8 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { tap, catchError, of } from 'rxjs';
 import { env } from '../env/env.dev';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 export interface Office {
     id: number;             // Office ID in the system
@@ -18,63 +17,104 @@ export interface Office {
 @Injectable({ providedIn: 'root' })
 export class OfficesService {
     private http = inject(HttpClient);
+    private baseUrl = `${env.apiBase}/offices`;
 
+    // Signals
     offices = signal<Office[]>([]);
     loading = signal(false);
+    error = signal<string | null>(null);
+
+    // fetch offices by params
+    private fetchOffices(params?: {
+        fields?: string;
+        orderBy?: string;
+        sortOrder?: 'ASC' | 'DESC';
+        includeAllOffices?: boolean;
+    }) {
+        this.loading.set(true);
+
+        let httpParams = new HttpParams();
+
+        if (params) {
+            Object.entries(params).forEach(([k, v]) => {
+                if (v !== null) httpParams = httpParams.set(k, v.toString());
+            });
+        }
+
+        this.http.get<Office[]>(this.baseUrl, { params: httpParams })
+            .pipe(
+                tap(list => this.offices.set(list)),
+                catchError(err => {
+                    this.error.set(err.message || 'Failed to load offices');
+                    return of([]);
+                }),
+                tap(() => this.loading.set(false))
+            ).subscribe();
+    }
 
     // Get all offices list
-    getOffices(): Observable<Office[]> {
-        this.loading.set(true);
-        return this.http.get<Office[]>(`${env.apiBase}/offices`).pipe(
-            tap({
-                next: (list) => this.offices.set(list),
-                complete: () => this.loading.set(false),
-            })
-        );
+    getOffices(params?: {
+        fields?: string;
+        orderBy?: string;
+        sortOrder?: 'ASC' | 'DESC';
+        includeAllOffices?: boolean
+    }) {
+        this.fetchOffices(params);
     }
 
     // Get office by ID
-    getOffice(officeId: number): Observable<Office> {
-        return this.http.get<Office>(`${env.apiBase}/offices/${officeId}`);
+    getOffice(officeId: number) {
+        return this.http.get<Office>(`${this.baseUrl}/${officeId}`);
     }
 
     // Create new office
-    createOffice(office: Partial<Office>): Observable<Office> {
-        return this.http.post<Office>(`${env.apiBase}/offices`, office).pipe(
-            tap(() => this.getOffices())
+    createOffice(office: Partial<Office>) {
+        return this.http.post<Office>(this.baseUrl, office).pipe(
+            tap(() => this.fetchOffices())
         );
     }
 
     // Update office by ID
-    updateOffice(officeId: number, office: Partial<Office>): Observable<Office> {
-        return this.http.put<Office>(`${env.apiBase}/offices/${officeId}`, office).pipe(
-            tap(() => this.getOffices())
+    updateOffice(officeId: number, office: Partial<Office>) {
+        return this.http.put<Office>(`${this.baseUrl}/${officeId}`, office).pipe(
+            tap(() => this.fetchOffices())
         );
     }
 
+    // Delete office by ID
+    deleteOffice(officeId: number) {
+        return this.http.delete<void>(`${this.baseUrl}/${officeId}`).pipe(
+            tap(() => this.fetchOffices())
+        );
+    }
+
+
+    // Template methods
     // Get office template
-    getTemplate(): Observable<Office> {
-        return this.http.get<Office>(`${env.apiBase}/offices/template`);
+    getTemplate() {
+        return this.http.get<Office>(`${this.baseUrl}/template`);
     }
 
     // Upload office template
-    uploadTemplate(file: File): Observable<void> {
+    uploadTemplate(file: File) {
         const formData = new FormData();
         formData.append('file', file);
-        return this.http.post<void>(`${env.apiBase}/offices/uploadtemplate`, formData).pipe(
-            tap(() => this.getOffices())
+        return this.http.post<void>(`${this.baseUrl}/uploadtemplate`, formData).pipe(
+            tap(() => this.fetchOffices())
         );
     }
 
+
+    // External ID methods
     // Get an office using an external ID
-    getByExternalId(externalId: string): Observable<Office> {
-        return this.http.get<Office>(`${env.apiBase}/offices/external-id/${externalId}`);
+    getByExternalId(externalId: string) {
+        return this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`);
     }
 
     // Update an office using an external ID
-    updateByExternalId(externalId: string, office: Partial<Office>): Observable<Office> {
-        return this.http.put<Office>(`${env.apiBase}/offices/external-id/${externalId}`, office).pipe(
-            tap(() => this.getOffices())
+    updateByExternalId(externalId: string, office: Partial<Office>) {
+        return this.http.put<Office>(`${this.baseUrl}/external-id/${externalId}`, office).pipe(
+            tap(() => this.fetchOffices())
         );
     }
 }
