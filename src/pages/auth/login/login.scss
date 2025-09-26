@@ -1,3 +1,5 @@
+@use "sass:math";
+
 #title {
     position: absolute;
     top: 20%;
@@ -58,13 +60,21 @@
 
 // n is number of stars required
 @function multiple-box-shadow($n, $max: 2000) {
-    $value: '#{random($max)}px #{random($max)}px #FFF';
+    $shadows: "";
 
-    @for $i from 2 through $n {
-        $value: '#{$value} , #{random($max)}px #{random($max)}px #FFF';
+    @for $i from 1 through $n {
+        $shadow: #{math.random($max)}px #{math.random($max)}px #FFF;
+
+        @if $i ==1 {
+            $shadows: $shadow;
+        }
+
+        @else {
+            $shadows: #{$shadows}, #{$shadow};
+        }
     }
 
-    @return unquote($value);
+    @return $shadows;
 }
 
 $shadows-small: multiple-box-shadow(700, 2400);

@@ -1,14 +1,69 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, effect } from "@angular/core";
+import { RouterModule } from '@angular/router';
+import { RolesService, Role } from "../../../services/roles.service";
 
 @Component({
-  selector: 'app-admin-roles',
+  selector: "app-admin-roles",
   standalone: true,
-  imports: [],
-  template: `<h2>Roles</h2>`,
-  styles: [],
+  imports: [RouterModule],
+  templateUrl: "./roles.html",
+  styleUrls: ["./roles.scss"]
 })
 export class RolesAdminPage {
-  loading = signal(true);
+  roleService = inject(RolesService);
 
-  constructor() {}
+  // Signals
+  roles = this.roleService.roles;
+  loading = this.roleService.loading;
+  error = signal<string | null>(null);
+
+  newRole = signal<Partial<Role>>({
+    name: '',
+    description: '',
+    disabled: false
+  });
+
+  private loadRoles = effect(() => {
+    this.roleService.getRoles();
+  });
+
+  // Utils
+  updateNewRoleField(field: keyof Role, value: string | boolean) {
+    this.newRole.set({ ...this.newRole(), [field]: value });
+  }
+
+  // Methods
+  createRole() {
+    const payload: Partial<Role> = { ...this.newRole() };
+
+    this.roleService.createRole(payload).subscribe({
+      next: () => {
+        this.newRole.set({
+          name: '',
+          description: '',
+          disabled: false
+        });
+      },
+      error: (err) => this.error.set(err.message || 'Failed to create role'),
+    });
+  }
+
+  updateRole(role: Role) {
+    this.roleService.updateRole(role.id, role).subscribe({
+      error: err => this.error.set(err.message || "Failed to update role")
+    });
+  }
+
+  deleteRole(roleId: number) {
+    this.roleService.deleteRole(roleId).subscribe({
+      error: err => this.error.set(err.message || "Failed to delete role")
+    });
+  }
+
+  toggleRole(role: Role) {
+    const action = role.disabled ? this.roleService.enableRole : this.roleService.disableRole;
+    action.call(this.roleService, role.id).subscribe({
+      error: err => this.error.set(err.message || "Failed to toggle role")
+    });
+  }
 }
