@@ -1,11 +1,12 @@
 import { Component, signal, inject, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
 import { OfficesService, Office } from "../../../services/office.service";
+import { FormatDatePipe } from "../../../pipes/format-date.pipe";
 
 @Component({
     selector: "app-admin-offices",
     standalone: true,
-    imports: [RouterModule],
+    imports: [RouterModule, FormatDatePipe],
     templateUrl: "./offices.html",
     styleUrls: ["./offices.scss"]
 })
@@ -28,23 +29,21 @@ export class OfficesAdminPage {
 
     private loadOffices = effect(() => {
         this.officeService.getOffices({
-            fields: 'externalId,name,openingDate,parentId',
+            fields: 'id,externalId,name,openingDate,parentId',
             orderBy: 'name',
             sortOrder: 'ASC'
         });
     });
 
-    // Utils
-    formatDateForApi(value: string): string {
-        const d = new Date(value);
-        const day = String(d.getDate()).padStart(2, '0');
-        const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-        const month = months[d.getMonth()];
-        const year = d.getFullYear();
-        return `${day} ${month} ${year}`; // "26 September 2025"
+    private resetNewOffice() {
+        this.newOffice.set({
+            name: '',
+            externalId: '',
+            parentId: undefined,
+            locale: 'en',
+            dateFormat: 'dd MMMM yyyy',
+            openingDate: new Date().toISOString().split('T')[0]
+        });
     }
 
     updateNewOfficeField(field: keyof Office, value: string | number) {
@@ -53,35 +52,15 @@ export class OfficesAdminPage {
 
     // Methods
     createOffice() {
-        const payload: Partial<Office> = {
-            ...this.newOffice(),
-            openingDate: this.formatDateForApi(this.newOffice().openingDate!)
-        };
-
-        this.officeService.createOffice(payload).subscribe({
-            next: () => {
-                this.newOffice.set({
-                    name: '',
-                    externalId: '',
-                    parentId: undefined,
-                    locale: 'en',
-                    dateFormat: 'dd MMMM yyyy',
-                    openingDate: new Date().toISOString().split('T')[0]
-                });
-            },
-            error: (err) => this.error.set(err.message || 'Failed to create office'),
+        this.officeService.createOffice(this.newOffice()).subscribe({
+            next: () => this.resetNewOffice(),
+            error: err => this.error.set(err.message || 'Failed to create office')
         });
     }
 
-    updateOffice(office: Office) {
-        this.officeService.updateOffice(office.id, office).subscribe({
+    updateOffice(officeId: number, office: Office) {
+        this.officeService.updateOffice(officeId, office).subscribe({
             error: err => this.error.set(err.message || "Failed to update office")
-        });
-    }
-
-    deleteOffice(officeId: number) {
-        this.officeService.deleteOffice(officeId).subscribe({
-            error: err => this.error.set(err.message || "Failed to delete office")
         });
     }
 }

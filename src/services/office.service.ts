@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
 import { env } from '../env/env.dev';
+import { formatDateForApi } from '../utils/date';
 
 export interface Office {
     id: number;             // Office ID in the system
@@ -69,25 +70,30 @@ export class OfficesService {
 
     // Create new office
     createOffice(office: Partial<Office>) {
-        return this.http.post<Office>(this.baseUrl, office).pipe(
+        const payload = {
+            ...office,
+            openingDate: office.openingDate ? formatDateForApi(office.openingDate) : undefined
+        };
+
+        return this.http.post<Office>(this.baseUrl, payload).pipe(
             tap(() => this.fetchOffices())
         );
     }
 
     // Update office by ID
     updateOffice(officeId: number, office: Partial<Office>) {
-        return this.http.put<Office>(`${this.baseUrl}/${officeId}`, office).pipe(
+        const { id, ...payload } = office;
+
+        if (payload.openingDate) {
+            payload.dateFormat = payload.dateFormat || 'dd MMMM yyyy';
+            payload.locale = payload.locale || 'en';
+            payload.openingDate = formatDateForApi(payload.openingDate);
+        }
+
+        return this.http.put<Office>(`${this.baseUrl}/${officeId}`, payload).pipe(
             tap(() => this.fetchOffices())
         );
     }
-
-    // Delete office by ID
-    deleteOffice(officeId: number) {
-        return this.http.delete<void>(`${this.baseUrl}/${officeId}`).pipe(
-            tap(() => this.fetchOffices())
-        );
-    }
-
 
     // Template methods
     // Get office template

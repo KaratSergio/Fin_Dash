@@ -39,7 +39,7 @@
     <tbody>
       @for (office of offices(); track office.id) {
       <tr>
-        <td>{{ formatDateForApi(office.openingDate || '') }}</td>
+        <td>{{ office.openingDate | formatDate }}</td>
         <td><input [value]="office.name" #nameInput (input)="office.name = nameInput.value"></td>
         <td><input [value]="office.externalId" #externalInput (input)="office.externalId = externalInput.value"></td>
         <td>
@@ -47,8 +47,7 @@
             (input)="office.parentId = parentInput.value ? +parentInput.value : undefined">
         </td>
         <td>
-          <button (click)="updateOffice(office)">Update</button>
-          <button (click)="deleteOffice(office.id)">Delete</button>
+          <button (click)="updateOffice(office.id, office)">Update</button>
         </td>
       </tr>
       } @empty {
