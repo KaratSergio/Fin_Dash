@@ -10,7 +10,7 @@
 
     <h2 class="title">Create New Role</h2>
     <div class="create-role">
-        <input placeholder="Name" #nameInput [value]="newRole().name"
+        <input class="name-input" placeholder="Name" #nameInput [value]="newRole().name"
             (input)="updateNewRoleField('name', nameInput.value)">
 
         <input placeholder="Description" #descInput [value]="newRole().description"
@@ -37,7 +37,7 @@
                 </td>
                 <td>{{ role.disabled ? 'Disabled' : 'Enabled' }}</td>
                 <td>
-                    <button (click)="updateRole(role)">Update</button>
+                    <button (click)="updateRole(role.id, role)">Update</button>
                     <button (click)="deleteRole(role.id)">Delete</button>
                     <button (click)="toggleRole(role)">
                         {{ role.disabled ? 'Enable' : 'Disable' }}

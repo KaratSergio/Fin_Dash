@@ -59,7 +59,8 @@ export class RolesService {
 
     // Update role by ID
     updateRole(roleId: number, role: Partial<Role>) {
-        return this.http.put<Role>(`${this.baseUrl}/${roleId}`, role).pipe(
+        const { disabled, ...payload } = role;
+        return this.http.put<Role>(`${this.baseUrl}/${roleId}`, payload).pipe(
             tap(() => this.fetchRoles())
         );
     }

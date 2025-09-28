@@ -7,7 +7,7 @@
 **FinDash** is a frontend application built with **Angular 20** for interacting with the **Apache Fineract REST API** (v1.13.0-SNAPSHOT).  
 The project is designed to fully leverage all available Fineract endpoints, providing a complete interface for managing users, roles, offices, and other platform entities.  
 
-
+- [Apache Fineract Backend](https://github.com/KaratSergio/fineract)
 > Demo credentials (for testing purposes):
 > - **Username:** `mifos`
 > - **Password:** `password`

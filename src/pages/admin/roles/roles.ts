@@ -20,7 +20,6 @@ export class RolesAdminPage {
   newRole = signal<Partial<Role>>({
     name: '',
     description: '',
-    disabled: false
   });
 
   private loadRoles = effect(() => {
@@ -40,16 +39,15 @@ export class RolesAdminPage {
       next: () => {
         this.newRole.set({
           name: '',
-          description: '',
-          disabled: false
+          description: ''
         });
       },
       error: (err) => this.error.set(err.message || 'Failed to create role'),
     });
   }
 
-  updateRole(role: Role) {
-    this.roleService.updateRole(role.id, role).subscribe({
+  updateRole(roleId: number, role: Partial<Role>) {
+    this.roleService.updateRole(roleId, role).subscribe({
       error: err => this.error.set(err.message || "Failed to update role")
     });
   }
