@@ -9,23 +9,18 @@
   } @else {
 
   <h2 class="title">Create New Office</h2>
-  <div class="create-office">
-    <input placeholder="Name" #nameInput [value]="newOffice().name"
-      (input)="updateNewOfficeField('name', nameInput.value)">
 
-    <input placeholder="External ID" #externalInput [value]="newOffice().externalId"
-      (input)="updateNewOfficeField('externalId', externalInput.value)">
+  <form [formGroup]="createOfficeForm" (ngSubmit)="createOffice()" class="create-office">
+    <input placeholder="Name" formControlName="name">
+    <input placeholder="External ID" formControlName="externalId">
+    <input placeholder="Parent ID" formControlName="parentId" type="number">
+    <input placeholder="Opening Date" formControlName="openingDate" type="date">
 
-    <input placeholder="Parent ID" #parentInput [value]="newOffice().parentId ?? ''" placeholder="Parent ID"
-      (input)="updateNewOfficeField('parentId', parentInput.value ? +parentInput.value : '')">
-
-    <input placeholder="Opening Date" #openingInput type="date" [value]="newOffice().openingDate"
-      (input)="updateNewOfficeField('openingDate', openingInput.value)">
-
-    <button (click)="createOffice()">Create Office</button>
-  </div>
+    <button type="submit" [disabled]="createOfficeForm.invalid">Create Office</button>
+  </form>
 
   <h2 class="title">List Of Offices</h2>
+
   <table>
     <thead>
       <tr>
