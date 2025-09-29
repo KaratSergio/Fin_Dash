@@ -43,9 +43,6 @@
 
     .create-user {
         margin: 0 0 1rem 0;
-        // display: flex;
-        // flex-wrap: wrap;
-        // gap: 0.5rem;
         padding: 0 0.5rem;
 
         .form-field {
@@ -53,10 +50,7 @@
         }
 
         button {
-            padding: 0 1.75rem;
-            height: 2.5rem;
             margin-left: 2.5rem;
-            align-self: flex-end;
         }
     }
 

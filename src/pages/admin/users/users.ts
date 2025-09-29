@@ -1,10 +1,11 @@
 import { Component, signal, inject, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 import { UsersService, AppUser } from "../../../services/user.service";
 import { RolesService } from "../../../services/roles.service";
@@ -17,12 +18,9 @@ import { PasswordModal } from "../../../components/modals/password-modal";
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-    FormsModule,
-    RouterModule,
-    PasswordModal
+    RouterModule, PasswordModal,
+    MatFormFieldModule, MatSelectModule,
+    MatInputModule, MatButtonModule
   ],
   templateUrl: "./users.html",
   styleUrls: ["./users.scss"]
@@ -52,10 +50,27 @@ export class UsersAdminPage {
     roles: [[] as number[], Validators.required]
   });
 
+  userControls: { [id: number]: { office: FormControl; roles: FormControl } } = {};
+
   private loadUsers = effect(() => {
     this.usersService.getUsers();
     this.rolesService.getRoles();
     this.officesService.getOffices();
+  });
+
+  private syncUserControls = effect(() => {
+    const list: AppUser[] = this.users();
+    list.forEach(user => {
+      if (!this.userControls[user.id]) {
+        this.userControls[user.id] = {
+          office: new FormControl(user.officeId ?? null),
+          roles: new FormControl(user.roles ?? [])
+        };
+      } else {
+        this.userControls[user.id].office.setValue(user.officeId ?? null, { emitEvent: false });
+        this.userControls[user.id].roles.setValue(user.roles ?? [], { emitEvent: false });
+      }
+    });
   });
 
   createUser() {

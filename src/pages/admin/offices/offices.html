@@ -11,12 +11,35 @@
   <h2 class="title">Create New Office</h2>
 
   <form [formGroup]="createOfficeForm" (ngSubmit)="createOffice()" class="create-office">
-    <input placeholder="Name" formControlName="name">
-    <input placeholder="External ID" formControlName="externalId">
-    <input placeholder="Parent ID" formControlName="parentId" type="number">
-    <input placeholder="Opening Date" formControlName="openingDate" type="date">
 
-    <button type="submit" [disabled]="createOfficeForm.invalid">Create Office</button>
+    <mat-form-field appearance="fill" class="">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="">
+      <mat-label>External ID</mat-label>
+      <input matInput formControlName="externalId">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="">
+      <mat-label>Parent Office</mat-label>
+      <mat-select formControlName="parentId">
+        <mat-option [value]="null">Head Office</mat-option>
+        @for (office of offices(); track office.id) {
+        <mat-option [value]="office.id">{{ office.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="">
+      <mat-label>Opening Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="openingDate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="createOfficeForm.invalid">Create Office</button>
   </form>
 
   <h2 class="title">List Of Offices</h2>
@@ -27,7 +50,7 @@
         <th>Opening Date</th>
         <th>Name</th>
         <th>External ID</th>
-        <th>Parent ID</th>
+        <th>Parent Office</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -37,10 +60,23 @@
         <td>{{ office.openingDate | formatDate }}</td>
         <td><input [value]="office.name" #nameInput (input)="office.name = nameInput.value"></td>
         <td><input [value]="office.externalId" #externalInput (input)="office.externalId = externalInput.value"></td>
+
         <td>
-          <input [value]="office.parentId ?? ''" #parentInput placeholder="Head office"
-            (input)="office.parentId = parentInput.value ? +parentInput.value : undefined">
+          @if (office.parentId !== undefined && office.parentId !== null) {
+          <mat-form-field appearance="outline" class="table-field-select">
+            <mat-select [formControl]="officeControls[office.id]" (selectionChange)="office.parentId = $event.value">
+              <mat-option [value]="null">Head Office</mat-option>
+              @for (parent of officesService.offices(); track parent.id) {
+              <mat-option [value]="parent.id">{{ parent.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          } @else {
+          <span style="color: gray; font-style: italic;">— No parent (Top-level office) —</span>
+          }
         </td>
+
+
         <td>
           <button (click)="updateOffice(office.id, office)">Update</button>
         </td>
@@ -51,6 +87,7 @@
       </tr>
       }
     </tbody>
+
   </table>
 
   }

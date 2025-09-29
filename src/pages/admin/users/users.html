@@ -87,7 +87,7 @@
 
         <td>
           <mat-form-field appearance="outline" class="table-field-select">
-            <mat-select [(ngModel)]="user.roles" multiple>
+            <mat-select [formControl]="userControls[user.id].roles" multiple>
               @for (role of roles(); track role.id) {
               <mat-option [value]="role.id">{{ role.name }}</mat-option>
               }
@@ -97,7 +97,7 @@
 
         <td>
           <mat-form-field appearance="outline" class="table-field-select">
-            <mat-select [(ngModel)]="user.officeId">
+            <mat-select [formControl]="userControls[user.id].office">
               @for (office of officesService.offices(); track office.id) {
               <mat-option [value]="office.id">{{ office.name }}</mat-option>
               }
