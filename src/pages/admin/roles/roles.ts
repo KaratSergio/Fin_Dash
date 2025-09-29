@@ -1,12 +1,13 @@
 import { Component, signal, inject, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 import { RolesService, Role } from "../../../services/roles.service";
 
 @Component({
   selector: "app-admin-roles",
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule],
+  imports: [RouterModule, ReactiveFormsModule, MatInputModule],
   templateUrl: "./roles.html",
   styleUrls: ["./roles.scss"]
 })

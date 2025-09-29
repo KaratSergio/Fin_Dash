@@ -84,8 +84,27 @@
         <td><input [value]="user.firstname" #firstname (input)="user.firstname = firstname.value"></td>
         <td><input [value]="user.lastname" #lastname (input)="user.lastname = lastname.value"></td>
         <td><input [value]="user.email" #email (input)="user.email = email.value"></td>
-        <td>{{ getRoleNames(user) }}</td>
-        <td>{{ user.officeId }}</td>
+
+        <td>
+          <mat-form-field appearance="outline" class="table-field-select">
+            <mat-select [(ngModel)]="user.roles" multiple>
+              @for (role of roles(); track role.id) {
+              <mat-option [value]="role.id">{{ role.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </td>
+
+        <td>
+          <mat-form-field appearance="outline" class="table-field-select">
+            <mat-select [(ngModel)]="user.officeId">
+              @for (office of officesService.offices(); track office.id) {
+              <mat-option [value]="office.id">{{ office.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </td>
+
         <td>
           <button (click)="updateUser(user)">Update</button>
           <button (click)="deleteUser(user.id)">Delete</button>

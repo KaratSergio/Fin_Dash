@@ -10,15 +10,18 @@
 
     <h2 class="title">Create New Role</h2>
     <form [formGroup]="createRoleForm" (ngSubmit)="createRole()" class="create-role">
-        <input placeholder="Name" formControlName="name">
 
-        @if (createRoleForm.get('name')?.invalid && createRoleForm.get('name')?.touched) {
-        <div class="error">Name is required</div>
-        }
+        <mat-form-field appearance="fill" class="name-input">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name">
+        </mat-form-field>
 
-        <input placeholder="Description" formControlName="description">
+        <mat-form-field appearance="fill" class="desc-field">
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description">
+        </mat-form-field>
 
-        <button type="submit" [disabled]="createRoleForm.invalid">Create Role</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="createRoleForm.invalid">Create Role</button>
     </form>
 
     <h2 class="title">List Of Roles</h2>

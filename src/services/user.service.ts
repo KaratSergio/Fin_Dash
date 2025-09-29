@@ -7,13 +7,17 @@ import { Role } from './roles.service';
 export interface AppUser {
     id: number;                   // User ID
     username: string;             // Login name
-    firstname?: string;           // First name
-    lastname?: string;            // Last name
-    email?: string;               // Email
-    password?: string;            // Password (only on create/change)
-    officeId: number;             // Office ID the user belongs to
-    selectedRoles: Role[];        // List of assigned roles
+    firstname: string;           // First name
+    lastname: string;            // Last name
+    email: string;               // Email
+    password: string;            // Password (only on create/change)
     sendPasswordToEmail: boolean; // Send password to Email
+
+    officeId: number;             // Office ID the user belongs to
+    officeName: string;           // Office name the user belongs to     
+
+    selectedRoles: Role[];        // List of assigned roles
+    roles: number[];              // User roles ID
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,7 +36,13 @@ export class UsersService {
 
         this.http.get<AppUser[]>(this.baseUrl)
             .pipe(
-                tap(list => this.users.set(list)),
+                tap(list => {
+                    const normalized = list.map(user => ({
+                        ...user,
+                        roles: user.selectedRoles.map(r => r.id) //  IDs only
+                    }));
+                    this.users.set(normalized);
+                }),
                 catchError(err => {
                     this.error.set(err.message || 'Failed to load users');
                     return of([]);
@@ -61,7 +71,8 @@ export class UsersService {
 
     // Update user
     updateUser(userId: number, user: Partial<AppUser>) {
-        return this.http.put<AppUser>(`${this.baseUrl}/${userId}`, user).pipe(
+        const { id, officeName, selectedRoles, ...payload } = user;
+        return this.http.put<AppUser>(`${this.baseUrl}/${userId}`, payload).pipe(
             tap(() => this.fetchUsers())
         );
     }

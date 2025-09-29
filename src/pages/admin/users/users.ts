@@ -1,6 +1,6 @@
 import { Component, signal, inject, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,6 +20,7 @@ import { PasswordModal } from "../../../components/modals/password-modal";
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    FormsModule,
     RouterModule,
     PasswordModal
   ],
@@ -48,7 +49,7 @@ export class UsersAdminPage {
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
     officeId: ['', Validators.required],
-    roles: [[] as number[]]
+    roles: [[] as number[], Validators.required]
   });
 
   private loadUsers = effect(() => {
