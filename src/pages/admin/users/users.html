@@ -50,7 +50,7 @@
     <!-- Roles Multiselect -->
     <mat-form-field appearance="fill" class="form-field">
       <mat-label>Roles</mat-label>
-      <mat-select formControlName="selectedRoles" multiple>
+      <mat-select formControlName="roles" multiple>
         @for (role of roles(); track role.id) {
         <mat-option [value]="role.id">{{ role.name }}</mat-option>
         }

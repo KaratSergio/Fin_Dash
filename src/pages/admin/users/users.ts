@@ -48,7 +48,7 @@ export class UsersAdminPage {
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
     officeId: ['', Validators.required],
-    selectedRoles: [[] as number[]]
+    roles: [[] as number[]]
   });
 
   private loadUsers = effect(() => {
@@ -60,7 +60,13 @@ export class UsersAdminPage {
   createUser() {
     if (this.createUserForm.invalid) return;
 
-    this.usersService.createUser(this.createUserForm.value as Partial<AppUser>).subscribe({
+    const payload: Partial<AppUser> = {
+      ...this.createUserForm.value,
+      sendPasswordToEmail: false, // !! temporarily disabled, dev mode (hardcode)
+      repeatPassword: this.createUserForm.value.password // !! temporarily unavailable, dev mode (hardcode)
+    } as Partial<AppUser>;
+
+    this.usersService.createUser(payload).subscribe({
       next: () => this.createUserForm.reset({
         username: '',
         firstname: '',
@@ -68,7 +74,7 @@ export class UsersAdminPage {
         email: '',
         password: '',
         officeId: '',
-        selectedRoles: []
+        roles: []
       }),
       error: (err) => this.error.set(err.message || 'Failed to create user'),
     });

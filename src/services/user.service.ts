@@ -12,7 +12,8 @@ export interface AppUser {
     email?: string;               // Email
     password?: string;            // Password (only on create/change)
     officeId: number;             // Office ID the user belongs to
-    selectedRoles: Role[];      // List of assigned roles
+    selectedRoles: Role[];        // List of assigned roles
+    sendPasswordToEmail: boolean; // Send password to Email
 }
 
 @Injectable({ providedIn: 'root' })
