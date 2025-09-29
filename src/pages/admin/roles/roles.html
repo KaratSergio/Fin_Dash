@@ -9,15 +9,17 @@
     } @else {
 
     <h2 class="title">Create New Role</h2>
-    <div class="create-role">
-        <input class="name-input" placeholder="Name" #nameInput [value]="newRole().name"
-            (input)="updateNewRoleField('name', nameInput.value)">
+    <form [formGroup]="createRoleForm" (ngSubmit)="createRole()" class="create-role">
+        <input placeholder="Name" formControlName="name">
 
-        <input placeholder="Description" #descInput [value]="newRole().description"
-            (input)="updateNewRoleField('description', descInput.value)">
+        @if (createRoleForm.get('name')?.invalid && createRoleForm.get('name')?.touched) {
+        <div class="error">Name is required</div>
+        }
 
-        <button (click)="createRole()">Create Role</button>
-    </div>
+        <input placeholder="Description" formControlName="description">
+
+        <button type="submit" [disabled]="createRoleForm.invalid">Create Role</button>
+    </form>
 
     <h2 class="title">List Of Roles</h2>
     <table>

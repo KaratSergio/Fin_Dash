@@ -1,15 +1,17 @@
 import { Component, signal, inject, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RolesService, Role } from "../../../services/roles.service";
 
 @Component({
   selector: "app-admin-roles",
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, ReactiveFormsModule],
   templateUrl: "./roles.html",
   styleUrls: ["./roles.scss"]
 })
 export class RolesAdminPage {
+  private fb = inject(FormBuilder);
   roleService = inject(RolesService);
 
   // Signals
@@ -17,36 +19,28 @@ export class RolesAdminPage {
   loading = this.roleService.loading;
   error = signal<string | null>(null);
 
-  newRole = signal<Partial<Role>>({
-    name: '',
-    description: '',
+  // Reactive form
+  createRoleForm = this.fb.group({
+    name: ['', Validators.required],
+    description: ['']
   });
 
+  // fetch roles list
   private loadRoles = effect(() => {
     this.roleService.getRoles();
   });
 
-  // Utils
-  updateNewRoleField(field: keyof Role, value: string | boolean) {
-    this.newRole.set({ ...this.newRole(), [field]: value });
-  }
-
   // Methods
   createRole() {
-    const payload: Partial<Role> = { ...this.newRole() };
+    if (this.createRoleForm.invalid) return;
 
-    this.roleService.createRole(payload).subscribe({
-      next: () => {
-        this.newRole.set({
-          name: '',
-          description: ''
-        });
-      },
-      error: (err) => this.error.set(err.message || 'Failed to create role'),
+    this.roleService.createRole(this.createRoleForm.value as Partial<Role>).subscribe({
+      next: () => this.createRoleForm.reset({ name: '', description: '' }),
+      error: err => this.error.set(err.message || 'Failed to create role')
     });
   }
 
-  updateRole(roleId: number, role: Partial<Role>) {
+  updateRole(roleId: number, role: Role) {
     this.roleService.updateRole(roleId, role).subscribe({
       error: err => this.error.set(err.message || "Failed to update role")
     });

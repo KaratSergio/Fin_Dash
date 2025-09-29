@@ -9,19 +9,60 @@
   } @else {
 
   <h2 class="title">Create New User</h2>
-  <div class="create-user">
-    <input placeholder="Username" #usernameInput [value]="newUser().username"
-      (input)="updateNewUserField('username', usernameInput.value)">
-    <input placeholder="First Name" #firstInput [value]="newUser().firstname"
-      (input)="updateNewUserField('firstname', firstInput.value)">
-    <input placeholder="Last Name" #lastInput [value]="newUser().lastname"
-      (input)="updateNewUserField('lastname', lastInput.value)">
-    <input placeholder="Email" #emailInput [value]="newUser().email"
-      (input)="updateNewUserField('email', emailInput.value)">
-    <input type="password" placeholder="Password" #pwdInput [value]="newUser().password"
-      (input)="updateNewUserField('password', pwdInput.value)">
-    <button (click)="createUser()">Create User</button>
-  </div>
+
+  <form [formGroup]="createUserForm" (ngSubmit)="createUser()" class="create-user">
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstname">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastname">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password">
+    </mat-form-field>
+
+    <!-- Office Select -->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Office</mat-label>
+      <mat-select formControlName="officeId">
+        @for (office of officesService.offices(); track office.id) {
+        <mat-option [value]="office.id">{{ office.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Roles Multiselect -->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Roles</mat-label>
+      <mat-select formControlName="selectedRoles" multiple>
+        @for (role of roles(); track role.id) {
+        <mat-option [value]="role.id">{{ role.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="createUserForm.invalid">
+      Create User
+    </button>
+  </form>
+
+
 
   <h2 class="title">List Of Users</h2>
   <table>
