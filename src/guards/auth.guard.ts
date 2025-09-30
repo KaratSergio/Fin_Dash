@@ -1,16 +1,14 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../services/auth/auth.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthGuard implements CanActivate {
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  constructor(private router: Router) { }
 
   canActivate(): boolean {
-    if (this.auth.user()) return true;
-
-    this.router.navigate(['login']);
-    return false;
+    // ! For now, we just always allow access
+    return true;
   }
 }

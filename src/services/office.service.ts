@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { env } from '../env/env.dev';
+import { env } from '../../server/env/env.dev';
 import { formatDateForApi } from '../utils/date';
 
 export interface Office {
