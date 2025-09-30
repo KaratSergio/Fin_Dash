@@ -23,7 +23,7 @@ export interface AppUser {
 @Injectable({ providedIn: 'root' })
 export class UsersService {
     private http = inject(HttpClient);
-    private baseUrl = `${env.apiBase}/users`;
+    private baseUrl = 'api/fineract/users';
 
     // Signals
     users = signal<AppUser[]>([]);

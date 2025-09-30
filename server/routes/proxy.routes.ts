@@ -12,14 +12,13 @@ proxyRoutes.use(async (req, res) => {
         const token = req.cookies['auth'];
         const body = ['POST', 'PUT', 'PATCH'].includes(req.method) ? JSON.stringify(req.body) : undefined;
 
-        const data = await safeFetch(`${env.proxy}${req.url}`, {
+        const data = await safeFetch(`${env.apiBase}${req.url}`, {
             method: req.method,
             headers: {
                 Authorization: `Basic ${token}`,
                 'Fineract-Platform-TenantId': 'default',
-                'Content-Type': req.get('Content-Type') || 'application/json'
-            },
-            body
+                ...(body ? { 'Content-Type': 'application/json' } : {})
+            }
         });
 
         res.json(data);

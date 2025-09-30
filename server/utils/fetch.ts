@@ -1,14 +1,14 @@
 import fetch, { RequestInit } from 'node-fetch';
+import { httpsAgent } from '../server';
 
 export async function safeFetch(url: string, options: RequestInit) {
-    const res = await fetch(url, options);
+    const res = await fetch(url, { ...options, agent: httpsAgent });
 
     if (!res.ok) {
         const text = await res.text();
         throw new Error(`Fetch failed: ${res.status} ${text}`);
     }
 
-    // We try to return JSON, otherwise text
     const contentType = res.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
         return res.json();

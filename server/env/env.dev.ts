@@ -1,9 +1,9 @@
 export const env = {
   production: false,
 
-  ssrUrl: 'http://localhost:4000', // express server
+  clientUrl: 'http://localhost:4200',
 
-  proxy: 'https://localhost:8443/fineract-provider',
+  serverUrl: 'http://localhost:4000', // express server
 
   apiBase: 'https://localhost:8443/fineract-provider/api/v1', // fineract local 
 

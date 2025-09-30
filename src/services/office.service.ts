@@ -1,7 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { env } from '../../server/env/env.dev';
 import { formatDateForApi } from '../utils/date';
 
 export interface Office {
@@ -18,7 +17,7 @@ export interface Office {
 @Injectable({ providedIn: 'root' })
 export class OfficesService {
     private http = inject(HttpClient);
-    private baseUrl = `${env.apiBase}/offices`;
+    private baseUrl = '/api/fineract/offices';
 
     // Signals
     offices = signal<Office[]>([]);

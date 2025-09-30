@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import fetch, { RequestInit } from 'node-fetch';
 import https from 'https';
 import cors from 'cors';
+import { env } from './env/env.dev';
 
 // Angular SSR imports
 import {
@@ -26,7 +27,7 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 // Middleware
 // ---------------------------
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: `${env.clientUrl}`,
   credentials: true,
 }));
 

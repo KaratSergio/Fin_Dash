@@ -1,7 +1,8 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { credentials } from './pages/auth/credentials.interceptor';
 
 import { App } from './app/app';
 import { appConfig } from './config/app.config';
@@ -10,7 +11,7 @@ import { routes } from './routes/app.routes';
 bootstrapApplication(App, {
   ...appConfig,
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([credentials])),
     provideZonelessChangeDetection(),
     provideRouter(routes),
   ],

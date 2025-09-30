@@ -18,7 +18,7 @@ export interface Permission {
 @Injectable({ providedIn: 'root' })
 export class RolesService {
     private http = inject(HttpClient);
-    private baseUrl = `${env.apiBase}/roles`;
+    private baseUrl = 'api/fineract/roles';
 
     // Signals
     roles = signal<Role[]>([]);
