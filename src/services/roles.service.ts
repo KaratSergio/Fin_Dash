@@ -1,7 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { env } from '@src/env/env.dev';
 
 export interface Role {
     id: number;             // Role ID
@@ -18,7 +17,7 @@ export interface Permission {
 @Injectable({ providedIn: 'root' })
 export class RolesService {
     private http = inject(HttpClient);
-    private baseUrl = `${env.apiBase}/roles`;
+    private baseUrl = 'api/fineract/roles';
 
     // Signals
     roles = signal<Role[]>([]);

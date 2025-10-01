@@ -1,16 +1,15 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { env } from '@src/env/env.dev';
 import { Role } from './roles.service';
 
 export interface AppUser {
     id: number;                   // User ID
     username: string;             // Login name
-    firstname: string;           // First name
-    lastname: string;            // Last name
-    email: string;               // Email
-    password: string;            // Password (only on create/change)
+    firstname: string;            // First name
+    lastname: string;             // Last name
+    email: string;                // Email
+    password: string;             // Password (only on create/change)
     sendPasswordToEmail: boolean; // Send password to Email
 
     officeId: number;             // Office ID the user belongs to
@@ -23,7 +22,7 @@ export interface AppUser {
 @Injectable({ providedIn: 'root' })
 export class UsersService {
     private http = inject(HttpClient);
-    private baseUrl = `${env.apiBase}/users`;
+    private baseUrl = 'api/fineract/users';
 
     // Signals
     users = signal<AppUser[]>([]);
