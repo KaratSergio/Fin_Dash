@@ -44,6 +44,7 @@ export async function setupSession(app: Express) {
             secret: process.env['SESSION_SECRET'] || 'supersecret',
             resave: false,
             saveUninitialized: false,
+            rolling: true,
             cookie: {
                 httpOnly: true,
                 secure: false,

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './../guards/auth.guard';
+import { authGuard } from './../guards/auth.guard';
 
 import { LoginPage } from '../pages/auth/login/login';
 
@@ -15,13 +15,13 @@ export const routes: Routes = [
   { path: 'login', component: LoginPage },
 
   // SPA
-  { path: 'overview', component: Overview, canActivate: [AuthGuard] },
-  { path: 'accounts', component: Accounts, canActivate: [AuthGuard] },
-  { path: 'transactions', component: Transactions, canActivate: [AuthGuard] },
-  { path: 'payments', component: Payments, canActivate: [AuthGuard] },
-  { path: 'analytics', component: Analytics, canActivate: [AuthGuard] },
+  { path: 'overview', component: Overview, canActivate: [authGuard] },
+  { path: 'accounts', component: Accounts, canActivate: [authGuard] },
+  { path: 'transactions', component: Transactions, canActivate: [authGuard] },
+  { path: 'payments', component: Payments, canActivate: [authGuard] },
+  { path: 'analytics', component: Analytics, canActivate: [authGuard] },
 
-  { path: 'admin', component: Admin, canActivate: [AuthGuard] },
+  { path: 'admin', component: Admin, canActivate: [authGuard] },
   {
     path: 'admin/offices',
     loadComponent: () => import('../pages/admin/offices/offices').then((m) => m.OfficesAdminPage),

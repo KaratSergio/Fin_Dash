@@ -2,8 +2,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import { join } from 'node:path';
-// import fetch, { RequestInit } from 'node-fetch';
-// import https from 'https';
 import cors from 'cors';
 import { env } from './env/env.dev';
 import { setupSession } from './redis/session';

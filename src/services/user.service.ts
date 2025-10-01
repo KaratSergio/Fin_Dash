@@ -6,10 +6,10 @@ import { Role } from './roles.service';
 export interface AppUser {
     id: number;                   // User ID
     username: string;             // Login name
-    firstname: string;           // First name
-    lastname: string;            // Last name
-    email: string;               // Email
-    password: string;            // Password (only on create/change)
+    firstname: string;            // First name
+    lastname: string;             // Last name
+    email: string;                // Email
+    password: string;             // Password (only on create/change)
     sendPasswordToEmail: boolean; // Send password to Email
 
     officeId: number;             // Office ID the user belongs to
