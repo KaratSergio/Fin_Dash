@@ -29,6 +29,15 @@
 
         button {
             padding: 0 0.25rem;
+            width: 4.1rem;
+        }
+
+        button[data-status-btn="enabled"] {
+            color: rgb(35, 92, 35);
+        }
+
+        button[data-status-btn="disabled"] {
+            color: rgb(125, 28, 28);
         }
 
         // column nth-child

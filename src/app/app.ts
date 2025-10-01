@@ -1,22 +1,46 @@
-import { Component, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { Sidebar } from '../components/sidebar/sidebar';
-import { RouterOutlet } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { Router, NavigationEnd, Event as RouterEvent, RouterOutlet } from '@angular/router';
+import { Sidebar } from '@src/components/sidebar/sidebar';
+import { filter } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, Sidebar],
-  templateUrl: './app.html',
-  styleUrls: ['./app.scss'],
+  template: `
+    <div class="app-container">
+      @if (showSidebar()) {<app-sidebar></app-sidebar>}
+
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  `,
+  styles: [`
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+    }
+  `],
 })
 export class App {
-  showSidebar = signal(true);
+  private router = inject(Router);
 
-  constructor(private router: Router) {
-    this.router.events.subscribe((event) => {
-      const url = (event as any).urlAfterRedirects ?? (event as any).url;
-      this.showSidebar.set(url !== '/login');
-    });
-  }
+  private navigationEnd = toSignal(
+    this.router.events.pipe(
+      filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd)
+    ),
+    { initialValue: null }
+  );
+
+  showSidebar = computed(() => {
+    const event = this.navigationEnd();
+    return !event || event.urlAfterRedirects !== '/login';
+  });
 }

@@ -42,11 +42,11 @@
                 </td>
                 <td>{{ role.disabled ? 'Disabled' : 'Enabled' }}</td>
                 <td>
-                    <button (click)="updateRole(role.id, role)">Update</button>
-                    <button (click)="deleteRole(role.id)">Delete</button>
-                    <button (click)="toggleRole(role)">
+                    <button (click)="toggleRole(role)" [attr.data-status-btn]="role.disabled ? 'enabled' : 'disabled'">
                         {{ role.disabled ? 'Enable' : 'Disable' }}
                     </button>
+                    <button (click)="updateRole(role.id, role)">Update</button>
+                    <button (click)="deleteRole(role.id)">Delete</button>
                 </td>
             </tr>
             } @empty {
