@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { formatDateForApi } from '../utils/date';
+import { formatDateForApi } from '@src/utils/date';
 
 export interface Office {
     id: number;             // Office ID in the system

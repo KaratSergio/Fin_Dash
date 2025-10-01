@@ -1,7 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { env } from '../../server/env/env.dev';
 import { Role } from './roles.service';
 
 export interface AppUser {
