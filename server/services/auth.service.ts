@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 import { env } from '../env/env.dev';
-import {
-  FineractAuthResponse,
-  fetchFineract,
-  isFineractAuthResponse
-} from '../server';
+import { isFineractAuthResponse } from '../types/api-types';
+import { fetchFineract } from '../utils/agent';
+
 
 // LOGIN
 export async function login(req: Request, res: Response) {
@@ -30,20 +28,12 @@ export async function login(req: Request, res: Response) {
       return res.status(500).json({ message: 'Invalid response from Fineract' });
     }
 
-    const data: FineractAuthResponse = json;
-
-    // Store token in HttpOnly cookie
-    res.cookie('auth', data.base64EncodedAuthenticationKey, {
-      httpOnly: true,
-      secure: false, // true in production
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60, // 1 hour
-    });
+    req.session.fineractToken = json.base64EncodedAuthenticationKey;
 
     return res.json({
-      username: data.username,
-      roles: data.roles,
-      permissions: data.permissions,
+      username: json.username,
+      roles: json.roles,
+      permissions: json.permissions,
     });
   } catch (err) {
     console.error(err);
@@ -52,55 +42,11 @@ export async function login(req: Request, res: Response) {
 }
 
 // LOGOUT
-export function logout(req: Request, res: Response): Response<any, Record<string, any>> {
-  res.clearCookie('auth');
-  return res.json({ success: true });
+export function logout(req: Request, res: Response) {
+  req.session.destroy((err) => {
+    if (err) console.error('Session destroy error:', err);
+    res.clearCookie('connect.sid');
+    res.json({ success: true });
+  });
 }
-
-// CHECK AUTH
-// export async function checkAuth(
-//   req: Request
-// ): Promise<{ user: FineractAuthResponse | null; authenticated: boolean }> {
-//   const token = req.cookies['auth'];
-//   console.log('[checkAuth] incoming cookies:', req.cookies);
-//   console.log('[checkAuth] extracted token:', token);
-
-//   if (!token) {
-//     console.warn('[checkAuth] no auth token found');
-//     return { user: null, authenticated: false };
-//   }
-
-//   try {
-//     console.log('[checkAuth] validating token against Fineract...');
-//     const res = await fetch(`${env.apiBase}${env.checkAuth}`, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Basic ${token}`,
-//         'Content-Type': 'application/json',
-//       },
-//       agent: httpsAgent,
-//     });
-
-//     console.log('[checkAuth] Fineract response status:', res.status);
-
-//     if (!res.ok) {
-//       const text = await res.text();
-//       console.warn('[checkAuth] invalid response:', text);
-//       return { user: null, authenticated: false };
-//     }
-
-//     const json = await res.json();
-//     console.log('[checkAuth] Fineract response JSON:', json);
-
-//     if (!isFineractAuthResponse(json)) {
-//       console.error('[checkAuth] response is not FineractAuthResponse');
-//       return { user: null, authenticated: false };
-//     }
-
-//     return { user: json, authenticated: true };
-//   } catch (err) {
-//     console.error('[checkAuth] error while validating:', err);
-//     return { user: null, authenticated: false };
-//   }
-// }
 

@@ -1,16 +1,17 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/auth.middleware';
 import { safeFetch } from '../utils/fetch';
 import { env } from '../env/env.dev';
 
 export const proxyRoutes = Router();
 
-proxyRoutes.use(requireAuth); // protect
-
 proxyRoutes.use(async (req, res) => {
     try {
-        const token = req.cookies['auth'];
-        const body = ['POST', 'PUT', 'PATCH'].includes(req.method) ? JSON.stringify(req.body) : undefined;
+        const token = req.session?.fineractToken;
+        if (!token) return res.status(401).json({ message: 'Not authenticated' });
+
+        const body = ['POST', 'PUT', 'PATCH'].includes(req.method)
+            ? JSON.stringify(req.body)
+            : undefined;
 
         const data = await safeFetch(`${env.apiBase}${req.url}`, {
             method: req.method,
@@ -21,8 +22,8 @@ proxyRoutes.use(async (req, res) => {
             }
         });
 
-        res.json(data);
+        return res.json(data);
     } catch (err: any) {
-        res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
     }
 });

@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { FineractAuthResponse } from '../../server/server';
+import { FineractAuthResponse } from '../../server/types/api-types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

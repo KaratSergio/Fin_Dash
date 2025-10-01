@@ -1,5 +1,5 @@
 import fetch, { RequestInit } from 'node-fetch';
-import { httpsAgent } from '../server';
+import { httpsAgent } from './agent';
 
 export async function safeFetch(url: string, options: RequestInit) {
     const res = await fetch(url, { ...options, agent: httpsAgent });
