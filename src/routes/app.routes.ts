@@ -1,14 +1,15 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './../guards/auth.guard';
+import { authGuard } from '@src/guards/auth.guard';
 
-import { LoginPage } from '../pages/auth/login/login';
+import { LoginPage } from '@src/pages/auth/login/login';
 
-import { Overview } from '../pages/overview/overview';
-import { Accounts } from '../pages/accounts/accounts';
-import { Transactions } from '../pages/transactions/transactions';
-import { Payments } from '../pages/payments/payments';
-import { Analytics } from '../pages/analytics/analytics';
-import { Admin } from '../pages/admin/admin';
+import { Overview } from '@src/pages/overview/overview';
+import { Accounts } from '@src/pages/accounts/accounts';
+import { Transactions } from '@src/pages/transactions/transactions';
+import { Payments } from '@src/pages/payments/payments';
+import { Analytics } from '@src/pages/analytics/analytics';
+import { Admin } from '@src/pages/admin/admin';
+import { ClientsPage } from '@src/pages/clients/clients';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'transactions', component: Transactions, canActivate: [authGuard] },
   { path: 'payments', component: Payments, canActivate: [authGuard] },
   { path: 'analytics', component: Analytics, canActivate: [authGuard] },
+  { path: 'clients', component: ClientsPage, canActivate: [] },
 
   { path: 'admin', component: Admin, canActivate: [authGuard] },
   {

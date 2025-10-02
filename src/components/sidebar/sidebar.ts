@@ -14,6 +14,7 @@ import { Logout } from '@src/components/logout/logout';
         <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
         <a routerLink="/payments" routerLinkActive="active">Payments</a>
         <a routerLink="/analytics" routerLinkActive="active">Analytics</a>
+        <a routerLink="/clients" routerLinkActive="active">Clients</a>
         <a routerLink="/admin" routerLinkActive="active">Admin</a>
       </div>
 

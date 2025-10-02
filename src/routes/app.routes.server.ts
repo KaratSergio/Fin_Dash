@@ -11,6 +11,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'transactions', renderMode: RenderMode.Prerender },
   { path: 'payments', renderMode: RenderMode.Prerender },
   { path: 'analytics', renderMode: RenderMode.Prerender },
+  { path: 'clients', renderMode: RenderMode.Prerender },
 
   // admin
   { path: 'admin', renderMode: RenderMode.Prerender },
