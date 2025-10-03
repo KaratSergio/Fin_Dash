@@ -38,6 +38,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "ioredis": "^5.8.0",
+    "ngx-mask": "^20.0.3",
     "node-fetch": "^3.3.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

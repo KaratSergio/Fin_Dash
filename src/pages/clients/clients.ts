@@ -2,6 +2,7 @@ import { Component, inject, signal, effect } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators, FormControl } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
@@ -17,8 +18,10 @@ import { OfficesService } from "@src/services/office.service";
         ReactiveFormsModule,
         RouterModule,
         MatFormFieldModule, MatSelectModule,
-        MatInputModule, MatButtonModule
+        MatInputModule, MatButtonModule,
+        NgxMaskDirective
     ],
+    providers: [provideNgxMask()],
     templateUrl: "./clients.html",
     styleUrls: ["./clients.scss"]
 })
@@ -42,10 +45,15 @@ export class ClientsPage {
         emailAddress: this.makeControl('', [Validators.required, Validators.email]),
         officeId: this.makeControl('', [Validators.required]),
         externalId: this.makeControl(''),
-        legalFormId: this.makeControl(1, [Validators.required]) // default PERSON (1)
+        legalFormId: this.makeControl(1, [Validators.required]) // ! default PERSON (1) hardcode
     });
 
-    clientControls: { [id: number]: { office: FormControl } } = {};
+    clientControls: {
+        [id: number]: {
+            office: FormControl<number | null>,
+            mobileNo: FormControl<string | null>
+        }
+    } = {};
 
     private loadData = effect(() => {
         this.clientsService.getClients();
@@ -57,10 +65,12 @@ export class ClientsPage {
         list.forEach(c => {
             if (!this.clientControls[c.id]) {
                 this.clientControls[c.id] = {
-                    office: new FormControl(c.officeId ?? null)
+                    office: new FormControl(c.officeId ?? null),
+                    mobileNo: new FormControl(c.mobileNo ?? '')
                 };
             } else {
                 this.clientControls[c.id].office.setValue(c.officeId ?? null, { emitEvent: false });
+                this.clientControls[c.id].mobileNo.setValue(c.mobileNo ?? '', { emitEvent: false });
             }
         });
     });
@@ -91,13 +101,19 @@ export class ClientsPage {
     }
 
     updateClient(client: Client) {
-        this.clientsService.updateClient(client.id, {
+        const controls = this.clientControls[client.id];
+
+        if (!controls) return;
+
+        const payload = {
             firstname: client.firstname,
             lastname: client.lastname,
             emailAddress: client.emailAddress,
-            mobileNo: client.mobileNo,
+            mobileNo: controls.mobileNo.value || undefined, // from FormControl
             externalId: client.externalId,
-        }).subscribe({
+        };
+
+        this.clientsService.updateClient(client.id, payload).subscribe({
             error: err => this.error.set(err.message || "Failed to update client")
         });
     }

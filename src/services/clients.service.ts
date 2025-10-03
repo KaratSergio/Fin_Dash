@@ -74,7 +74,7 @@ export class ClientsService {
         const payload = {
             firstname: data.firstname,
             lastname: data.lastname,
-            email: data.email,
+            emailAddress: data.emailAddress,
             mobileNo: data.mobileNo,
             externalId: data.externalId,
         };

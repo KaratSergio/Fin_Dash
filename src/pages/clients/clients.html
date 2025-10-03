@@ -23,7 +23,7 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobileNo">
+            <input matInput formControlName="mobileNo" mask="+00 (000) 000-00-00" placeholder="+38 (099) 123-45-67">
         </mat-form-field>
 
         <mat-form-field appearance="fill">
@@ -68,7 +68,10 @@
                 <td><input [value]="client.firstname" #f (input)="client.firstname=f.value"></td>
                 <td><input [value]="client.lastname" #l (input)="client.lastname=l.value"></td>
                 <td><input [value]="client.emailAddress" #e (input)="client.emailAddress=e.value"></td>
-                <td><input [value]="client.mobileNo" #m (input)="client.mobileNo=m.value"></td>
+                <td>
+                    <input matInput [formControl]="clientControls[client.id].mobileNo" mask="+00 (000) 000-00-00"
+                        placeholder="+38 (099) 123-45-67">
+                </td>
                 <td>
                     <mat-form-field appearance="outline" class="table-field-select">
                         <mat-select [formControl]="clientControls[client.id].office">
