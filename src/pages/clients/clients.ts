@@ -41,7 +41,8 @@ export class ClientsPage {
         mobileNo: this.makeControl(''),
         emailAddress: this.makeControl('', [Validators.required, Validators.email]),
         officeId: this.makeControl('', [Validators.required]),
-        externalId: this.makeControl('')
+        externalId: this.makeControl(''),
+        legalFormId: this.makeControl(1, [Validators.required]) // default PERSON (1)
     });
 
     clientControls: { [id: number]: { office: FormControl } } = {};
@@ -67,21 +68,50 @@ export class ClientsPage {
     createClient() {
         if (this.createClientForm.invalid) return;
 
-        const formValue = {
-            ...this.createClientForm.value,
-            officeId: Number(this.createClientForm.value.officeId), // convert to number
-            externalId: this.createClientForm.value.externalId || undefined
-        } as Partial<Client>;
+        const formValue = this.createClientForm.value;
 
-        this.clientsService.createClient(formValue).subscribe({
+        const payload = {
+            firstname: formValue.firstname,
+            lastname: formValue.lastname,
+            emailAddress: formValue.emailAddress,
+            mobileNo: formValue.mobileNo || undefined,
+            officeId: Number(formValue.officeId),
+            externalId: formValue.externalId || undefined,
+            legalFormId: Number(formValue.legalFormId),
+            active: true,
+            activationDate: new Date().toISOString().split("T")[0], // yyyy-MM-dd
+            dateFormat: "yyyy-MM-dd",
+            locale: "en"
+        };
+
+        this.clientsService.createClient(payload).subscribe({
             next: () => this.createClientForm.reset(),
             error: err => this.error.set(err.message || "Failed to create client")
         });
     }
 
     updateClient(client: Client) {
-        this.clientsService.updateClient(client.id, client).subscribe({
+        this.clientsService.updateClient(client.id, {
+            firstname: client.firstname,
+            lastname: client.lastname,
+            emailAddress: client.emailAddress,
+            mobileNo: client.mobileNo,
+            externalId: client.externalId,
+        }).subscribe({
             error: err => this.error.set(err.message || "Failed to update client")
+        });
+    }
+
+    transferClient(client: Client) {
+        const officeId = this.clientControls[client.id]?.office.value;
+
+        if (!officeId) {
+            this.error.set("Please select an office before transfer");
+            return;
+        }
+
+        this.clientsService.transferClientPropose(client.id, officeId).subscribe({
+            error: err => this.error.set(err.message || "Failed to transfer client")
         });
     }
 
