@@ -1,0 +1,39 @@
+<form class="client-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstname">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastname">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Mobile</mat-label>
+        <input matInput formControlName="mobileNo" mask="+00 (000) 000-00-00" placeholder="+38 (099) 123-45-67">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="emailAddress">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Office</mat-label>
+        <mat-select formControlName="officeId">
+            @for (office of offices; track office.id) {
+            <mat-option [value]="office.id">{{ office.name }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>External ID</mat-label>
+        <input matInput formControlName="externalId">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+        Create Client
+    </button>
+</form>

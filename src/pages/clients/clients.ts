@@ -1,25 +1,22 @@
 import { Component, inject, signal, effect } from "@angular/core";
-import { ReactiveFormsModule, FormBuilder, Validators, FormControl } from "@angular/forms";
+import { FormBuilder, FormControl } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-
-import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
+import { provideNgxMask } from 'ngx-mask';
 
 import { ClientsService, Client } from "@src/services/clients.service";
 import { OfficesService } from "@src/services/office.service";
+import { FormUtils } from "@src/utils/form";
+
+import { ClientForm } from "./client-form/client-form";
+import { ClientTable } from "./client-table/client-table";
 
 @Component({
     selector: "app-admin-clients",
     standalone: true,
     imports: [
-        ReactiveFormsModule,
         RouterModule,
-        MatFormFieldModule, MatSelectModule,
-        MatInputModule, MatButtonModule,
-        NgxMaskDirective
+        ClientForm,
+        ClientTable
     ],
     providers: [provideNgxMask()],
     templateUrl: "./clients.html",
@@ -27,6 +24,8 @@ import { OfficesService } from "@src/services/office.service";
 })
 export class ClientsPage {
     private fb = inject(FormBuilder);
+    private utils = new FormUtils(this.fb);
+
     clientsService = inject(ClientsService);
     officesService = inject(OfficesService);
 
@@ -34,26 +33,25 @@ export class ClientsPage {
     loading = this.clientsService.loading;
     error = signal<string | null>(null);
 
-    private makeControl<T>(value: T, validators: any[] = []) {
-        return this.fb.nonNullable.control(value, { validators });
-    }
-
+    /// form for creating a new client
     createClientForm = this.fb.group({
-        firstname: this.makeControl('', [Validators.required]),
-        lastname: this.makeControl('', [Validators.required]),
-        mobileNo: this.makeControl(''),
-        emailAddress: this.makeControl('', [Validators.required, Validators.email]),
-        officeId: this.makeControl('', [Validators.required]),
-        externalId: this.makeControl(''),
-        legalFormId: this.makeControl(1, [Validators.required]) // ! default PERSON (1) hardcode
+        firstname: this.utils.requiredText(),
+        lastname: this.utils.requiredText(),
+        mobileNo: this.utils.makeControl(''),
+        emailAddress: this.utils.requiredEmail(),
+        officeId: this.utils.optionalNumber(),
+        externalId: this.utils.makeControl(''),
+        legalFormId: this.utils.makeControl(1, []) //! PERSON = 1
     });
 
-    clientControls: {
-        [id: number]: {
-            office: FormControl<number | null>,
-            mobileNo: FormControl<string | null>
-        }
-    } = {};
+    // controls for editing existing clients
+    clientControls: Record<number, {
+        firstname: FormControl<string | null>,
+        lastname: FormControl<string | null>,
+        emailAddress: FormControl<string | null>,
+        mobileNo: FormControl<string | null>,
+        office: FormControl<number | null>
+    }> = {};
 
     private loadData = effect(() => {
         this.clientsService.getClients();
@@ -65,35 +63,40 @@ export class ClientsPage {
         list.forEach(c => {
             if (!this.clientControls[c.id]) {
                 this.clientControls[c.id] = {
-                    office: new FormControl(c.officeId ?? null),
-                    mobileNo: new FormControl(c.mobileNo ?? '')
+                    firstname: new FormControl(c.firstname ?? ''),
+                    lastname: new FormControl(c.lastname ?? ''),
+                    emailAddress: new FormControl(c.emailAddress ?? ''),
+                    mobileNo: new FormControl(c.mobileNo ?? ''),
+                    office: new FormControl(c.officeId ?? null)
                 };
             } else {
-                this.clientControls[c.id].office.setValue(c.officeId ?? null, { emitEvent: false });
-                this.clientControls[c.id].mobileNo.setValue(c.mobileNo ?? '', { emitEvent: false });
+                const controls = this.clientControls[c.id];
+                controls.firstname.setValue(c.firstname ?? '', { emitEvent: false });
+                controls.lastname.setValue(c.lastname ?? '', { emitEvent: false });
+                controls.emailAddress.setValue(c.emailAddress ?? '', { emitEvent: false });
+                controls.mobileNo.setValue(c.mobileNo ?? '', { emitEvent: false });
+                controls.office.setValue(c.officeId ?? null, { emitEvent: false });
             }
         });
     });
 
+    // Methods
     createClient() {
         if (this.createClientForm.invalid) return;
-
-        const formValue = this.createClientForm.value;
-
+        const f = this.createClientForm.value;
         const payload = {
-            firstname: formValue.firstname,
-            lastname: formValue.lastname,
-            emailAddress: formValue.emailAddress,
-            mobileNo: formValue.mobileNo || undefined,
-            officeId: Number(formValue.officeId),
-            externalId: formValue.externalId || undefined,
-            legalFormId: Number(formValue.legalFormId),
+            firstname: f.firstname,
+            lastname: f.lastname,
+            emailAddress: f.emailAddress,
+            mobileNo: f.mobileNo || undefined,
+            officeId: Number(f.officeId),
+            externalId: f.externalId || undefined,
+            legalFormId: Number(f.legalFormId),
             active: true,
-            activationDate: new Date().toISOString().split("T")[0], // yyyy-MM-dd
+            activationDate: new Date().toISOString().split("T")[0],
             dateFormat: "yyyy-MM-dd",
             locale: "en"
         };
-
         this.clientsService.createClient(payload).subscribe({
             next: () => this.createClientForm.reset(),
             error: err => this.error.set(err.message || "Failed to create client")
@@ -102,17 +105,14 @@ export class ClientsPage {
 
     updateClient(client: Client) {
         const controls = this.clientControls[client.id];
-
         if (!controls) return;
-
         const payload = {
-            firstname: client.firstname,
-            lastname: client.lastname,
-            emailAddress: client.emailAddress,
-            mobileNo: controls.mobileNo.value || undefined, // from FormControl
+            firstname: controls.firstname.value,
+            lastname: controls.lastname.value,
+            emailAddress: controls.emailAddress.value,
+            mobileNo: controls.mobileNo.value,
             externalId: client.externalId,
         };
-
         this.clientsService.updateClient(client.id, payload).subscribe({
             error: err => this.error.set(err.message || "Failed to update client")
         });
@@ -120,12 +120,10 @@ export class ClientsPage {
 
     transferClient(client: Client) {
         const officeId = this.clientControls[client.id]?.office.value;
-
         if (!officeId) {
             this.error.set("Please select an office before transfer");
             return;
         }
-
         this.clientsService.transferClientPropose(client.id, officeId).subscribe({
             error: err => this.error.set(err.message || "Failed to transfer client")
         });

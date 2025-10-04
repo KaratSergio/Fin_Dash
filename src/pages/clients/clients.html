@@ -1,4 +1,4 @@
-<div class="clients-admin">
+<div class="clients">
     <h1>Clients</h1>
 
     @if (loading()) {
@@ -9,91 +9,14 @@
     } @else {
 
     <h2 class="title">Create New Client</h2>
-    <form class="create-client" [formGroup]="createClientForm" (ngSubmit)="createClient()">
-
-        <mat-form-field appearance="fill">
-            <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstname">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastname">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobileNo" mask="+00 (000) 000-00-00" placeholder="+38 (099) 123-45-67">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="emailAddress">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>Office</mat-label>
-            <mat-select formControlName="officeId">
-                @for (office of officesService.offices(); track office.id) {
-                <mat-option [value]="office.id">{{ office.name }}</mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-            <mat-label>External ID</mat-label>
-            <input matInput formControlName="externalId">
-        </mat-form-field>
-
-        <button mat-raised-button color="primary" type="submit" [disabled]="createClientForm.invalid">
-            Create Client
-        </button>
-    </form>
+    <app-client-form [form]="createClientForm" [offices]="officesService.offices()" (submitForm)="createClient()">
+    </app-client-form>
 
     <h2 class="title">List of Clients</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Office</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (client of clients(); track client.id) {
-            <tr>
-                <td><input [value]="client.firstname" #f (input)="client.firstname=f.value"></td>
-                <td><input [value]="client.lastname" #l (input)="client.lastname=l.value"></td>
-                <td><input [value]="client.emailAddress" #e (input)="client.emailAddress=e.value"></td>
-                <td>
-                    <input matInput [formControl]="clientControls[client.id].mobileNo" mask="+00 (000) 000-00-00"
-                        placeholder="+38 (099) 123-45-67">
-                </td>
-                <td>
-                    <mat-form-field appearance="outline" class="table-field-select">
-                        <mat-select [formControl]="clientControls[client.id].office">
-                            @for (office of officesService.offices(); track office.id) {
-                            <mat-option [value]="office.id">{{ office.name }}</mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
-                </td>
-                <td>
-                    <button (click)="updateClient(client)">Update</button>
-                    <button (click)="transferClient(client)">Transfer</button>
-                    <button (click)="deleteClient(client.id)">Delete</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="6">No clients found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+    <app-client-table [clients]="clients()" [clientControls]="clientControls" [officesService]="officesService"
+        (update)="updateClient($event)" (transfer)="transferClient($event)" (delete)="deleteClient($event)">
+    </app-client-table>
+
     }
     }
 </div>
