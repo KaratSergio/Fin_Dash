@@ -1,0 +1,24 @@
+<div class="loans">
+    <h1>Loans</h1>
+
+    @if(loading()) {
+    <div>Loading...</div>
+    } @else {
+    @if(error()) {
+    <div class="error">{{ error() }}</div>
+    }
+
+    <h2 class="title">Create New Loan</h2>
+    <app-loan-form [form]="createLoanForm" [clients]="clients()" (submitForm)="createLoan()">
+    </app-loan-form>
+
+    <h2 class="title">List Of Loans</h2>
+    <app-loan-table [loans]="loans()" (delete)="deleteLoan($event)" (select)="selectLoan($event)">
+    </app-loan-table>
+
+    @if(selectedLoanId()) {
+    <app-loan-details [loanForm]="loanForm" [loanId]="selectedLoanId()!" (save)="saveLoan()" (cancel)="cancelEdit()">
+    </app-loan-details>
+    }
+    }
+</div>

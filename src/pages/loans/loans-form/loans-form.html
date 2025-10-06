@@ -1,0 +1,27 @@
+<form class="loans-form" [formGroup]="form" (ngSubmit)="submitForm.emit()">
+    <mat-form-field>
+        <mat-label>Client</mat-label>
+        <mat-select formControlName="clientId">
+            @for (c of clients; track c.id) {
+            <mat-option [value]="c.id">{{ c.firstname }} {{ c.lastname }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Loan Product ID</mat-label>
+        <input matInput type="number" formControlName="loanProductId" />
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Principal</mat-label>
+        <input matInput type="number" formControlName="principal" />
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Expected Disbursement Date</mat-label>
+        <input matInput type="date" formControlName="expectedDisbursementDate" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Create Loan</button>
+</form>

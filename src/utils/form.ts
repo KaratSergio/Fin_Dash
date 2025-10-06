@@ -18,4 +18,12 @@ export class FormUtils {
     optionalNumber(value: number | null = null) {
         return this.makeControl(value);
     }
+
+    requiredNumber(value: number | null = null) {
+        return this.makeControl(value, [Validators.required, Validators.min(0)]);
+    }
+
+    requiredDate(value: string | null = null) {
+        return this.makeControl(value, [Validators.required]);
+    }
 }

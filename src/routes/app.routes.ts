@@ -10,6 +10,7 @@ import { Payments } from '@src/pages/payments/payments';
 import { Analytics } from '@src/pages/analytics/analytics';
 import { Admin } from '@src/pages/admin/admin';
 import { ClientsPage } from '@src/pages/clients/clients';
+import { LoansPage } from '@src/pages/loans/loans';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'payments', component: Payments, canActivate: [authGuard] },
   { path: 'analytics', component: Analytics, canActivate: [authGuard] },
   { path: 'clients', component: ClientsPage, canActivate: [] },
+  { path: 'loans', component: LoansPage, canActivate: [] },
 
   { path: 'admin', component: Admin, canActivate: [authGuard] },
   {
