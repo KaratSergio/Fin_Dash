@@ -7,56 +7,13 @@
     @if (error()) {
     <div class="error">{{ error() }}</div>
     } @else {
-
     <h2 class="title">Create New Role</h2>
-    <form [formGroup]="createRoleForm" (ngSubmit)="createRole()" class="create-role">
-
-        <mat-form-field appearance="fill" class="name-input">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="desc-field">
-            <mat-label>Description</mat-label>
-            <input matInput formControlName="description">
-        </mat-form-field>
-
-        <button mat-raised-button color="primary" type="submit" [disabled]="createRoleForm.invalid">Create Role</button>
-    </form>
+    <app-roles-form [form]="createRoleForm" (create)="createRole()"></app-roles-form>
 
     <h2 class="title">List Of Roles</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (role of roles(); track role.id) {
-            <tr>
-                <td><input [value]="role.name" #nameInput (input)="role.name = nameInput.value"></td>
-                <td><input [value]="role.description ?? ''" #descInput (input)="role.description = descInput.value">
-                </td>
-                <td>{{ role.disabled ? 'Disabled' : 'Enabled' }}</td>
-                <td>
-                    <button (click)="toggleRole(role)" [attr.data-status-btn]="role.disabled ? 'enabled' : 'disabled'">
-                        {{ role.disabled ? 'Enable' : 'Disable' }}
-                    </button>
-                    <button (click)="updateRole(role.id, role)">Update</button>
-                    <button (click)="deleteRole(role.id)">Delete</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="4">No roles found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
-
+    <app-roles-table [roles]="roles()" [roleControls]="roleControls" (update)="updateRole($event)"
+        (delete)="deleteRole($event)" (toggle)="toggleRole($event)">
+    </app-roles-table>
     }
     }
 </div>

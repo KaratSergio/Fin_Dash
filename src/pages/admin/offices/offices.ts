@@ -1,49 +1,47 @@
-import { Component, signal, inject, effect } from "@angular/core";
+import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
-import { OfficesService, Office } from "../../../services/office.service";
-import { FormatDatePipe } from "../../../pipes/format-date.pipe";
-import { ReactiveFormsModule, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { OfficesService, Office } from "@src/services/office.service";
+import { FormUtils } from "@src/utils/form";
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
+import { OfficesForm } from "./offices-form/offices-form";
+import { OfficesTable } from "./offices-table/offices-table";
 
 @Component({
     selector: "app-admin-offices",
     standalone: true,
-    imports: [
-        RouterModule, FormatDatePipe, ReactiveFormsModule,
-        MatFormFieldModule, MatInputModule, MatDatepickerModule,
-        MatNativeDateModule, MatButtonModule, MatSelectModule
-    ],
+    imports: [RouterModule, OfficesForm, OfficesTable],
     templateUrl: "./offices.html",
     styleUrls: ["./offices.scss"]
 })
 export class OfficesAdminPage {
     private fb = inject(FormBuilder);
+    private utils = new FormUtils(this.fb);
     officesService = inject(OfficesService);
 
-    // Signals
     offices = this.officesService.offices;
     loading = this.officesService.loading;
     error = signal<string | null>(null);
 
-    // Reactive form
+    // Form for creating office
     createOfficeForm = this.fb.group({
-        name: ['', Validators.required],
-        externalId: [''],
-        parentId: [null],
-        dateFormat: ['dd MMMM yyyy'],
-        locale: ['en'],
-        openingDate: [new Date().toISOString().split('T')[0], Validators.required]
+        name: this.utils.requiredText(),
+        externalId: this.utils.makeControl(''),
+        parentId: this.utils.makeControl<number | null>(null),
+        openingDate: this.utils.requiredText(new Date().toISOString().split('T')[0]),
+        locale: this.utils.makeControl('en'),
+        dateFormat: this.utils.makeControl('dd MMMM yyyy')
     });
 
-    officeControls: { [key: number]: FormControl } = {};
+    // Controls for editing existing offices
+    officeControls: Record<number, {
+        name: FormControl<string>;
+        externalId: FormControl<string>;
+        parentId: FormControl<number | null>;
+        openingDate: FormControl<string>;
+    }> = {};
 
-    // fetch offices list
+    // Load offices initially
     private loadOffices = effect(() => {
         this.officesService.getOffices({
             fields: 'id,externalId,name,openingDate,parentId',
@@ -52,13 +50,22 @@ export class OfficesAdminPage {
         });
     });
 
+    // Sync office controls
     private syncControls = effect(() => {
-        const list = this.offices();
-        list.forEach(office => {
+        this.offices().forEach(office => {
             if (!this.officeControls[office.id]) {
-                this.officeControls[office.id] = new FormControl(office.parentId ?? null);
+                this.officeControls[office.id] = {
+                    name: this.utils.requiredText(office.name),
+                    externalId: this.utils.makeControl(office.externalId ?? ''),
+                    parentId: this.utils.makeControl(office.parentId ?? null),
+                    openingDate: this.utils.requiredText(office.openingDate ?? '')
+                };
             } else {
-                this.officeControls[office.id].setValue(office.parentId ?? null, { emitEvent: false });
+                const controls = this.officeControls[office.id];
+                controls.name.setValue(office.name, { emitEvent: false });
+                controls.externalId.setValue(office.externalId ?? '', { emitEvent: false });
+                controls.parentId.setValue(office.parentId ?? null, { emitEvent: false });
+                controls.openingDate.setValue(office.openingDate ?? '', { emitEvent: false });
             }
         });
     });
@@ -71,17 +78,28 @@ export class OfficesAdminPage {
                 name: '',
                 externalId: '',
                 parentId: null,
+                openingDate: new Date().toISOString().split('T')[0],
                 locale: 'en',
-                dateFormat: 'dd MMMM yyyy',
-                openingDate: new Date().toISOString().split('T')[0]
+                dateFormat: 'dd MMMM yyyy'
             }),
             error: err => this.error.set(err.message || 'Failed to create office')
         });
     }
 
-    updateOffice(officeId: number, office: Office) {
-        this.officesService.updateOffice(officeId, office).subscribe({
+    updateOffice(office: Office) {
+        const controls = this.officeControls[office.id];
+        if (!controls) return;
+
+        const payload: Partial<Office> = {
+            name: controls.name.value,
+            externalId: controls.externalId.value,
+            parentId: controls.parentId.value ?? undefined,
+            openingDate: controls.openingDate.value
+        };
+
+        this.officesService.updateOffice(office.id, payload).subscribe({
             error: err => this.error.set(err.message || "Failed to update office")
         });
     }
+
 }

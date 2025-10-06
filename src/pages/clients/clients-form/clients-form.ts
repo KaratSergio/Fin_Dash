@@ -15,15 +15,12 @@ import { NgxMaskDirective } from 'ngx-mask';
         MatFormFieldModule, MatSelectModule,
         MatInputModule, MatButtonModule,
     ],
-    templateUrl: "./client-form.html",
-    styleUrls: ["./client-form.scss"]
+    templateUrl: "./clients-form.html",
+    styleUrls: ["./clients-form.scss"]
 })
 export class ClientForm {
     @Input() form!: FormGroup;
-    @Input() offices: any[] = [];
-    @Output() submitForm = new EventEmitter<void>();
+    @Input() offices: { id: number; name: string }[] = [];
 
-    onSubmit() {
-        this.submitForm.emit();
-    }
+    @Output() create = new EventEmitter<void>();
 }

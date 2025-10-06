@@ -18,8 +18,8 @@ import { OfficesService } from "@src/services/office.service";
         MatFormFieldModule, MatSelectModule,
         MatInputModule, MatButtonModule
     ],
-    templateUrl: "./client-table.html",
-    styleUrls: ["./client-table.scss"],
+    templateUrl: "./clients-table.html",
+    styleUrls: ["./clients-table.scss"],
 })
 export class ClientTable {
     @Input() clients: Client[] = [];

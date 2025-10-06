@@ -1,52 +1,78 @@
-import { Component, signal, inject, effect } from "@angular/core";
+import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { RolesService, Role } from "../../../services/roles.service";
+import { FormBuilder, FormControl } from '@angular/forms';
+import { FormUtils } from "@src/utils/form";
+import { RolesService, Role } from "@src/services/roles.service";
 
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { RolesForm } from "./roles-form/roles-form";
+import { RolesTable } from "./roles-table/roles-table";
 
 @Component({
   selector: "app-admin-roles",
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule,
-    MatInputModule, MatButtonModule
-  ],
+  imports: [RouterModule, RolesForm, RolesTable],
   templateUrl: "./roles.html",
   styleUrls: ["./roles.scss"]
 })
 export class RolesAdminPage {
   private fb = inject(FormBuilder);
+  private utils = new FormUtils(this.fb);
   roleService = inject(RolesService);
 
-  // Signals
   roles = this.roleService.roles;
   loading = this.roleService.loading;
   error = signal<string | null>(null);
 
-  // Reactive form
+  // Form for creating role
   createRoleForm = this.fb.group({
-    name: ['', Validators.required],
-    description: ['']
+    name: this.utils.requiredText(),
+    description: this.utils.makeControl('')
   });
 
-  // fetch roles list
-  private loadRoles = effect(() => {
-    this.roleService.getRoles();
+  // Controls for editing existing roles
+  roleControls: Record<number, {
+    name: FormControl<string>;
+    description: FormControl<string>;
+  }> = {};
+
+  // Load roles initially
+  private loadRoles = effect(() => this.roleService.getRoles());
+
+  // Sync role controls
+  private syncControls = effect(() => {
+    this.roles().forEach(role => {
+      if (!this.roleControls[role.id]) {
+        this.roleControls[role.id] = {
+          name: this.utils.requiredText(role.name),
+          description: this.utils.makeControl(role.description ?? '')
+        };
+      } else {
+        const controls = this.roleControls[role.id];
+        controls.name.setValue(role.name, { emitEvent: false });
+        controls.description.setValue(role.description ?? '', { emitEvent: false });
+      }
+    });
   });
 
   // Methods
   createRole() {
     if (this.createRoleForm.invalid) return;
-
-    this.roleService.createRole(this.createRoleForm.value as Partial<Role>).subscribe({
+    this.roleService.createRole(this.createRoleForm.value).subscribe({
       next: () => this.createRoleForm.reset({ name: '', description: '' }),
-      error: err => this.error.set(err.message || 'Failed to create role')
+      error: err => this.error.set(err.message || "Failed to create role")
     });
   }
 
-  updateRole(roleId: number, role: Role) {
-    this.roleService.updateRole(roleId, role).subscribe({
+  updateRole(roleId: number) {
+    const controls = this.roleControls[roleId];
+    if (!controls) return;
+
+    const payload: Partial<Role> = {
+      name: controls.name.value,
+      description: controls.description.value
+    };
+
+    this.roleService.updateRole(roleId, payload as Role).subscribe({
       error: err => this.error.set(err.message || "Failed to update role")
     });
   }

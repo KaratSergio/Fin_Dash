@@ -9,121 +9,12 @@
   } @else {
 
   <h2 class="title">Create New User</h2>
-
-  <form [formGroup]="createUserForm" (ngSubmit)="createUser()" class="create-user">
-
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="username">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>First Name</mat-label>
-      <input matInput formControlName="firstname">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Last Name</mat-label>
-      <input matInput formControlName="lastname">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Password</mat-label>
-      <input matInput type="password" formControlName="password">
-    </mat-form-field>
-
-    <!-- Office Select -->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Office</mat-label>
-      <mat-select formControlName="officeId">
-        @for (office of officesService.offices(); track office.id) {
-        <mat-option [value]="office.id">{{ office.name }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Roles Multiselect -->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Roles</mat-label>
-      <mat-select formControlName="roles" multiple>
-        @for (role of roles(); track role.id) {
-        <mat-option [value]="role.id">{{ role.name }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" type="submit" [disabled]="createUserForm.invalid">
-      Create User
-    </button>
-  </form>
-
-
+  <app-users-form [form]="createUserForm" [roles]="roles()" [offices]="officesService.offices()"
+    (create)="createUser()"></app-users-form>
 
   <h2 class="title">List Of Users</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Roles</th>
-        <th>Office</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (user of users(); track user.id) {
-      <tr>
-        <td><input [value]="user.username" #username (input)="user.username = username.value"></td>
-        <td><input [value]="user.firstname" #firstname (input)="user.firstname = firstname.value"></td>
-        <td><input [value]="user.lastname" #lastname (input)="user.lastname = lastname.value"></td>
-        <td><input [value]="user.email" #email (input)="user.email = email.value"></td>
-
-        <td>
-          <mat-form-field appearance="outline" class="table-field-select">
-            <mat-select [formControl]="userControls[user.id].roles" multiple>
-              @for (role of roles(); track role.id) {
-              <mat-option [value]="role.id">{{ role.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </td>
-
-        <td>
-          <mat-form-field appearance="outline" class="table-field-select">
-            <mat-select [formControl]="userControls[user.id].office">
-              @for (office of officesService.offices(); track office.id) {
-              <mat-option [value]="office.id">{{ office.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </td>
-
-        <td>
-          <button (click)="updateUser(user)">Update</button>
-          <button (click)="deleteUser(user.id)">Delete</button>
-          <button (click)="openPasswordModal(user.id)">Change Password</button>
-        </td>
-      </tr>
-      } @empty {
-      <tr>
-        <td colspan="7">No users found</td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <app-users-table [users]="users()" [roles]="roles()" [offices]="officesService.offices()"
+    [userControls]="userControls" (update)="updateUser($event)" (delete)="deleteUser($event)"></app-users-table>
   }
-  }
-
-  <!-- Password Modal -->
-  @if (passwordModalVisible()) {
-  <app-password-modal [userId]="modalUserId" (save)="handleSavePassword($event)" (close)="handleCloseModal()">
-  </app-password-modal>
   }
 </div>

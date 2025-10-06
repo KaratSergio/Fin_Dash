@@ -1,136 +1,132 @@
-import { Component, signal, inject, effect } from "@angular/core";
-import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Component, inject, signal, effect } from "@angular/core";
+import { RouterModule } from "@angular/router";
+import { FormBuilder, FormControl } from "@angular/forms";
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { UsersService, AppUser } from "@src/services/user.service";
+import { RolesService } from "@src/services/roles.service";
+import { OfficesService } from "@src/services/office.service";
+import { FormUtils } from "@src/utils/form";
 
-import { UsersService, AppUser } from "../../../services/user.service";
-import { RolesService } from "../../../services/roles.service";
-import { OfficesService } from "../../../services/office.service";
-
-import { PasswordModal } from "../../../components/modals/password-modal";
+import { UsersForm } from "./users-form/users-form";
+import { UsersTable } from "./users-table/users-table";
 
 @Component({
   selector: "app-admin-users",
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    RouterModule, PasswordModal,
-    MatFormFieldModule, MatSelectModule,
-    MatInputModule, MatButtonModule
-  ],
+  imports: [RouterModule, UsersForm, UsersTable],
   templateUrl: "./users.html",
   styleUrls: ["./users.scss"]
 })
 export class UsersAdminPage {
   private fb = inject(FormBuilder);
+  private utils = new FormUtils(this.fb);
+
   usersService = inject(UsersService);
   rolesService = inject(RolesService);
   officesService = inject(OfficesService);
 
-  // Signals
   users = this.usersService.users;
   roles = this.rolesService.roles;
   loading = this.usersService.loading;
   error = signal<string | null>(null);
-  passwordModalVisible = signal(false);
-  modalUserId?: number;
 
-  // Reactive form
+  // Create User Form
   createUserForm = this.fb.group({
-    username: ['', Validators.required],
-    firstname: ['', Validators.required],
-    lastname: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-    officeId: ['', Validators.required],
-    roles: [[] as number[], Validators.required]
+    username: this.utils.requiredText(),
+    firstname: this.utils.requiredText(),
+    lastname: this.utils.requiredText(),
+    email: this.utils.requiredEmail(),
+    password: this.utils.requiredText(),
+    officeId: this.utils.optionalNumber(),
+    roles: this.utils.makeControl<number[]>([], [])
   });
 
-  userControls: { [id: number]: { office: FormControl; roles: FormControl } } = {};
+  // Controls for editing users
+  userControls: Record<number, {
+    username: FormControl<string | null>;
+    firstname: FormControl<string | null>;
+    lastname: FormControl<string | null>;
+    email: FormControl<string | null>;
+    roles: FormControl<number[]>;
+    office: FormControl<number | null>;
+  }> = {};
 
-  private loadUsers = effect(() => {
+  // Load users, roles, offices
+  private loadData = effect(() => {
     this.usersService.getUsers();
     this.rolesService.getRoles();
     this.officesService.getOffices();
   });
 
-  private syncUserControls = effect(() => {
+  // Sync controls with latest data
+  private syncControls = effect(() => {
     const list: AppUser[] = this.users();
-    list.forEach(user => {
-      if (!this.userControls[user.id]) {
-        this.userControls[user.id] = {
-          office: new FormControl(user.officeId ?? null),
-          roles: new FormControl(user.roles ?? [])
+    list.forEach(u => {
+      if (!this.userControls[u.id]) {
+        this.userControls[u.id] = {
+          username: new FormControl(u.username ?? ''),
+          firstname: new FormControl(u.firstname ?? ''),
+          lastname: new FormControl(u.lastname ?? ''),
+          email: new FormControl(u.email ?? ''),
+          roles: new FormControl<number[]>(u.roles ?? [], { nonNullable: true }),
+          office: new FormControl(u.officeId ?? null)
         };
       } else {
-        this.userControls[user.id].office.setValue(user.officeId ?? null, { emitEvent: false });
-        this.userControls[user.id].roles.setValue(user.roles ?? [], { emitEvent: false });
+        const controls = this.userControls[u.id];
+        controls.username.setValue(u.username ?? '', { emitEvent: false });
+        controls.firstname.setValue(u.firstname ?? '', { emitEvent: false });
+        controls.lastname.setValue(u.lastname ?? '', { emitEvent: false });
+        controls.email.setValue(u.email ?? '', { emitEvent: false });
+        controls.roles.setValue(u.roles ?? [], { emitEvent: false });
+        controls.office.setValue(u.officeId ?? null, { emitEvent: false });
       }
     });
   });
 
+  // Methods
   createUser() {
     if (this.createUserForm.invalid) return;
+    const f = this.createUserForm.value;
 
-    const payload: Partial<AppUser> = {
-      ...this.createUserForm.value,
-      sendPasswordToEmail: false, // !! temporarily disabled, dev mode (hardcode)
-      repeatPassword: this.createUserForm.value.password // !! temporarily unavailable, dev mode (hardcode)
-    } as Partial<AppUser>;
+    const payload = {
+      username: f.username,
+      firstname: f.firstname,
+      lastname: f.lastname,
+      email: f.email,
+      password: f.password,
+      officeId: f.officeId ?? undefined,
+      roles: f.roles ?? [],
+      sendPasswordToEmail: false,
+      repeatPassword: f.password
+    };
 
     this.usersService.createUser(payload).subscribe({
-      next: () => this.createUserForm.reset({
-        username: '',
-        firstname: '',
-        lastname: '',
-        email: '',
-        password: '',
-        officeId: '',
-        roles: []
-      }),
-      error: (err) => this.error.set(err.message || 'Failed to create user'),
+      next: () => this.createUserForm.reset(),
+      error: err => this.error.set(err.message || "Failed to create user")
     });
   }
 
   updateUser(user: AppUser) {
-    this.usersService.updateUser(user.id, user).subscribe({
+    const controls = this.userControls[user.id];
+    if (!controls) return;
+
+    const payload = {
+      username: controls.username.value ?? '',
+      firstname: controls.firstname.value ?? '',
+      lastname: controls.lastname.value ?? '',
+      email: controls.email.value ?? '',
+      roles: controls.roles.value ?? [],
+      officeId: controls.office.value ?? undefined
+    };
+
+    this.usersService.updateUser(user.id, payload).subscribe({
       error: err => this.error.set(err.message || "Failed to update user")
     });
   }
 
-  deleteUser(userId: number) {
-    this.usersService.deleteUser(userId).subscribe({
+  deleteUser(id: number) {
+    this.usersService.deleteUser(id).subscribe({
       error: err => this.error.set(err.message || "Failed to delete user")
     });
-  }
-
-  changePassword(userId: number, newPassword: string) {
-    this.usersService.changePassword(userId, newPassword).subscribe({
-      error: err => this.error.set(err.message || "Failed to change password")
-    });
-  }
-
-  openPasswordModal(userId: number) {
-    this.modalUserId = userId;
-    this.passwordModalVisible.set(true);
-  }
-
-  handleSavePassword(event: { userId: number; password: string }) {
-    this.changePassword(event.userId, event.password);
-    this.passwordModalVisible.set(false);
-    this.modalUserId = undefined;
-  }
-
-  handleCloseModal() {
-    this.passwordModalVisible.set(false);
-    this.modalUserId = undefined;
-  }
-
-  getRoleNames(user: AppUser): string {
-    return user.selectedRoles?.map(r => r.name).join(', ') ?? '';
   }
 }

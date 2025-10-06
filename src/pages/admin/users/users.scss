@@ -9,49 +9,8 @@
         color: #c3eb25;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-
-        th,
-        td {
-            padding: 0.25rem 0.5rem;
-            border: 1px solid #cccccc86;
-        }
-
-        td:nth-child(5) {
-            padding: 0;
-        }
-
-        td:nth-child(6) {
-            padding: 0;
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.25rem 0.5rem;
-            color: white;
-            border: none;
-            background-color: inherit;
-        }
-
-        button {
-            padding: 0 0.25rem;
-        }
-    }
-
-    .create-user {
-        margin: 0 0 1rem 0;
-        padding: 0 0.5rem;
-
-        .form-field {
-            flex: 1 1 220px;
-        }
-
-        button {
-            margin-left: 2.5rem;
-        }
+    .title {
+        margin-left: 0.5rem;
     }
 
     .error {
@@ -60,32 +19,4 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
-
-    .title {
-        margin-left: 0.5rem;
-    }
-}
-
-/* Selectors in table, custom styles */
-.table-field-select.mat-mdc-form-field {
-    display: block !important;
-}
-
-.table-field-select ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-    display: none !important;
-}
-
-.table-field-select ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
-    border: none;
-}
-
-.table-field-select ::ng-deep .mdc-text-field--outlined .mat-mdc-form-field-infix,
-.mdc-text-field--no-label .mat-mdc-form-field-infix {
-    padding-bottom: 0;
-}
-
-.table-field-select ::ng-deep .mat-mdc-form-field-infix {
-    min-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
 }

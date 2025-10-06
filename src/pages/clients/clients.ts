@@ -7,8 +7,8 @@ import { ClientsService, Client } from "@src/services/clients.service";
 import { OfficesService } from "@src/services/office.service";
 import { FormUtils } from "@src/utils/form";
 
-import { ClientForm } from "./client-form/client-form";
-import { ClientTable } from "./client-table/client-table";
+import { ClientForm } from "./clients-form/clients-form";
+import { ClientTable } from "./clients-table/clients-table";
 
 @Component({
     selector: "app-admin-clients",
