@@ -18,36 +18,21 @@ import { MatIconModule } from '@angular/material/icon';
         <a routerLink="/clients" routerLinkActive="active">Clients</a>
 
         <!-- Credits Group -->
-        <div class="menu-group">
-          <a
-            (click)="toggleCredits()"
-            [class.active-group]="creditsOpen()"
-          >
-            Credits
-            <mat-icon class="arrow">
-              {{ creditsOpen() ? 'expand_more' : 'chevron_right' }}
-            </mat-icon>
-          </a>
+      <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
+        <a (click)="toggleCredits()">
+          Credits
+          <mat-icon class="arrow">
+            {{ creditsOpen() ? 'expand_more' : 'chevron_right' }}
+          </mat-icon>
+        </a>
 
-          <div class="sub-links">
-            @if(creditsOpen()) {
-              <a
-                routerLink="/credits/loans"
-                routerLinkActive="active-sub"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                Loans
-              </a>
-              <a
-                routerLink="/credits/loan-products"
-                routerLinkActive="active-sub"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                Loan Products
-              </a>
-            }
-          </div>
+        <div class="sub-links">
+          @if(creditsOpen()) {
+            <a routerLink="/credits/loans" routerLinkActive="active-sub">Loans</a>
+            <a routerLink="/credits/loan-products" routerLinkActive="active-sub">Loan Products</a>
+          } 
         </div>
+      </div>
 
         <a routerLink="/admin" routerLinkActive="active">Admin</a>
       </div>

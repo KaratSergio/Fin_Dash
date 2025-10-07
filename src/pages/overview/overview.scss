@@ -6,16 +6,17 @@
     margin-bottom: 1rem;
   }
 
-  button {
-    padding: 0.5rem 1rem;
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
+  .error {
+    color: #dc2626;
+  }
 
-    &:hover {
-      background-color: #1d4ed8;
-    }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    padding: 0.25rem 0;
+    border-bottom: 1px solid #e5e7eb;
   }
 }
