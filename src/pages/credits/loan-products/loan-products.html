@@ -1,0 +1,25 @@
+<div class="loans-products">
+    <h1>Loan Products</h1>
+
+    @if(loading()) {
+    <div>Loading...</div>
+    } @else {
+    @if(error()) {
+    <div class="error">{{ error() }}</div>
+    }
+
+    <h2 class="title">Create New Product</h2>
+    <app-loan-products-form [form]="createProductForm" (submitForm)="createProduct()">
+    </app-loan-products-form>
+
+    <h2 class="title">List of Loan Products</h2>
+    <app-loan-products-table [loanProducts]="loanProducts()" (select)="selectProduct($event)">
+    </app-loan-products-table>
+
+    @if(selectedProductId()) {
+    <app-loan-products-details [productForm]="productForm" [productId]="selectedProductId()!" (save)="saveProduct()"
+        (cancel)="cancelEdit()">
+    </app-loan-products-details>
+    }
+    }
+</div>

@@ -12,7 +12,10 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'payments', renderMode: RenderMode.Prerender },
   { path: 'analytics', renderMode: RenderMode.Prerender },
   { path: 'clients', renderMode: RenderMode.Prerender },
-  { path: 'loans', renderMode: RenderMode.Prerender },
+  // Credits group
+  { path: 'credits', renderMode: RenderMode.Prerender },
+  { path: 'credits/loans', renderMode: RenderMode.Prerender },
+  { path: 'credits/loan-products', renderMode: RenderMode.Prerender },
 
   // admin
   { path: 'admin', renderMode: RenderMode.Prerender },

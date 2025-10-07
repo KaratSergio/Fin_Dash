@@ -1,0 +1,30 @@
+<div class="loan-products-table">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Principal</th>
+                <th>Interest Rate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (p of loanProducts; track p.id) {
+            <tr>
+                <td>{{ p.id }}</td>
+                <td><input [formControl]="productControls[p.id].name" /></td>
+                <td><input type="number" [formControl]="productControls[p.id].principal" /></td>
+                <td><input type="number" [formControl]="productControls[p.id].interestRatePerPeriod" /></td>
+                <td>
+                    <button (click)="select.emit(p)">Select</button>
+                </td>
+            </tr>
+            } @empty {
+            <tr>
+                <td colspan="5">No loan products found</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

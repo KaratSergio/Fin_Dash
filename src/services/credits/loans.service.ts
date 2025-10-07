@@ -3,26 +3,30 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
 
 export interface Loan {
-    id: number;
-    accountNo: string;
-    clientId: number;
-    clientName?: string;
-    loanProductId: number;
-    loanProductName?: string;
-    principal: number;
-    interestRatePerPeriod: number;
-    numberOfRepayments: number;
-    loanTermFrequency: number;
-    loanTermFrequencyType: number;
-    repaymentEvery: number;
-    repaymentFrequencyType: number;
-    interestRateFrequencyType: number;
-    interestType: number;
-    amortizationType: number;
-    status?: { id: number; code: string; value: string };
-    submittedOnDate?: string;
-    approvedOnDate?: string;
-    expectedDisbursementDate?: string;
+    id: number;                          // Loan ID
+    accountNo: string;                   // Loan account number
+    clientId: number;                    // ID of the client who owns the loan
+    clientName?: string;                 // Name of the client (optional)
+    loanProductId: number;               // ID of the loan product
+    loanProductName?: string;            // Name of the loan product (optional)
+    principal: number;                   // Principal amount
+    interestRatePerPeriod: number;       // Interest rate per period
+    numberOfRepayments: number;          // Total number of repayments
+    loanTermFrequency: number;           // Loan term frequency (number)
+    loanTermFrequencyType: number;       // Loan term frequency type (enum)
+    repaymentEvery: number;              // Repayment interval
+    repaymentFrequencyType: number;      // Repayment frequency type (enum)
+    interestRateFrequencyType: number;   // Interest rate frequency type (enum)
+    interestType: number;                // Type of interest (enum)
+    amortizationType: number;            // Amortization type (enum)
+    status?: {                            // Current status of the loan (optional)
+        id: number;
+        code: string;
+        value: string;
+    };
+    submittedOnDate?: string;            // Date when loan was submitted (yyyy-MM-dd) (optional)
+    approvedOnDate?: string;             // Date when loan was approved (yyyy-MM-dd) (optional)
+    expectedDisbursementDate?: string;   // Expected disbursement date (yyyy-MM-dd) (optional)
 }
 
 @Injectable({ providedIn: 'root' })

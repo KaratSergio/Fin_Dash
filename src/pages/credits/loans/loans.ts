@@ -2,7 +2,7 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { LoansService, Loan } from '@src/services/loans.service';
+import { LoansService, Loan } from '@src/services/credits/loans.service';
 import { ClientsService } from '@src/services/clients.service';
 import { FormUtils } from '@src/utils/form';
 
@@ -13,7 +13,10 @@ import { LoanDetails } from './loans-details/loans-details';
 @Component({
     selector: 'app-loans-page',
     standalone: true,
-    imports: [RouterModule, LoanForm, LoanTable, LoanDetails],
+    imports: [
+        RouterModule, LoanForm,
+        LoanTable, LoanDetails
+    ],
     templateUrl: './loans.html',
     styleUrls: ['./loans.scss']
 })
