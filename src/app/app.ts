@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, NavigationEnd, Event as RouterEvent, RouterOutlet } from '@angular/router';
-import { Sidebar } from '@src/components/sidebar/sidebar';
+import { Sidebar } from '@src/shared/components/sidebar/sidebar';
 import { filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 
