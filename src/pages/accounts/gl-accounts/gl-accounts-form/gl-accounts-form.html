@@ -1,0 +1,24 @@
+<form [formGroup]="form" (ngSubmit)="create.emit()" class="create-account">
+    <mat-form-field appearance="fill" class="name-input">
+        <mat-label>Account Name</mat-label>
+        <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="code-input">
+        <mat-label>GL Code</mat-label>
+        <input matInput formControlName="glCode" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="desc-input">
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="manualEntriesAllowed">
+        Manual Entries Allowed
+    </mat-checkbox>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+        Create Account
+    </button>
+</form>

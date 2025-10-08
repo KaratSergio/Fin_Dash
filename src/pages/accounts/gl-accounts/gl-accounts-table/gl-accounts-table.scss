@@ -1,0 +1,28 @@
+.gl-accounts-table {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #cccccc86;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.25rem;
+            background: inherit;
+            color: white;
+            border: none;
+        }
+
+        button {
+            margin-right: 0.5rem;
+        }
+
+        mat-checkbox {
+            margin: 0 auto;
+        }
+    }
+}

@@ -11,7 +11,24 @@ import { MatIconModule } from '@angular/material/icon';
     <nav class="sidebar">
       <div class="links">
         <a routerLink="/overview" routerLinkActive="active">Overview</a>
-        <a routerLink="/accounts" routerLinkActive="active">Accounts</a>
+
+        <!-- Accounts Group -->
+        <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
+          <a (click)="toggleMenu('accounts')">
+            Accounts
+            <mat-icon class="arrow">
+              {{ menuState.accounts() ? 'expand_more' : 'chevron_right' }}
+            </mat-icon>
+          </a>
+
+          <div class="sub-links">
+            @if(menuState.accounts()) {
+              <a routerLink="/accounts/gl-accounts" routerLinkActive="active-sub">GL Accounts</a>
+              <!-- Other subpages will be added later -->
+            }
+          </div>
+        </div>
+
         <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
         <a routerLink="/payments" routerLinkActive="active">Payments</a>
         <a routerLink="/analytics" routerLinkActive="active">Analytics</a>
@@ -19,15 +36,15 @@ import { MatIconModule } from '@angular/material/icon';
 
         <!-- Credits Group -->
       <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
-        <a (click)="toggleCredits()">
+        <a (click)="toggleMenu('credits')">
           Credits
           <mat-icon class="arrow">
-            {{ creditsOpen() ? 'expand_more' : 'chevron_right' }}
+            {{ menuState.credits() ? 'expand_more' : 'chevron_right' }}
           </mat-icon>
         </a>
 
         <div class="sub-links">
-          @if(creditsOpen()) {
+          @if(menuState.credits()) {
             <a routerLink="/credits/loans" routerLinkActive="active-sub">Loans</a>
             <a routerLink="/credits/loan-products" routerLinkActive="active-sub">Loan Products</a>
           } 
@@ -114,9 +131,13 @@ import { MatIconModule } from '@angular/material/icon';
   `]
 })
 export class Sidebar {
-  creditsOpen = signal(false);
+  menuState = {
+    credits: signal(false),
+    accounts: signal(false),
+  };
 
-  toggleCredits() {
-    this.creditsOpen.set(!this.creditsOpen());
+  toggleMenu(key: keyof typeof this.menuState) {
+    const current = this.menuState[key]();
+    this.menuState[key].set(!current);
   }
 }

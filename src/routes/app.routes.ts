@@ -4,7 +4,8 @@ import { authGuard } from '@src/guards/auth.guard';
 import { LoginPage } from '@src/pages/auth/login/login';
 
 import { Overview } from '@src/pages/overview/overview';
-import { Accounts } from '@src/pages/accounts/accounts';
+// Accounts group
+// import { GLAccountsPage } from '@src/pages/accounts/gl-accounts/gl-accounts';
 import { Transactions } from '@src/pages/transactions/transactions';
 import { Payments } from '@src/pages/payments/payments';
 import { Analytics } from '@src/pages/analytics/analytics';
@@ -20,7 +21,20 @@ export const routes: Routes = [
 
   // SPA
   { path: 'overview', component: Overview, canActivate: [authGuard] },
-  { path: 'accounts', component: Accounts, canActivate: [authGuard] },
+
+  // Accounts group
+  {
+    path: 'accounts',
+    children: [
+      { path: '', redirectTo: 'gl-accounts', pathMatch: 'full' },
+      {
+        path: 'gl-accounts',
+        loadComponent: () =>
+          import('../pages/accounts/gl-accounts/gl-accounts').then(m => m.GLAccountsPage),
+      },
+    ],
+  },
+
   { path: 'transactions', component: Transactions, canActivate: [authGuard] },
   { path: 'payments', component: Payments, canActivate: [authGuard] },
   { path: 'analytics', component: Analytics, canActivate: [authGuard] },
