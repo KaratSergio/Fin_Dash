@@ -26,4 +26,16 @@ export class FormUtils {
     requiredDate(value: string | null = null) {
         return this.makeControl(value, [Validators.required]);
     }
+
+    requiredNumberNN(value: number = 0) {
+        return this.makeControl(value, [Validators.required, Validators.min(0)]);
+    }
+
+    makeBooleanNN(value: boolean = false) {
+        return this.makeControl(value);
+    }
+
+    makeEnumNN<T>(value: T) {
+        return this.makeControl(value);
+    }
 }

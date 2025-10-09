@@ -1,0 +1,51 @@
+.charges-table {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #cccccc86;
+        }
+
+        input,
+        mat-select {
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            color: white;
+            border: none;
+            background-color: inherit;
+        }
+
+        button {
+            padding: 0 0.25rem;
+            width: 4.1rem;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 150px; // Name
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 250px; // Description
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 100px; // Amount
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 120px; // Type
+        }
+
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 150px; // Actions
+        }
+    }
+}

@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
       <div class="links">
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         <a routerLink="/clients" routerLinkActive="active">Clients</a>
+        <a routerLink="/charges" routerLinkActive="active">Charges</a>
 
         <!-- Accounts Group -->
         <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">

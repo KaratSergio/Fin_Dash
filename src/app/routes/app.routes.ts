@@ -13,6 +13,9 @@ import { Admin } from '@pages/admin/admin';
 // Clients
 import { ClientsPage } from '@domains/clients/pages/clients';
 
+// Charges
+import { ChargesPage } from '@domains/charges/pages/charges';
+
 // Loans
 import { LoansPage } from '@domains/loans/pages/loans/loans';
 import { LoanProductsPage } from '@domains/loans/pages/loan-products/loan-products';
@@ -30,6 +33,11 @@ export const routes: Routes = [
   // --- Clients ---
   {
     path: 'clients', component: ClientsPage, canActivate: [authGuard],
+  },
+
+  // --- Charges ---
+  {
+    path: 'charges', component: ChargesPage, canActivate: [authGuard],
   },
 
   // --- Accounts group ---

@@ -1,0 +1,19 @@
+<div class="charges-page">
+    <h1>Charges</h1>
+
+    @if (loading()) {
+    <div>Loading...</div>
+    } @else {
+    @if (error()) {
+    <div class="error">{{ error() }}</div>
+    } @else {
+    <h2 class="title">Create New Charge</h2>
+    <app-charges-form [form]="createChargeForm" (create)="createCharge()"></app-charges-form>
+
+    <h2 class="title">List Of Charges</h2>
+    <app-charges-table [charges]="charges()" [chargeControls]="chargeControls" (update)="updateCharge($event)"
+        (delete)="deleteCharge($event)">
+    </app-charges-table>
+    }
+    }
+</div>

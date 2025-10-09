@@ -8,6 +8,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'dashboard', renderMode: RenderMode.Prerender },
   { path: 'accounts', renderMode: RenderMode.Prerender },
   { path: 'clients', renderMode: RenderMode.Prerender },
+  { path: 'charges', renderMode: RenderMode.Prerender },
 
   // Credits group
   { path: 'loans', renderMode: RenderMode.Prerender },

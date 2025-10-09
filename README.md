@@ -98,7 +98,7 @@ src/
 │   ├── loans/                           # Loan Products, Loans, Loan Charges, Rescheduling...
 │   │   ├── services/
 │   │   │   ├── loans.service.ts
-│   │   │   ├── loans.charges.service.ts
+│   │   │   ├── loans-charges.service.ts
 │   │   │   └── loan-products.service.ts
 │   │   ├── pages/
 │   │   │   ├── loans/
