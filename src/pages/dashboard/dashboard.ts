@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CurrenciesService } from '@src/domains/currencies/services/currencies.service';
+import { CurrenciesService } from '@domains/currencies/services/currencies.service';
 
 @Component({
   selector: 'app-overview',

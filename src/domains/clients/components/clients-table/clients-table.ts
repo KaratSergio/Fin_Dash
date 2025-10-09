@@ -7,8 +7,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { NgxMaskDirective } from "ngx-mask";
 
-import { Client } from "@src/domains/clients/services/clients.service";
-import { OfficesService } from "@src/domains/offices/services/offices.service";
+import { Client } from "../../services/clients.service";
+import { OfficesService } from "@domains/offices/services/offices.service";
 
 @Component({
     selector: "app-client-table",

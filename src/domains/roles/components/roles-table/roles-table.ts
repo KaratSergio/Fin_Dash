@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
-import { Role } from "@src/domains/roles/services/roles.service";
+import { Role } from "../../services/roles.service";
 
 @Component({
     selector: 'app-roles-table',

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { formatDateForApi } from '@src/core/utils/date';
+import { formatDateForApi } from '@core/utils/date';
 
 @Pipe({ name: 'formatDate' })
 export class FormatDatePipe implements PipeTransform {

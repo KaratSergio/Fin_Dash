@@ -1,8 +1,8 @@
 import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { FormUtils } from "@src/core/utils/form";
-import { RolesService, Role } from "@src/domains/roles/services/roles.service";
+import { FormUtils } from "@core/utils/form";
+import { RolesService, Role } from "@domains/roles/services/roles.service";
 
 import { RolesForm } from "../components/roles-form/roles-form";
 import { RolesTable } from "../components/roles-table/roles-table";

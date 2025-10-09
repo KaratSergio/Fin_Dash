@@ -3,9 +3,9 @@ import { FormBuilder, FormControl } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { provideNgxMask } from 'ngx-mask';
 
-import { ClientsService, Client } from "@src/domains/clients/services/clients.service";
-import { OfficesService } from "@src/domains/offices/services/offices.service";
-import { FormUtils } from "@src/core/utils/form";
+import { ClientsService, Client } from "@domains/clients/services/clients.service";
+import { OfficesService } from "@domains/offices/services/offices.service";
+import { FormUtils } from "@core/utils/form";
 
 import { ClientForm } from "../components/clients-form/clients-form";
 import { ClientTable } from "../components/clients-table/clients-table";

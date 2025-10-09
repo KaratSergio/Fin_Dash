@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Loan } from "@src/domains/loans/services/loans.service";
+import { Loan } from "@domains/loans/services/loans.service";
 
 @Component({
     selector: "app-loan-table",

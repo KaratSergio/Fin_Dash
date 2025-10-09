@@ -2,9 +2,9 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { LoansService, Loan } from '@src/domains/loans/services/loans.service';
-import { ClientsService } from '@src/domains/clients/services/clients.service';
-import { FormUtils } from '@src/core/utils/form';
+import { LoansService, Loan } from '@domains/loans/services/loans.service';
+import { ClientsService } from '@domains/clients/services/clients.service';
+import { FormUtils } from '@core/utils/form';
 
 import { LoanForm } from '../../components/loans/loans-form/loans-form';
 import { LoanTable } from '../../components/loans/loans-table/loans-table';

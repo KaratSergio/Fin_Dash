@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '@src/core/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
-import { handleError, AuthError } from '@src/core/utils/error';
+import { AuthService } from '@core/auth/auth.service';
+import { handleError, AuthError } from '@core/utils/error';
 
 @Component({
   selector: 'app-logout',

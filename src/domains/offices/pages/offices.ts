@@ -1,8 +1,8 @@
 import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { OfficesService, Office } from "@src/domains/offices/services/offices.service";
-import { FormUtils } from "@src/core/utils/form";
+import { OfficesService, Office } from "@domains/offices/services/offices.service";
+import { FormUtils } from "@core/utils/form";
 
 import { OfficesForm } from "../components/offices-form/offices-form";
 import { OfficesTable } from "../components/offices-table/offices-table";

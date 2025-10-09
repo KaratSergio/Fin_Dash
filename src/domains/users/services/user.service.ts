@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-import { Role } from '../../roles/services/roles.service';
+import { Role } from '@domains/roles/services/roles.service';
 
 export interface AppUser {
     id: number;                   // User ID

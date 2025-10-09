@@ -4,15 +4,15 @@ export const serverRoutes: ServerRoute[] = [
   // enter App
   { path: 'login', renderMode: RenderMode.Prerender },
 
-  // SPA
   { path: '', renderMode: RenderMode.Prerender },
   { path: 'dashboard', renderMode: RenderMode.Prerender },
   { path: 'accounts', renderMode: RenderMode.Prerender },
   { path: 'clients', renderMode: RenderMode.Prerender },
+
   // Credits group
   { path: 'loans', renderMode: RenderMode.Prerender },
-  { path: 'loans/loans', renderMode: RenderMode.Prerender },
-  { path: 'loans/loan-products', renderMode: RenderMode.Prerender },
+  { path: 'loans/list', renderMode: RenderMode.Prerender },
+  { path: 'loans/products', renderMode: RenderMode.Prerender },
 
   // admin
   { path: 'admin', renderMode: RenderMode.Prerender },

@@ -17,6 +17,21 @@
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
+
+      // --- Internal layers ---
+      "@app/*": ["src/app/*"],
+      "@core/*": ["src/core/*"],
+      "@shared/*": ["src/shared/*"],
+      "@domains/*": ["src/domains/*"],
+      "@pages/*": ["src/pages/*"],
+
+      // --- Optional deeper aliases ---
+      "@pipes/*": ["src/shared/pipes/*"],
+      "@config/*": ["src/core/config/*"],
+      "@utils/*": ["src/core/utils/*"],
+      "@guards/*": ["src/core/guards/*"],
+
+      // --- Server side ---
       "@server/*": ["server/*"]
     }
   },

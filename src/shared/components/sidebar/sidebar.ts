@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Logout } from '@src/shared/components/logout/logout';
+import { Logout } from '@shared/components/logout/logout';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
     <nav class="sidebar">
       <div class="links">
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/clients" routerLinkActive="active">Clients</a>
 
         <!-- Accounts Group -->
         <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
@@ -24,15 +25,9 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="sub-links">
             @if(menuState.accounts()) {
               <a routerLink="/accounts/gl-accounts" routerLinkActive="active-sub">GL Accounts</a>
-              <!-- Other subpages will be added later -->
             }
           </div>
         </div>
-
-        <!-- <a routerLink="/transactions" routerLinkActive="active">Transactions</a>
-        <a routerLink="/payments" routerLinkActive="active">Payments</a>
-        <a routerLink="/analytics" routerLinkActive="active">Analytics</a> -->
-        <a routerLink="/clients" routerLinkActive="active">Clients</a>
 
         <!-- Loans Group -->
       <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
@@ -45,8 +40,8 @@ import { MatIconModule } from '@angular/material/icon';
 
         <div class="sub-links">
           @if(menuState.loans()) {
-            <a routerLink="/loans/loans" routerLinkActive="active-sub">Loans</a>
-            <a routerLink="/loans/loan-products" routerLinkActive="active-sub">Loan Products</a>
+            <a routerLink="/loans/list" routerLinkActive="active-sub">Loans</a>
+            <a routerLink="/loans/products" routerLinkActive="active-sub">Loan Products</a>
           } 
         </div>
       </div>

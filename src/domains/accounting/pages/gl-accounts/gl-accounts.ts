@@ -2,8 +2,8 @@ import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FormBuilder, FormControl } from "@angular/forms";
 
-import { GLAccountsService, GLAccount } from "@src/domains/accounting/services/glaccounts.service";
-import { FormUtils } from "@src/core/utils/form";
+import { GLAccountsService, GLAccount } from "@domains/accounting/services/glaccounts.service";
+import { FormUtils } from "@core/utils/form";
 
 import { GLAccountsForm } from "../../components/gl-accounts-form/gl-accounts-form";
 import { GLAccountsTable } from "../../components/gl-accounts-table/gl-accounts-table";

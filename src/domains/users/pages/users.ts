@@ -2,13 +2,13 @@ import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FormBuilder, FormControl } from "@angular/forms";
 
-import { UsersService, AppUser } from "@src/domains/users/services/user.service";
-import { RolesService } from "@src/domains/roles/services/roles.service";
-import { OfficesService } from "@src/domains/offices/services/offices.service";
-import { FormUtils } from "@src/core/utils/form";
+import { UsersService, AppUser } from "@domains/users/services/user.service";
+import { RolesService } from "@domains/roles/services/roles.service";
+import { OfficesService } from "@domains/offices/services/offices.service";
+import { FormUtils } from "@core/utils/form";
 
-import { UsersForm } from "../../../domains/users/components/users-form/users-form";
-import { UsersTable } from "../../../domains/users/components/users-table/users-table";
+import { UsersForm } from "../components/users-form/users-form";
+import { UsersTable } from "../components/users-table/users-table";
 
 @Component({
   selector: "app-admin-users",
