@@ -42,6 +42,7 @@ export class LoanProductsService {
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // Get loan product list
     getLoanProducts() {
         this.loading.set(true);

@@ -38,7 +38,7 @@ export class LoansService {
     loading = signal(false);
     error = signal<string | null>(null);
 
-
+    // CRUD
     // Get all credit list 
     getLoans() {
         this.loading.set(true);
@@ -81,8 +81,7 @@ export class LoansService {
         );
     }
 
-    // === COMMANDS ===
-
+    // ACTION
     // Approve the application
     approveLoan(id: number, approvedOnDate: string) {
         const payload = {

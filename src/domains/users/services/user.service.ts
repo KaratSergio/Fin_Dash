@@ -24,11 +24,11 @@ export class UsersService {
     private http = inject(HttpClient);
     private baseUrl = 'api/fineract/users';
 
-    // Signals
     users = signal<AppUser[]>([]);
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // Fetch all users
     private fetchUsers() {
         this.loading.set(true);
@@ -83,6 +83,7 @@ export class UsersService {
         );
     }
 
+    // ACTIONS
     // Change password
     changePassword(userId: number, newPassword: string) {
         return this.http.post<void>(`${this.baseUrl}/${userId}/pwd`, { password: newPassword });

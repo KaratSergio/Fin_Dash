@@ -19,11 +19,11 @@ export class OfficesService {
     private http = inject(HttpClient);
     private baseUrl = '/api/fineract/offices';
 
-    // Signals
     offices = signal<Office[]>([]);
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // fetch offices by params
     private fetchOffices(params?: {
         fields?: string;
@@ -94,7 +94,7 @@ export class OfficesService {
         );
     }
 
-    // Template methods
+    // TEMPLATE
     // Get office template
     getTemplate() {
         return this.http.get<Office>(`${this.baseUrl}/template`);
@@ -110,7 +110,7 @@ export class OfficesService {
     }
 
 
-    // External ID methods
+    // EXTERNAL ID
     // Get an office using an external ID
     getByExternalId(externalId: string) {
         return this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`);

@@ -27,6 +27,7 @@ export class CurrenciesService {
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // Fetch currency configuration with optional fields parameter
     private fetchCurrencies(fields?: string) {
         this.loading.set(true);
@@ -72,6 +73,7 @@ export class CurrenciesService {
     }
 }
 
+// in use
 // Get all currencies
 // currenciesService.getCurrencies();
 

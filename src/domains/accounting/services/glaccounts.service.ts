@@ -48,6 +48,7 @@ export class GLAccountsService {
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // Fetch all General Ledger Accounts
     getAllAccounts() {
         this.loading.set(true);

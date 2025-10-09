@@ -19,11 +19,11 @@ export class RolesService {
     private http = inject(HttpClient);
     private baseUrl = 'api/fineract/roles';
 
-    // Signals
     roles = signal<Role[]>([]);
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // Private fetch method
     private fetchRoles() {
         this.loading.set(true);
@@ -71,6 +71,7 @@ export class RolesService {
         );
     }
 
+    // ACTION
     // Enable role
     enableRole(roleId: number) {
         return this.http.post<void>(`${this.baseUrl}/${roleId}?command=enable`, {}).pipe(

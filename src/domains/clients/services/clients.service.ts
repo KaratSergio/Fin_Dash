@@ -25,6 +25,7 @@ export class ClientsService {
     loading = signal(false);
     error = signal<string | null>(null);
 
+    // CRUD
     // Fetch Clients
     private fetchClients(params?: { offset?: number; limit?: number; orderBy?: string; sortOrder?: 'ASC' | 'DESC' }) {
         this.loading.set(true);
@@ -84,6 +85,12 @@ export class ClientsService {
             .pipe(tap(() => this.fetchClients()));
     }
 
+    // Removed  client
+    deleteClient(id: number) {
+        return this.http
+            .delete<void>(`${this.baseUrl}/${id}`)
+            .pipe(tap(() => this.fetchClients()));
+    }
 
     // The endpoint for transferring a client between offices
     // occurs in two stages: 
@@ -112,12 +119,5 @@ export class ClientsService {
 
         return this.http
             .post(`${this.baseUrl}/${clientId}?command=acceptTransfer`, payload);
-    }
-
-    // Removed  client
-    deleteClient(id: number) {
-        return this.http
-            .delete<void>(`${this.baseUrl}/${id}`)
-            .pipe(tap(() => this.fetchClients()));
     }
 }
