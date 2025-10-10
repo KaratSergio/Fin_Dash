@@ -59,7 +59,7 @@ export const routes: Routes = [
   // --- Loans group ---
   {
     path: 'loans',
-    canActivate: [authGuard],
+    canActivate: [],
     children: [
       { path: '', redirectTo: 'list', pathMatch: 'full' },
       { path: 'list', component: LoansPage },

@@ -7,8 +7,10 @@ export class FormUtils {
         return this.fb.nonNullable.control(value, { validators });
     }
 
-    requiredText(value: string = '') {
-        return this.makeControl(value, [Validators.required]);
+    requiredText(value: string = '', maxLength?: number) {
+        const validators = [Validators.required];
+        if (maxLength) validators.push(Validators.maxLength(maxLength));
+        return this.makeControl(value, validators);
     }
 
     requiredEmail(value: string = '') {

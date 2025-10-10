@@ -16,6 +16,7 @@ export interface LoanProduct {
     interestRateFrequencyType?: number;   // Default interest rate frequency type (optional)
     interestType?: number;                // Default interest type (optional)
     amortizationType?: number;            // Default amortization type (optional)
+    repaymentFrequencyType: number;
     currency?: {                           // Currency info (optional)
         code: string;
         name: string;
@@ -31,6 +32,30 @@ export interface LoanProduct {
         code: string;
         value: string;
     };
+}
+
+export interface LoanProductRequest {
+    name: string;
+    shortName: string;
+    principal: number;
+    interestRatePerPeriod: number;
+    numberOfRepayments: number;
+    currencyCode: string;
+    digitsAfterDecimal: number;
+    inMultiplesOf: number;
+    repaymentEvery: number;
+    repaymentFrequencyType: number;
+    interestRateFrequencyType: number;
+    amortizationType: number;
+    interestType: number;
+    interestCalculationPeriodType: number;
+    transactionProcessingStrategyCode: string;
+    accountingRule: number;
+    isInterestRecalculationEnabled: boolean;
+    daysInYearType: number;
+    daysInMonthType: number;
+    locale: string;
+    dateFormat: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -75,7 +100,7 @@ export class LoanProductsService {
     }
 
     // Create loan product
-    createLoanProduct(payload: Partial<LoanProduct>) {
+    createLoanProduct(payload: LoanProductRequest) {
         return this.http.post<LoanProduct>(this.baseUrl, payload).pipe(
             tap(() => this.getLoanProducts())
         );

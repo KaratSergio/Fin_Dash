@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { LoanProduct } from "@domains/loans/services/loan-products.service";
 
 @Component({
@@ -11,11 +11,12 @@ import { LoanProduct } from "@domains/loans/services/loan-products.service";
 })
 export class LoanProductTable {
     @Input() loanProducts: LoanProduct[] = [];
-    @Input() productControls: Record<number, {
-        name: FormControl<string | null>,
-        principal: FormControl<number | null>,
-        interestRatePerPeriod: FormControl<number | null>
-    }> = {};
-
     @Output() select = new EventEmitter<LoanProduct>();
+
+    // transformation to display some fields on the screen
+    displayOption(option: { id: number; code: string; value: string } | number | undefined): string {
+        if (option == null) return '';
+        if (typeof option === 'number') return `Type ${option}`;
+        return option.value;
+    }
 }

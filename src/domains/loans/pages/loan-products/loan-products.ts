@@ -31,18 +31,25 @@ export class LoanProductsPage {
     // New product creation form
     createProductForm = this.fb.group({
         name: this.utils.requiredText(),
-        shortName: this.utils.requiredText(),
+        shortName: this.utils.requiredText('', 4),
         principal: this.utils.requiredNumber(),
         interestRatePerPeriod: this.utils.requiredNumber(),
         numberOfRepayments: this.utils.requiredNumber(),
+        interestType: this.utils.requiredNumber(),
+        amortizationType: this.utils.requiredNumber(),
+        repaymentFrequencyType: this.utils.requiredNumber(),
     });
 
     // Product Editing Form
     productForm = this.fb.group({
         name: this.utils.requiredText(),
+        shortName: this.utils.requiredText('', 4),
         principal: this.utils.requiredNumber(),
         interestRatePerPeriod: this.utils.requiredNumber(),
         numberOfRepayments: this.utils.requiredNumber(),
+        interestType: this.utils.requiredNumber(),
+        amortizationType: this.utils.requiredNumber(),
+        repaymentFrequencyType: this.utils.requiredNumber(),
         status: this.fb.control({ value: '', disabled: true }),
     });
 
@@ -57,11 +64,27 @@ export class LoanProductsPage {
         const f = this.createProductForm.value;
 
         const payload = {
-            name: f.name?.trim(),
-            shortName: f.shortName?.trim(),
+            name: f.name?.trim() || '',
+            shortName: f.shortName?.trim() || '',
             principal: Number(f.principal),
             interestRatePerPeriod: Number(f.interestRatePerPeriod),
             numberOfRepayments: Number(f.numberOfRepayments),
+            interestType: Number(f.interestType),
+            amortizationType: Number(f.amortizationType),
+            repaymentFrequencyType: Number(f.repaymentFrequencyType),
+
+            currencyCode: 'USD',
+            digitsAfterDecimal: 2,
+            inMultiplesOf: 1,
+            repaymentEvery: 1,
+            interestRateFrequencyType: 2, // Per month
+            interestCalculationPeriodType: 1, // Same as repayment period
+            transactionProcessingStrategyCode: 'mifos-standard-strategy',
+            accountingRule: 1, // None (no accounting)
+            isInterestRecalculationEnabled: false,
+            daysInYearType: 1,
+            daysInMonthType: 1,
+
             locale: 'en',
             dateFormat: 'yyyy-MM-dd',
         };
@@ -80,10 +103,14 @@ export class LoanProductsPage {
         this.selectedProductId.set(product.id);
         this.productForm.patchValue({
             name: product.name,
+            shortName: product.shortName,
             principal: product.principal,
             interestRatePerPeriod: product.interestRatePerPeriod,
             numberOfRepayments: product.numberOfRepayments,
-            status: product.status?.value || '',
+            // interestType: product.interestType?.id || 0,
+            // amortizationType: product.amortizationType?.id || 0,
+            // repaymentFrequencyType: product.repaymentFrequencyType?.id || 0,
+            // status: product.status || '',
         });
     }
 
@@ -95,9 +122,13 @@ export class LoanProductsPage {
         const f = this.productForm.value;
         const payload = {
             name: f.name?.trim(),
+            shortName: f.shortName?.trim(),
             principal: Number(f.principal),
             interestRatePerPeriod: Number(f.interestRatePerPeriod),
             numberOfRepayments: Number(f.numberOfRepayments),
+            interestType: Number(f.interestType),
+            amortizationType: Number(f.amortizationType),
+            repaymentFrequencyType: Number(f.repaymentFrequencyType),
         };
 
         this.loanProductsService.updateLoanProduct(productId, payload).subscribe({
