@@ -8,11 +8,12 @@
     <div class="error">{{ error() }}</div>
     } @else {
     <h2 class="title">Create New Charge</h2>
-    <app-charges-form [form]="createChargeForm" (create)="createCharge()"></app-charges-form>
+    <app-charges-form [form]="createChargeForm" [currencies]="selectedCurrencies()"
+        (create)="createCharge()"></app-charges-form>
 
     <h2 class="title">List Of Charges</h2>
-    <app-charges-table [charges]="charges()" [chargeControls]="chargeControls" (update)="updateCharge($event)"
-        (delete)="deleteCharge($event)">
+    <app-charges-table [charges]="charges()" [currencies]="selectedCurrencies()" [chargeControls]="chargeControls"
+        (update)="updateCharge($event)" (delete)="deleteCharge($event)">
     </app-charges-table>
     }
     }

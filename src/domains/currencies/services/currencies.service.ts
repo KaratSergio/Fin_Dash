@@ -27,7 +27,6 @@ export class CurrenciesService {
     loading = signal(false);
     error = signal<string | null>(null);
 
-    // CRUD
     // Fetch currency configuration with optional fields parameter
     private fetchCurrencies(fields?: string) {
         this.loading.set(true);
@@ -38,7 +37,8 @@ export class CurrenciesService {
             url += `?fields=${fields}`;
         }
 
-        this.http.get<CurrencyConfigResponse>(url)
+        this.http
+            .get<CurrencyConfigResponse>(url)
             .pipe(
                 tap(res => {
                     this.allCurrencies.set(res.currencyOptions || []);
@@ -53,6 +53,7 @@ export class CurrenciesService {
             .subscribe();
     }
 
+    // CRUD
     // Public method to refresh currencies (optionally only selected)
     getCurrencies(onlySelected = false) {
         if (onlySelected) this.fetchCurrencies('selectedCurrencyOptions');

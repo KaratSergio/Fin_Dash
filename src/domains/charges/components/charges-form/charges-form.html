@@ -5,21 +5,21 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-        <mat-label>Description</mat-label>
-        <input matInput formControlName="description">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
         <mat-label>Amount</mat-label>
         <input matInput type="number" formControlName="amount">
     </mat-form-field>
 
     <mat-form-field appearance="fill">
         <mat-label>Currency</mat-label>
-        <input matInput formControlName="currencyCode">
+        <mat-select formControlName="currencyCode">
+            @for(currency of currencies; track currency.code) {
+            <mat-option [value]="currency.code">{{ currency.displayLabel }}</mat-option>
+            }
+        </mat-select>
     </mat-form-field>
 
-    <mat-checkbox formControlName="penalty">Penalty?</mat-checkbox>
+    <!--for checkbox [disabled]="form.get('dueAtDisbursement')?.value" -->
+    <mat-checkbox formControlName="penalty">Penalty</mat-checkbox>
 
     <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Create Charge</button>
 </form>

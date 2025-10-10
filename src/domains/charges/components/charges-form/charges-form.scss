@@ -11,7 +11,12 @@
 
     mat-checkbox {
         margin-top: 1.5rem;
+
+        ::ng-deep .mat-internal-form-field>label {
+            color: white;
+        }
     }
+
 
     button {
         margin-top: 1.5rem;

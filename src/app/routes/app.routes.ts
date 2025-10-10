@@ -37,7 +37,7 @@ export const routes: Routes = [
 
   // --- Charges ---
   {
-    path: 'charges', component: ChargesPage, canActivate: [authGuard],
+    path: 'charges', component: ChargesPage, canActivate: [],
   },
 
   // --- Accounts group ---
