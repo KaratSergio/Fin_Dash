@@ -25,7 +25,7 @@
                 <td><input [value]="displayOption(p.amortizationType)" readonly /></td>
                 <td><input [value]="displayOption(p.repaymentFrequencyType)" readonly /></td>
                 <td>
-                    <button (click)="select.emit(p)">Select</button>
+                    <button (click)="toggle.emit(p)">{{ activeProductId === p.id ? 'Hide' : 'Show' }}</button>
                 </td>
             </tr>
             } @empty {

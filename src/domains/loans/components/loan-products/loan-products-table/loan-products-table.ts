@@ -11,7 +11,9 @@ import { LoanProduct } from "@domains/loans/services/loan-products.service";
 })
 export class LoanProductTable {
     @Input() loanProducts: LoanProduct[] = [];
-    @Output() select = new EventEmitter<LoanProduct>();
+    @Input() activeProductId: number | null = null;
+
+    @Output() toggle = new EventEmitter<LoanProduct>();
 
     // transformation to display some fields on the screen
     displayOption(option: { id: number; code: string; value: string } | number | undefined): string {
@@ -19,4 +21,5 @@ export class LoanProductTable {
         if (typeof option === 'number') return `Type ${option}`;
         return option.value;
     }
+
 }

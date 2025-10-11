@@ -21,4 +21,14 @@ export class LoanProductDetails {
 
     @Output() save = new EventEmitter<void>();
     @Output() cancel = new EventEmitter<void>();
+
+    onSubmit() {
+        console.log('🔹 onSubmit triggered');
+        if (this.productForm.valid) {
+            console.log('✅ form valid, emitting save');
+            this.save.emit();
+        } else {
+            console.warn('⚠️ form invalid');
+        }
+    }
 }

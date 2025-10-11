@@ -13,7 +13,8 @@
     </app-loan-products-form>
 
     <h2 class="title">List of Loan Products</h2>
-    <app-loan-products-table [loanProducts]="loanProducts()" (select)="selectProduct($event)">
+    <app-loan-products-table [loanProducts]="loanProducts()" [activeProductId]="selectedProductId()"
+        (toggle)="toggleProduct($event)">
     </app-loan-products-table>
 
     @if(selectedProductId()) {

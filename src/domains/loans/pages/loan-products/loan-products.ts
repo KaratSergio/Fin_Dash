@@ -46,11 +46,11 @@ export class LoanProductsPage {
         shortName: this.utils.requiredText('', 4),
         principal: this.utils.requiredNumber(),
         interestRatePerPeriod: this.utils.requiredNumber(),
-        numberOfRepayments: this.utils.requiredNumber(),
-        interestType: this.utils.requiredNumber(),
-        amortizationType: this.utils.requiredNumber(),
-        repaymentFrequencyType: this.utils.requiredNumber(),
-        status: this.fb.control({ value: '', disabled: true }),
+        // numberOfRepayments: this.utils.requiredNumber(),
+        // interestType: this.utils.requiredNumber(),
+        // amortizationType: this.utils.requiredNumber(),
+        // repaymentFrequencyType: this.utils.requiredNumber(),
+        // status: this.fb.control({ value: '', disabled: true }),
     });
 
     // Automatic data loading
@@ -106,7 +106,7 @@ export class LoanProductsPage {
             shortName: product.shortName,
             principal: product.principal,
             interestRatePerPeriod: product.interestRatePerPeriod,
-            numberOfRepayments: product.numberOfRepayments,
+            // numberOfRepayments: product.numberOfRepayments,
             // interestType: product.interestType?.id || 0,
             // amortizationType: product.amortizationType?.id || 0,
             // repaymentFrequencyType: product.repaymentFrequencyType?.id || 0,
@@ -125,10 +125,10 @@ export class LoanProductsPage {
             shortName: f.shortName?.trim(),
             principal: Number(f.principal),
             interestRatePerPeriod: Number(f.interestRatePerPeriod),
-            numberOfRepayments: Number(f.numberOfRepayments),
-            interestType: Number(f.interestType),
-            amortizationType: Number(f.amortizationType),
-            repaymentFrequencyType: Number(f.repaymentFrequencyType),
+            // numberOfRepayments: Number(f.numberOfRepayments),
+            // interestType: Number(f.interestType),
+            // amortizationType: Number(f.amortizationType),
+            // repaymentFrequencyType: Number(f.repaymentFrequencyType),
         };
 
         this.loanProductsService.updateLoanProduct(productId, payload).subscribe({
@@ -146,5 +146,11 @@ export class LoanProductsPage {
         if (!product) return;
 
         this.selectProduct(product);
+    }
+
+    // Toggle loan product detail
+    toggleProduct(product: LoanProduct) {
+        if (this.selectedProductId() === product.id) this.selectedProductId.set(null);
+        else this.selectProduct(product);
     }
 }
