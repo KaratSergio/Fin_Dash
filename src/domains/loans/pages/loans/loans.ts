@@ -1,10 +1,13 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, computed } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { LoansService, Loan } from '@domains/loans/services/loans.service';
+import { LoanProductsService, LoanProduct } from '@domains/loans/services/loan-products.service';
 import { ClientsService } from '@domains/clients/services/clients.service';
+
 import { FormUtils } from '@core/utils/form';
+import { formatDateForApi } from '@core/utils/date';
 
 import { LoanForm } from '../../components/loans/loans-form/loans-form';
 import { LoanTable } from '../../components/loans/loans-table/loans-table';
@@ -13,10 +16,7 @@ import { LoanDetails } from '../../components/loans/loans-details/loans-details'
 @Component({
     selector: 'app-loans-page',
     standalone: true,
-    imports: [
-        RouterModule, LoanForm,
-        LoanTable, LoanDetails
-    ],
+    imports: [RouterModule, LoanForm, LoanTable, LoanDetails],
     templateUrl: './loans.html',
     styleUrls: ['./loans.scss']
 })
@@ -26,6 +26,7 @@ export class LoansPage {
 
     loansService = inject(LoansService);
     clientsService = inject(ClientsService);
+    loanProductsService = inject(LoanProductsService);
 
     loans = this.loansService.loans;
     clients = this.clientsService.clients;
@@ -33,75 +34,122 @@ export class LoansPage {
     error = signal<string | null>(null);
 
     selectedLoanId = signal<number | null>(null);
+    selectedLoanProduct = signal<LoanProduct | null>(null);
 
-    // Form for creating a new loan
+    loanProducts = computed(() => this.loanProductsService.loanProducts());
+
     createLoanForm = this.fb.group({
         clientId: this.utils.requiredNumber(),
-        loanProductId: this.utils.requiredNumber(),
+        productId: this.utils.requiredNumber(),
         principal: this.utils.requiredNumber(),
-        expectedDisbursementDate: this.utils.requiredDate()
+        expectedDisbursementDate: this.utils.requiredText(new Date().toISOString().split('T')[0]),
+
+        // mandatory numeric parameters always requires them
+        loanTermFrequency: this.fb.control(12),          // loan term
+        loanTermFrequencyType: this.fb.control(2),       // 2 = Months
+        numberOfRepayments: this.fb.control(12),
+        repaymentEvery: this.fb.control(1),
+        repaymentFrequencyType: this.fb.control(2),      // 2 = Monthly
+        interestType: this.fb.control(0),                // 0 = Declining balance
+        interestCalculationPeriodType: this.fb.control(1), // 1 = Same as repayment period
+        amortizationType: this.fb.control(1),            // 1 = Equal principal payments
+        interestRatePerPeriod: this.fb.control(5),
+        transactionProcessingStrategyCode: this.fb.control('mifos-standard-strategy'),
+
+        loanType: this.fb.control('individual'),
+        dateFormat: this.fb.control('dd MMMM yyyy'),
+        locale: this.fb.control('en')
     });
 
-    // Form for details of the selected loan
-    loanForm = this.fb.group({
+    // Loan details form
+    loanDetailsForm = this.fb.group({
         principal: this.utils.requiredNumber(),
         expectedDisbursementDate: this.utils.requiredDate(),
         status: this.fb.control({ value: '', disabled: true })
     });
 
+    // Loan init data
     private loadData = effect(() => {
         this.loansService.getLoans();
         this.clientsService.getClients();
+        this.loanProductsService.getLoanProducts();
     });
 
-    // Creating a new loan
     createLoan() {
         if (this.createLoanForm.invalid) return;
+
         const f = this.createLoanForm.value;
+        const product = this.selectedLoanProduct();
+
+        if (!product) {
+            this.error.set('Loan product not selected');
+            return;
+        }
 
         const payload = {
-            clientId: Number(f.clientId),
-            productId: Number(f.loanProductId),
-            principal: Number(f.principal),
-            expectedDisbursementDate: f.expectedDisbursementDate || undefined,
-            dateFormat: 'yyyy-MM-dd',
+            dateFormat: 'dd MMMM yyyy',
             locale: 'en',
-            submittedOnDate: new Date().toISOString().split('T')[0],
+            loanType: 'individual',
+            clientId: f.clientId!,
+            productId: product.id,
+            principal: f.principal ?? product.principal ?? 0,
+            loanTermFrequency: product.numberOfRepayments ?? 1,
+            loanTermFrequencyType: product.loanTermFrequencyType ?? 2,
+            numberOfRepayments: product.numberOfRepayments ?? 1,
+            repaymentEvery: product.repaymentEvery ?? 1,
+            repaymentFrequencyType:
+                (product.repaymentFrequencyType as any)?.id ?? product.repaymentFrequencyType ?? 2,
+            interestRatePerPeriod: product.interestRatePerPeriod ?? 1,
+            interestType:
+                (product.interestType as any)?.id ?? product.interestType ?? 0,
+            interestCalculationPeriodType:
+                (product.interestCalculationPeriodType as any)?.id ??
+                product.interestCalculationPeriodType ??
+                1,
+            amortizationType:
+                (product.amortizationType as any)?.id ?? product.amortizationType ?? 1,
+            transactionProcessingStrategyCode:
+                product.transactionProcessingStrategyCode ?? 'mifos-standard-strategy',
+            expectedDisbursementDate: formatDateForApi(f.expectedDisbursementDate!),
+            submittedOnDate: formatDateForApi(f.expectedDisbursementDate!),
+            maxOutstandingLoanBalance: 1,
+            disbursementData: [
+                {
+                    expectedDisbursementDate: formatDateForApi(f.expectedDisbursementDate!),
+                    principal: f.principal ?? product.principal ?? 0,
+                },
+            ],
         };
 
         this.loansService.createLoan(payload).subscribe({
             next: () => this.createLoanForm.reset(),
-            error: err => this.error.set(err.message || 'Failed to create loan')
+            error: err => this.error.set(err.message || 'Failed to create loan'),
         });
     }
 
-    // Deleting a loan
     deleteLoan(id: number) {
         this.loansService.deleteLoan(id).subscribe({
             error: err => this.error.set(err.message || 'Failed to delete loan')
         });
     }
 
-    // Selecting a loan for editing
     selectLoan(loan: Loan) {
         this.selectedLoanId.set(loan.id);
-        this.loanForm.patchValue({
+        this.loanDetailsForm.patchValue({
             principal: loan.principal,
             expectedDisbursementDate: loan.expectedDisbursementDate,
             status: loan.status?.value || ''
         });
     }
 
-    // Saving changes to a loan
     saveLoan() {
         const loanId = this.selectedLoanId();
         if (!loanId) return;
 
-        const f = this.loanForm.value;
-        const payload = {
+        const f = this.loanDetailsForm.value;
+        const payload: Partial<Loan> = {
             principal: f.principal ?? undefined,
-            expectedDisbursementDate: f.expectedDisbursementDate ?? undefined,
-            // status: f.status ?? undefined
+            expectedDisbursementDate: f.expectedDisbursementDate ?? undefined
         };
 
         this.loansService.updateLoan(loanId, payload).subscribe({
@@ -110,7 +158,6 @@ export class LoansPage {
         });
     }
 
-    // Cancel Edit
     cancelEdit() {
         const loanId = this.selectedLoanId();
         if (!loanId) return;
@@ -121,4 +168,26 @@ export class LoansPage {
         this.selectLoan(loan);
     }
 
+    onSelectLoanProduct(productId: number) {
+        const product = this.loanProducts().find(p => p.id === productId);
+        if (!product) return;
+
+        this.selectedLoanProduct.set(product);
+
+        // patching values ​​from the product, but with fallback to defaults
+        this.createLoanForm.patchValue({
+            productId: product.id,
+            principal: product.principal ?? this.createLoanForm.value.principal,
+            loanTermFrequency: product.numberOfRepayments ?? 12,
+            loanTermFrequencyType: product.loanTermFrequencyType ?? 2,
+            numberOfRepayments: product.numberOfRepayments ?? 12,
+            repaymentEvery: product.repaymentEvery ?? 1,
+            repaymentFrequencyType: product.repaymentFrequencyType ?? 2,
+            interestType: product.interestType ?? 0,
+            interestCalculationPeriodType: product.interestCalculationPeriodType ?? 1,
+            amortizationType: product.amortizationType ?? 1,
+            interestRatePerPeriod: product.interestRatePerPeriod ?? 5,
+            transactionProcessingStrategyCode: product.transactionProcessingStrategyCode ?? 'mifos-standard-strategy'
+        });
+    }
 }

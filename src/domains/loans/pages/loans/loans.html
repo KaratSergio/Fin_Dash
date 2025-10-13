@@ -9,7 +9,8 @@
     }
 
     <h2 class="title">Create New Loan</h2>
-    <app-loan-form [form]="createLoanForm" [clients]="clients()" (submitForm)="createLoan()">
+    <app-loan-form [form]="createLoanForm" [clients]="clients()" [products]="loanProducts()" (submitForm)="createLoan()"
+        (productSelected)="selectedLoanProduct.set($event)">
     </app-loan-form>
 
     <h2 class="title">List Of Loans</h2>
@@ -17,7 +18,8 @@
     </app-loan-table>
 
     @if(selectedLoanId()) {
-    <app-loan-details [loanForm]="loanForm" [loanId]="selectedLoanId()!" (save)="saveLoan()" (cancel)="cancelEdit()">
+    <app-loan-details [loanDetailsForm]="loanDetailsForm" [loanId]="selectedLoanId()!" (save)="saveLoan()"
+        (cancel)="cancelEdit()">
     </app-loan-details>
     }
     }

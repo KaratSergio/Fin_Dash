@@ -17,6 +17,10 @@ export interface LoanProduct {
     interestType?: number;                // Default interest type (optional)
     amortizationType?: number;            // Default amortization type (optional)
     repaymentFrequencyType: number;
+    loanType?: string;
+    loanTermFrequencyType?: number;
+    interestCalculationPeriodType?: number;
+    transactionProcessingStrategyCode?: string;
     currency?: {                           // Currency info (optional)
         code: string;
         name: string;

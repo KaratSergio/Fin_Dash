@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
     styleUrls: ['./loans-details.scss']
 })
 export class LoanDetails {
-    @Input() loanForm!: FormGroup;
+    @Input() loanDetailsForm!: FormGroup;
     @Input() loanId!: number;
 
     @Output() save = new EventEmitter<void>();

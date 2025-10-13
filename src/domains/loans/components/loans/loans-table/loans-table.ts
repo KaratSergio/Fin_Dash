@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Loan } from "@domains/loans/services/loans.service";
+import { formatTimeline } from "@core/utils/date";
 
 @Component({
     selector: "app-loan-table",
@@ -20,4 +21,6 @@ export class LoanTable {
     @Output() update = new EventEmitter<Loan>();
     @Output() select = new EventEmitter<Loan>();
     @Output() delete = new EventEmitter<number>();
+
+    formatTimeline = formatTimeline;
 }

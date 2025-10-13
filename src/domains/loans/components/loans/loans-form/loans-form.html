@@ -1,4 +1,5 @@
 <form class="loans-form" [formGroup]="form" (ngSubmit)="submitForm.emit()">
+
     <mat-form-field>
         <mat-label>Client</mat-label>
         <mat-select formControlName="clientId">
@@ -9,8 +10,12 @@
     </mat-form-field>
 
     <mat-form-field>
-        <mat-label>Loan Product ID</mat-label>
-        <input matInput type="number" formControlName="loanProductId" />
+        <mat-label>Loan Product</mat-label>
+        <mat-select formControlName="productId" (selectionChange)="onProductSelect($event.value)">
+            @for (p of products; track p.id) {
+            <mat-option [value]="p.id">{{ p.name }}</mat-option>
+            }
+        </mat-select>
     </mat-form-field>
 
     <mat-form-field>
@@ -18,10 +23,12 @@
         <input matInput type="number" formControlName="principal" />
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field appearance="fill">
         <mat-label>Expected Disbursement Date</mat-label>
-        <input matInput type="date" formControlName="expectedDisbursementDate" />
+        <input matInput [matDatepicker]="picker" formControlName="expectedDisbursementDate" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit">Create Loan</button>
+    <button mat-raised-button type="submit" color="primary">Create Loan</button>
 </form>

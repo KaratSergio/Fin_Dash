@@ -2,12 +2,35 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
 
+export interface LoanTimeline {
+    submittedOnDate: [number, number, number]; // [YYYY, MM, DD]
+    actualMaturityDate: [number, number, number];
+    expectedDisbursementDate: [number, number, number];
+    expectedMaturityDate: [number, number, number];
+    submittedByFirstname: string;
+    submittedByLastname: string;
+    submittedByUsername: string;
+}
+
+
 export interface Loan {
     id: number;                          // Loan ID
+    loanType: string;
+    interestCalculationPeriodType?: number;
+    transactionProcessingStrategyCode?: string;
+    graceOnPrincipalPayment: number;
+    graceOnInterestPayment: number;
+    graceOnInterestCharged: number;
+    maxOutstandingLoanBalance: number;
+    fixedEmiAmount: number;
+    disbursementData?: {
+        expectedDisbursementDate: string;
+        principal: number;
+    }[];
     accountNo: string;                   // Loan account number
     clientId: number;                    // ID of the client who owns the loan
     clientName?: string;                 // Name of the client (optional)
-    loanProductId: number;               // ID of the loan product
+    productId: number;                   // ID of the loan product
     loanProductName?: string;            // Name of the loan product (optional)
     principal: number;                   // Principal amount
     interestRatePerPeriod: number;       // Interest rate per period
@@ -27,6 +50,9 @@ export interface Loan {
     submittedOnDate?: string;            // Date when loan was submitted (yyyy-MM-dd) (optional)
     approvedOnDate?: string;             // Date when loan was approved (yyyy-MM-dd) (optional)
     expectedDisbursementDate?: string;   // Expected disbursement date (yyyy-MM-dd) (optional)
+    locale: string;
+    dateFormat: string;
+    timeline?: LoanTimeline;
 }
 
 @Injectable({ providedIn: 'root' })
