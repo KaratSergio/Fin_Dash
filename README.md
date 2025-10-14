@@ -96,6 +96,14 @@ src/
 │   │       └── clients.scss
 │   │
 │   ├── loans/                           # Loan Products, Loans, Loan Charges, Rescheduling...
+│   │   ├── interfaces/                  # interfaces - backend data structure
+│   │   │   ├── loan.interface.ts
+│   │   │   ├── loan-charges.interface.ts
+│   │   │   ├── loan-products.interface.ts
+│   │   │   └── dto/                     # dto - data structure, send to the backend
+│   │   │       ├── loan-create.dto.ts
+│   │   │       ├── loan-update.dto.ts
+│   │   │       └── loan-commands.dto.ts
 │   │   ├── services/
 │   │   │   ├── loans.service.ts
 │   │   │   ├── loans-charges.service.ts
