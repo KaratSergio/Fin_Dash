@@ -25,7 +25,7 @@ export class FormUtils {
         return this.makeControl(value, [Validators.required, Validators.min(0)]);
     }
 
-    requiredDate(value: string | null = null) {
+    requiredDate(value: Date | null = null) {
         return this.makeControl(value, [Validators.required]);
     }
 

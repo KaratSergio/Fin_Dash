@@ -64,7 +64,9 @@ export class LoansPage {
     // Loan details form
     loanDetailsForm = this.fb.group({
         principal: this.utils.requiredNumber(),
-        expectedDisbursementDate: this.utils.requiredDate(),
+        timeline: this.fb.group({
+            expectedDisbursementDate: this.utils.requiredDate(),
+        }),
         status: this.fb.control({ value: '', disabled: true })
     });
 
@@ -133,11 +135,26 @@ export class LoansPage {
         });
     }
 
-    selectLoan(loan: Loan) {
+    toggleLoan(loan: Loan) {
+        if (this.selectedLoanId() === loan.id) {
+            this.selectedLoanId.set(null);
+            return;
+        }
+
         this.selectedLoanId.set(loan.id);
+
+        // convert to [YYYY,MM,DD] 
+        const expectedDate = loan.timeline?.expectedDisbursementDate
+            ? new Date(
+                loan.timeline.expectedDisbursementDate[0],
+                loan.timeline.expectedDisbursementDate[1] - 1,
+                loan.timeline.expectedDisbursementDate[2]
+            )
+            : null;
+
         this.loanDetailsForm.patchValue({
             principal: loan.principal,
-            expectedDisbursementDate: loan.expectedDisbursementDate,
+            timeline: { expectedDisbursementDate: expectedDate },
             status: loan.status?.value || ''
         });
     }
@@ -147,14 +164,58 @@ export class LoansPage {
         if (!loanId) return;
 
         const f = this.loanDetailsForm.value;
-        const payload: Partial<Loan> = {
-            principal: f.principal ?? undefined,
-            expectedDisbursementDate: f.expectedDisbursementDate ?? undefined
+        const loan = this.loans().find(l => l.id === loanId);
+        if (!loan) return;
+
+        const expectedDate: Date = f.timeline!.expectedDisbursementDate!;
+
+        // getting id from an object or number
+        const getId = (field: any, fallback: number) =>
+            typeof field === 'object' && field !== null && 'id' in field
+                ? (field as { id: number }).id
+                : field ?? fallback;
+
+        // getting code from an object or string
+        const getValue = (field: any, fallback: string | number) =>
+            field && typeof field === 'object' && 'value' in field ? field.value : field ?? fallback;
+
+        const payload = {
+            clientId: loan.clientId,
+            productId: loan.loanProductId,
+            principal: f.principal ?? loan.principal ?? 0,
+            expectedDisbursementDate: formatDateForApi(expectedDate),
+            submittedOnDate: formatDateForApi(expectedDate),
+            dateFormat: 'dd MMMM yyyy',
+            locale: 'en',
+            loanType: getValue(loan.loanType, '').toLowerCase(),
+            loanTermFrequency: loan.loanTermFrequency,
+            loanTermFrequencyType: loan.loanTermFrequencyType,
+            numberOfRepayments: loan.numberOfRepayments,
+            repaymentEvery: loan.repaymentEvery,
+            repaymentFrequencyType: getId(loan.repaymentFrequencyType, 1),
+            interestType: getId(loan.interestType, 0),
+            interestCalculationPeriodType: getId(loan.interestCalculationPeriodType, 1),
+            amortizationType: getId(loan.amortizationType, 1),
+            interestRatePerPeriod: loan.interestRatePerPeriod,
+            transactionProcessingStrategyCode: loan.transactionProcessingStrategyCode ?? 'mifos-standard-strategy',
+            disbursementData: [
+                {
+                    expectedDisbursementDate: formatDateForApi(expectedDate),
+                    principal: f.principal ?? loan.principal ?? 0,
+                    dateFormat: 'dd MMMM yyyy',
+                    locale: 'en',
+                },
+            ],
         };
 
         this.loansService.updateLoan(loanId, payload).subscribe({
-            next: () => console.log('Loan updated'),
-            error: err => this.error.set(err.message || 'Failed to update loan')
+            next: () => {
+
+                console.log('updated'); // !
+
+                this.loansService.getLoans();
+            },
+            error: err => this.error.set(err.message || 'Failed to update loan'),
         });
     }
 
@@ -165,7 +226,7 @@ export class LoansPage {
         const loan = this.loans().find(l => l.id === loanId);
         if (!loan) return;
 
-        this.selectLoan(loan);
+        this.toggleLoan(loan);
     }
 
     onSelectLoanProduct(productId: number) {

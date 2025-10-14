@@ -31,6 +31,7 @@ export interface Loan {
     clientId: number;                    // ID of the client who owns the loan
     clientName?: string;                 // Name of the client (optional)
     productId: number;                   // ID of the loan product
+    loanProductId: number;
     loanProductName?: string;            // Name of the loan product (optional)
     principal: number;                   // Principal amount
     interestRatePerPeriod: number;       // Interest rate per period
@@ -49,10 +50,10 @@ export interface Loan {
     };
     submittedOnDate?: string;            // Date when loan was submitted (yyyy-MM-dd) (optional)
     approvedOnDate?: string;             // Date when loan was approved (yyyy-MM-dd) (optional)
-    expectedDisbursementDate?: string;   // Expected disbursement date (yyyy-MM-dd) (optional)
     locale: string;
     dateFormat: string;
     timeline?: LoanTimeline;
+    expectedDisbursementDate: string;
 }
 
 @Injectable({ providedIn: 'root' })

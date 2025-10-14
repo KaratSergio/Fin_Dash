@@ -19,8 +19,7 @@
                 </td>
                 <td><input [value]="loan.status?.value" readonly /></td>
                 <td>
-                    <button (click)="select.emit(loan)">Select</button>
-                    <button (click)="update.emit(loan)">Update</button>
+                    <button (click)="toggle.emit(loan)">{{ activeLoanId === loan.id ? 'Hide' : 'Show' }}</button>
                     <button (click)="delete.emit(loan.id)">Delete</button>
                 </td>
             </tr>

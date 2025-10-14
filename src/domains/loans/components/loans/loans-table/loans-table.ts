@@ -17,9 +17,9 @@ export class LoanTable {
         expectedDisbursementDate: FormControl<string | null>,
         status: FormControl<string | null>
     }> = {};
+    @Input() activeLoanId: number | null = null;
 
-    @Output() update = new EventEmitter<Loan>();
-    @Output() select = new EventEmitter<Loan>();
+    @Output() toggle = new EventEmitter<Loan>();
     @Output() delete = new EventEmitter<number>();
 
     formatTimeline = formatTimeline;

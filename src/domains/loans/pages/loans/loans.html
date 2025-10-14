@@ -14,7 +14,8 @@
     </app-loan-form>
 
     <h2 class="title">List Of Loans</h2>
-    <app-loan-table [loans]="loans()" (delete)="deleteLoan($event)" (select)="selectLoan($event)">
+    <app-loan-table [loans]="loans()" (delete)="deleteLoan($event)" [activeLoanId]="selectedLoanId()"
+        (toggle)="toggleLoan($event)">
     </app-loan-table>
 
     @if(selectedLoanId()) {
