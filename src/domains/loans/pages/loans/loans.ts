@@ -3,11 +3,12 @@ import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { LoansService, Loan } from '@domains/loans/services/loans.service';
-import { LoanProductsService, LoanProduct } from '@domains/loans/services/loan-products.service';
+import { LoanProductsService } from '@domains/loans/services/loan-products.service';
 import { ClientsService } from '@domains/clients/services/clients.service';
 
 import { FormUtils } from '@core/utils/form';
 import { formatDateForApi } from '@core/utils/date';
+import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
 
 import { LoanForm } from '../../components/loans/loans-form/loans-form';
 import { LoanTable } from '../../components/loans/loans-table/loans-table';

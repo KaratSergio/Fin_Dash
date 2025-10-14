@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
-import { LoanProduct } from '@domains/loans/services/loan-products.service';
+import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
 
 @Component({
     selector: 'app-loan-form',

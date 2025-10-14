@@ -3,7 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FormUtils } from '@core/utils/form';
 
-import { LoanProductsService, LoanProduct } from '@domains/loans/services/loan-products.service';
+import { LoanProductsService } from '@domains/loans/services/loan-products.service';
+import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
+import { LoanProductCreateDto } from '@domains/loans/interfaces/dto/loan-product-create.dto';
+import { LoanProductUpdateDto } from '@domains/loans/interfaces/dto/loan-product-update.dto';
 
 import { LoanProductForm } from '../../components/loan-products/loan-products-form/loan-products-form';
 import { LoanProductTable } from '../../components/loan-products/loan-products-table/loan-products-table';
@@ -12,7 +15,10 @@ import { LoanProductDetails } from '../../components/loan-products/loan-products
 @Component({
     selector: 'app-loan-products-page',
     standalone: true,
-    imports: [RouterModule, LoanProductForm, LoanProductTable, LoanProductDetails],
+    imports: [
+        RouterModule, LoanProductForm,
+        LoanProductTable, LoanProductDetails
+    ],
     templateUrl: './loan-products.html',
     styleUrls: ['./loan-products.scss']
 })
@@ -63,7 +69,7 @@ export class LoanProductsPage {
         if (this.createProductForm.invalid) return;
         const f = this.createProductForm.value;
 
-        const payload = {
+        const dto: LoanProductCreateDto = {
             name: f.name?.trim() || '',
             shortName: f.shortName?.trim() || '',
             principal: Number(f.principal),
@@ -89,7 +95,7 @@ export class LoanProductsPage {
             dateFormat: 'yyyy-MM-dd',
         };
 
-        this.loanProductsService.createLoanProduct(payload).subscribe({
+        this.loanProductsService.createLoanProduct(dto).subscribe({
             next: () => {
                 this.createProductForm.reset();
                 this.loanProductsService.getLoanProducts();
@@ -120,7 +126,7 @@ export class LoanProductsPage {
         if (!productId || this.productForm.invalid) return;
 
         const f = this.productForm.value;
-        const payload = {
+        const dto: LoanProductUpdateDto = {
             name: f.name?.trim(),
             shortName: f.shortName?.trim(),
             principal: Number(f.principal),
@@ -131,7 +137,7 @@ export class LoanProductsPage {
             // repaymentFrequencyType: Number(f.repaymentFrequencyType),
         };
 
-        this.loanProductsService.updateLoanProduct(productId, payload).subscribe({
+        this.loanProductsService.updateLoanProduct(productId, dto).subscribe({
             next: () => console.log('Loan product updated'),
             error: (err) => this.error.set(err.message || 'Failed to update product')
         });

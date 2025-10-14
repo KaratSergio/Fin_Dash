@@ -1,66 +1,13 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
+// types
+import { LoanProduct } from '../interfaces/loan-product.interface';
+import { LoanProductCreateDto } from '../interfaces/dto/loan-product-create.dto'
+import { LoanProductUpdateDto } from '../interfaces/dto/loan-product-update.dto'
 
 // A Loan product is a template that is used when creating a loan.
 // Much of the template definition can be overridden during loan creation.
-export interface LoanProduct {
-    id: number;                          // Loan product ID
-    name: string;                        // Name of the loan product
-    shortName?: string;                   // Short name (optional)
-    description?: string;                 // Description of the loan product (optional)
-    principal?: number;                   // Default principal amount (optional)
-    interestRatePerPeriod?: number;       // Default interest rate (optional)
-    numberOfRepayments?: number;          // Default number of repayments (optional)
-    repaymentEvery?: number;              // Default repayment interval (optional)
-    interestRateFrequencyType?: number;   // Default interest rate frequency type (optional)
-    interestType?: number;                // Default interest type (optional)
-    amortizationType?: number;            // Default amortization type (optional)
-    repaymentFrequencyType: number;
-    loanType?: string;
-    loanTermFrequencyType?: number;
-    interestCalculationPeriodType?: number;
-    transactionProcessingStrategyCode?: string;
-    currency?: {                           // Currency info (optional)
-        code: string;
-        name: string;
-        decimalPlaces: number;
-    };
-    accountingRule?: {                     // Accounting rule (optional)
-        id: number;
-        code: string;
-        value: string;
-    };
-    status?: {                             // Status info (optional)
-        id: number;
-        code: string;
-        value: string;
-    };
-}
-
-export interface LoanProductRequest {
-    name: string;
-    shortName: string;
-    principal: number;
-    interestRatePerPeriod: number;
-    numberOfRepayments: number;
-    currencyCode: string;
-    digitsAfterDecimal: number;
-    inMultiplesOf: number;
-    repaymentEvery: number;
-    repaymentFrequencyType: number;
-    interestRateFrequencyType: number;
-    amortizationType: number;
-    interestType: number;
-    interestCalculationPeriodType: number;
-    transactionProcessingStrategyCode: string;
-    accountingRule: number;
-    isInterestRecalculationEnabled: boolean;
-    daysInYearType: number;
-    daysInMonthType: number;
-    locale: string;
-    dateFormat: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class LoanProductsService {
@@ -71,7 +18,6 @@ export class LoanProductsService {
     loading = signal(false);
     error = signal<string | null>(null);
 
-    // CRUD
     // Get loan product list
     getLoanProducts() {
         this.loading.set(true);
@@ -91,6 +37,7 @@ export class LoanProductsService {
             .subscribe();
     }
 
+    // CRUD
     // Get loan product by ID
     getLoanProductById(productId: number) {
         return this.http.get<LoanProduct>(`${this.baseUrl}/${productId}`);
@@ -104,24 +51,24 @@ export class LoanProductsService {
     }
 
     // Create loan product
-    createLoanProduct(payload: LoanProductRequest) {
-        return this.http.post<LoanProduct>(this.baseUrl, payload).pipe(
+    createLoanProduct(dto: LoanProductCreateDto) {
+        return this.http.post<LoanProduct>(this.baseUrl, dto).pipe(
             tap(() => this.getLoanProducts())
         );
     }
 
     // Update loan product
-    updateLoanProduct(productId: number, payload: Partial<LoanProduct>) {
-        return this.http.put<LoanProduct>(`${this.baseUrl}/${productId}`, payload).pipe(
-            tap(() => this.getLoanProducts())
-        );
+    updateLoanProduct(productId: number, dto: LoanProductUpdateDto) {
+        return this.http
+            .put<LoanProduct>(`${this.baseUrl}/${productId}`, dto)
+            .pipe(tap(() => this.getLoanProducts()));
     }
 
     // Update loan product by externalId
-    updateLoanProductByExternalId(externalId: string, payload: Partial<LoanProduct>) {
-        return this.http.put<LoanProduct>(`${this.baseUrl}/external-id/${externalId}`, payload).pipe(
-            tap(() => this.getLoanProducts())
-        );
+    updateLoanProductByExternalId(externalId: string, dto: LoanProductUpdateDto) {
+        return this.http
+            .put<LoanProduct>(`${this.baseUrl}/external-id/${externalId}`, dto)
+            .pipe(tap(() => this.getLoanProducts()));
     }
 
     // get template
