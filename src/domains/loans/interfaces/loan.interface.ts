@@ -1,4 +1,13 @@
-import { LoanTimeline } from './loan-timeline.interface';
+export interface LoanTimeline {
+    submittedOnDate: [number, number, number];
+    actualMaturityDate: [number, number, number];
+    expectedDisbursementDate: [number, number, number];
+    expectedMaturityDate: [number, number, number];
+    submittedByFirstname: string;
+    submittedByLastname: string;
+    submittedByUsername: string;
+}
+
 
 export interface Loan {
     id: number;

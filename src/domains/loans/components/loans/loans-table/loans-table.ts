@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Loan } from "@domains/loans/services/loans.service";
+import { Loan } from "@domains/loans/interfaces/loan.interface";
 import { formatTimeline } from "@core/utils/date";
 
 @Component({

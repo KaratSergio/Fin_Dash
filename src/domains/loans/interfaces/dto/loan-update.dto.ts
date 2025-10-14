@@ -1,4 +1,6 @@
 export interface UpdateLoanDto {
+    clientId: number;
+    productId: number;
     principal?: number;
     expectedDisbursementDate?: string;
     submittedOnDate?: string;

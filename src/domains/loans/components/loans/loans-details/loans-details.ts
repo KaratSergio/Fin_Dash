@@ -22,6 +22,6 @@ export class LoanDetails {
     @Input() loanDetailsForm!: FormGroup;
     @Input() loanId!: number;
 
-    @Output() save = new EventEmitter<void>();
+    @Output() update = new EventEmitter<void>();
     @Output() cancel = new EventEmitter<void>();
 }

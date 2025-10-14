@@ -4,7 +4,7 @@
 <div class="loan-details">
     <h3>Loan Details: #{{ loanId }}</h3>
 
-    <form [formGroup]="loanDetailsForm" (ngSubmit)="save.emit()">
+    <form [formGroup]="loanDetailsForm" (ngSubmit)="update.emit()">
         <mat-form-field>
             <mat-label>Principal</mat-label>
             <input matInput type="number" formControlName="principal" />

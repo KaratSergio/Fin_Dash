@@ -19,7 +19,7 @@
     </app-loan-table>
 
     @if(selectedLoanId()) {
-    <app-loan-details [loanDetailsForm]="loanDetailsForm" [loanId]="selectedLoanId()!" (save)="saveLoan()"
+    <app-loan-details [loanDetailsForm]="loanDetailsForm" [loanId]="selectedLoanId()!" (update)="updateLoan()"
         (cancel)="cancelEdit()">
     </app-loan-details>
     }

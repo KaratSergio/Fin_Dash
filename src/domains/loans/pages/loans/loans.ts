@@ -2,13 +2,17 @@ import { Component, inject, signal, effect, computed } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { LoansService, Loan } from '@domains/loans/services/loans.service';
+import { LoansService } from '@domains/loans/services/loans.service';
 import { LoanProductsService } from '@domains/loans/services/loan-products.service';
 import { ClientsService } from '@domains/clients/services/clients.service';
 
 import { FormUtils } from '@core/utils/form';
 import { formatDateForApi } from '@core/utils/date';
+
 import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
+import { Loan } from '@domains/loans/interfaces/loan.interface';
+import { CreateLoanDto } from '@domains/loans/interfaces/dto/loan-create.dto';
+import { UpdateLoanDto } from '@domains/loans/interfaces/dto/loan-update.dto';
 
 import { LoanForm } from '../../components/loans/loans-form/loans-form';
 import { LoanTable } from '../../components/loans/loans-table/loans-table';
@@ -89,7 +93,7 @@ export class LoansPage {
             return;
         }
 
-        const payload = {
+        const dto: CreateLoanDto = {
             dateFormat: 'dd MMMM yyyy',
             locale: 'en',
             loanType: 'individual',
@@ -124,7 +128,7 @@ export class LoansPage {
             ],
         };
 
-        this.loansService.createLoan(payload).subscribe({
+        this.loansService.createLoan(dto).subscribe({
             next: () => this.createLoanForm.reset(),
             error: err => this.error.set(err.message || 'Failed to create loan'),
         });
@@ -160,7 +164,7 @@ export class LoansPage {
         });
     }
 
-    saveLoan() {
+    updateLoan() {
         const loanId = this.selectedLoanId();
         if (!loanId) return;
 
@@ -180,7 +184,7 @@ export class LoansPage {
         const getValue = (field: any, fallback: string | number) =>
             field && typeof field === 'object' && 'value' in field ? field.value : field ?? fallback;
 
-        const payload = {
+        const dto: UpdateLoanDto = {
             clientId: loan.clientId,
             productId: loan.loanProductId,
             principal: f.principal ?? loan.principal ?? 0,
@@ -209,7 +213,7 @@ export class LoansPage {
             ],
         };
 
-        this.loansService.updateLoan(loanId, payload).subscribe({
+        this.loansService.updateLoan(loanId, dto).subscribe({
             next: () => {
 
                 console.log('updated'); // !

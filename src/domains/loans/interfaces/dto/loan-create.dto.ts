@@ -15,6 +15,7 @@ export interface CreateLoanDto {
     amortizationType: number;
     interestRatePerPeriod: number;
     transactionProcessingStrategyCode: string;
+    maxOutstandingLoanBalance: number;
     loanType: string;
 
     disbursementData: {
