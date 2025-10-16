@@ -22,7 +22,7 @@ import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
     styleUrls: ['./loans-form.scss']
 })
 export class LoanForm {
-    @Input() form!: FormGroup;
+    @Input() loanCreateForm!: FormGroup;
     @Input() products: LoanProduct[] = [];
     @Input() clients: { id: number; firstname: string; lastname: string }[] = [];
 
@@ -33,9 +33,9 @@ export class LoanForm {
         const product = this.products.find(p => p.id === productId);
         if (!product) return;
 
-        this.form.patchValue({
+        this.loanCreateForm.patchValue({
             productId: product.id,
-            principal: product.principal ?? this.form.value.principal,
+            principal: product.principal ?? this.loanCreateForm.value.principal,
             loanType: 'individual',
             loanTermFrequency: product.numberOfRepayments,
             loanTermFrequencyType: product.loanTermFrequencyType,

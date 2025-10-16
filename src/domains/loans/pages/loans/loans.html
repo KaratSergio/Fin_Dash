@@ -9,8 +9,8 @@
     }
 
     <h2 class="title">Create New Loan</h2>
-    <app-loan-form [form]="createLoanForm" [clients]="clients()" [products]="loanProducts()" (submitForm)="createLoan()"
-        (productSelected)="selectedLoanProduct.set($event)">
+    <app-loan-form [loanCreateForm]="loanCreateForm" [clients]="clients()" [products]="loanProducts()"
+        (submitForm)="createLoan()" (productSelected)="selectedLoanProduct.set($event)">
     </app-loan-form>
 
     <h2 class="title">List Of Loans</h2>

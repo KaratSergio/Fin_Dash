@@ -21,9 +21,10 @@ export function formatTimeline(date: number[] | null | undefined): string {
     return `${year}-${mm}-${dd}`; // "YYYY-MM-DD"
 }
 
-export function parseApiDate(dateArr: number[] | null | undefined): Date | null {
-    if (!dateArr || !Array.isArray(dateArr)) return null;
-    const [year, month, day] = dateArr;
-    // month - 1 потому что в JS месяцы с 0 начинаются
+
+export function parseApiDate(dateArray?: [number, number, number] | number[] | null): Date | null {
+    if (!dateArray || dateArray.length !== 3) return null;
+    const [year, month, day] = dateArray;
+    if ([year, month, day].some(n => typeof n !== 'number')) return null;
     return new Date(year, month - 1, day);
 }
