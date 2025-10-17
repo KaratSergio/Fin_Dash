@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@core/guards/auth.guard';
+import { permissionGuard } from '@core/guards/permission.guard';
 
 // Auth pages
 import { LoginPage } from '@pages/auth/login/login';
@@ -19,6 +20,22 @@ import { ChargesPage } from '@domains/charges/pages/charges';
 // Loans
 import { LoansPage } from '@domains/loans/pages/loans/loans';
 import { LoanProductsPage } from '@domains/loans/pages/loan-products/loan-products';
+
+// wrapper route
+const secure = (path: string, component: any, permission?: string) => ({
+  path,
+  component,
+  canActivate: permission ? [authGuard, permissionGuard] : [authGuard],
+  data: permission ? { permission } : {},
+});
+
+// wrapper lazZzy route
+const secureLazy = (path: string, loadComponent: () => Promise<any>, permission?: string) => ({
+  path,
+  loadComponent,
+  canActivate: permission ? [authGuard, permissionGuard] : [authGuard],
+  data: permission ? { permission } : {},
+});
 
 export const routes: Routes = [
   // --- Default redirect ---
@@ -70,31 +87,12 @@ export const routes: Routes = [
   // --- Admin group ---
   {
     path: 'admin',
-    canActivate: [authGuard],
     children: [
-      { path: '', component: Admin },
-      {
-        path: 'offices',
-        loadComponent: () =>
-          import('../../domains/offices/pages/offices').then(
-            (m) => m.OfficesAdminPage
-          ),
-      },
-      {
-        path: 'users',
-        loadComponent: () =>
-          import('../../domains/users/pages/users').then(
-            (m) => m.UsersAdminPage
-          ),
-      },
-      {
-        path: 'roles',
-        loadComponent: () =>
-          import('../../domains/roles/pages/roles').then(
-            (m) => m.RolesAdminPage
-          ),
-      },
-    ],
+      secure('', Admin),
+      secureLazy('offices', () => import('../../domains/offices/pages/offices').then(m => m.OfficesAdminPage)),
+      secureLazy('users', () => import('../../domains/users/pages/users').then(m => m.UsersAdminPage)),
+      secureLazy('roles', () => import('../../domains/roles/pages/roles').then(m => m.RolesAdminPage)),
+    ]
   },
 
   // --- Fallback (optional) ---

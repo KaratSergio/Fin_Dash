@@ -1,5 +1,5 @@
 <div class="page">
-  <h1>Currencies</h1>
+  <h1>Permissions</h1>
 
   @if (loading()) {
   <div>Loading currencies...</div>
@@ -7,9 +7,9 @@
   <div class="error">{{ error() }}</div>
   } @else {
   <ul>
-    @for (currency of allCurrencies(); track currency.code) {
+    @for (permission of permissions(); track permission.code) {
     <li>
-      {{ currency.code }} — {{ currency.displayLabel }} ({{ currency.name }})
+      {{ permission.code }} — {{ permission.grouping }} ({{ permission.actionName }})
     </li>
     }
   </ul>

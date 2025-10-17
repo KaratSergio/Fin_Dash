@@ -1,17 +1,13 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
+import { Permission } from './permission.service';
 
 export interface Role {
     id: number;             // Role ID
     name: string;           // Role name
     description?: string;   // Optional description
     disabled?: boolean;     // Whether role is disabled
-}
-
-export interface Permission {
-    code: string;           // Permission code
-    enabled: boolean;       // Is permission enabled for this role
 }
 
 @Injectable({ providedIn: 'root' })
