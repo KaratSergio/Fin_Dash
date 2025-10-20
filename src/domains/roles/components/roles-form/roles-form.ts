@@ -5,6 +5,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
+import { Role } from "@domains/roles/services/roles.service";
+
 @Component({
     selector: 'app-roles-form',
     standalone: true,
@@ -17,5 +19,5 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class RolesForm {
     @Input() form!: FormGroup;
-    @Output() create = new EventEmitter<void>();
+    @Output() create = new EventEmitter<Role>();
 }

@@ -31,8 +31,7 @@ export class PermissionsService {
                     return of([]);
                 }),
                 tap(() => this.loading.set(false))
-            )
-            .subscribe();
+            ).subscribe();
     }
 
     // Update MakerChecker permissions

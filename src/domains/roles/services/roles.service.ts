@@ -19,7 +19,6 @@ export class RolesService {
     loading = signal(false);
     error = signal<string | null>(null);
 
-    // CRUD
     // Private fetch method
     private fetchRoles() {
         this.loading.set(true);
@@ -35,6 +34,7 @@ export class RolesService {
             ).subscribe();
     }
 
+    // CRUD
     // Get all roles
     getRoles() {
         this.fetchRoles();
@@ -47,50 +47,51 @@ export class RolesService {
 
     // Create new role
     createRole(role: Partial<Role>) {
-        return this.http.post<Role>(this.baseUrl, role).pipe(
-            tap(() => this.fetchRoles())
-        );
+        return this.http
+            .post<Role>(this.baseUrl, role)
+            .pipe(tap(() => this.fetchRoles()));
     }
 
     // Update role by ID
     updateRole(roleId: number, role: Partial<Role>) {
         const { disabled, ...payload } = role;
-        return this.http.put<Role>(`${this.baseUrl}/${roleId}`, payload).pipe(
-            tap(() => this.fetchRoles())
-        );
+        return this.http
+            .put<Role>(`${this.baseUrl}/${roleId}`, payload)
+            .pipe(tap(() => this.fetchRoles()));
     }
 
     // Delete role by ID
     deleteRole(roleId: number) {
-        return this.http.delete<void>(`${this.baseUrl}/${roleId}`).pipe(
-            tap(() => this.fetchRoles())
-        );
+        return this.http
+            .delete<void>(`${this.baseUrl}/${roleId}`)
+            .pipe(tap(() => this.fetchRoles()));
     }
 
     // ACTION
     // Enable role
     enableRole(roleId: number) {
-        return this.http.post<void>(`${this.baseUrl}/${roleId}?command=enable`, {}).pipe(
-            tap(() => this.fetchRoles())
-        );
+        return this.http
+            .post<void>(`${this.baseUrl}/${roleId}?command=enable`, {})
+            .pipe(tap(() => this.fetchRoles()));
     }
 
     // Disable role
     disableRole(roleId: number) {
-        return this.http.post<void>(`${this.baseUrl}/${roleId}?command=disable`, {}).pipe(
-            tap(() => this.fetchRoles())
-        );
+        return this.http
+            .post<void>(`${this.baseUrl}/${roleId}?command=disable`, {})
+            .pipe(tap(() => this.fetchRoles()));
     }
 
     // Get role permissions
     getPermissions(roleId: number) {
-        return this.http.get<Permission[]>(`${this.baseUrl}/${roleId}/permissions`);
+        return this.http
+            .get<Permission[]>(`${this.baseUrl}/${roleId}/permissions`);
     }
 
     // Update role permissions
     updatePermissions(roleId: number, permissions: Permission[]) {
-        return this.http.put<void>(`${this.baseUrl}/${roleId}/permissions`, permissions).pipe(
-            tap(() => this.fetchRoles())
-        );
+        return this.http
+            .put<void>(`${this.baseUrl}/${roleId}/permissions`, permissions)
+            .pipe(tap(() => this.fetchRoles()));
     }
 }

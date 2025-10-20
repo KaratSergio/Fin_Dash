@@ -83,6 +83,7 @@ export class RolesAdminPage {
     });
   }
 
+  // actions
   toggleRole(role: Role) {
     const action = role.disabled ? this.roleService.enableRole : this.roleService.disableRole;
     action.call(this.roleService, role.id).subscribe({

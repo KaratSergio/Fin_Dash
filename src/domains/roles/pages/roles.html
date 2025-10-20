@@ -3,8 +3,7 @@
 
     @if (loading()) {
     <div>Loading...</div>
-    } @else {
-    @if (error()) {
+    } @else if (error()) {
     <div class="error">{{ error() }}</div>
     } @else {
     <h2 class="title">Create New Role</h2>
@@ -14,6 +13,5 @@
     <app-roles-table [roles]="roles()" [roleControls]="roleControls" (update)="updateRole($event)"
         (delete)="deleteRole($event)" (toggle)="toggleRole($event)">
     </app-roles-table>
-    }
     }
 </div>
