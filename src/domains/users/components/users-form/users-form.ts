@@ -6,6 +6,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 
+import { CreateUserDto } from "@domains/users/interfaces/user.dto";
+
 @Component({
     selector: "app-users-form",
     standalone: true,
@@ -22,5 +24,5 @@ export class UsersForm {
     @Input() roles: { id: number; name: string }[] = [];
     @Input() offices: { id: number; name: string }[] = [];
 
-    @Output() create = new EventEmitter<void>();
+    @Output() create = new EventEmitter<CreateUserDto>();
 }

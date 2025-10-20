@@ -6,7 +6,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 
-import { AppUser } from "@domains/users/services/user.service";
+import { AppUser } from "@domains/users/interfaces/user.interface";
 
 @Component({
     selector: "app-users-table",

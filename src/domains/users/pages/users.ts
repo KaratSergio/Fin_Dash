@@ -2,9 +2,11 @@ import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FormBuilder, FormControl } from "@angular/forms";
 
-import { UsersService, AppUser } from "@domains/users/services/user.service";
+import { UsersService } from "@domains/users/services/user.service";
 import { RolesService } from "@domains/roles/services/roles.service";
 import { OfficesService } from "@domains/offices/services/offices.service";
+import { AppUser } from "@domains/users/interfaces/user.interface";
+import { CreateUserDto, UpdateUserDto } from '@domains/users/interfaces/user.dto';
 import { FormUtils } from "@core/utils/form";
 
 import { UsersForm } from "../components/users-form/users-form";
@@ -88,16 +90,16 @@ export class UsersAdminPage {
     if (this.createUserForm.invalid) return;
     const f = this.createUserForm.value;
 
-    const payload = {
-      username: f.username,
-      firstname: f.firstname,
-      lastname: f.lastname,
-      email: f.email,
-      password: f.password,
-      officeId: f.officeId ?? undefined,
+    const payload: CreateUserDto = {
+      username: f.username ?? '',
+      firstname: f.firstname ?? '',
+      lastname: f.lastname ?? '',
+      email: f.email ?? '',
+      password: f.password ?? '',
+      officeId: f.officeId ?? 0,
       roles: f.roles ?? [],
       sendPasswordToEmail: false,
-      repeatPassword: f.password
+      repeatPassword: f.password ?? '',
     };
 
     this.usersService.createUser(payload).subscribe({
@@ -110,7 +112,7 @@ export class UsersAdminPage {
     const controls = this.userControls[user.id];
     if (!controls) return;
 
-    const payload = {
+    const payload: UpdateUserDto = {
       username: controls.username.value ?? '',
       firstname: controls.firstname.value ?? '',
       lastname: controls.lastname.value ?? '',
