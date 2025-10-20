@@ -1,8 +1,11 @@
 import { Component, inject, signal, effect } from "@angular/core";
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { OfficesService, Office } from "@domains/offices/services/offices.service";
+import { OfficesService } from "@domains/offices/services/offices.service";
+import { CreateOfficeDto, UpdateOfficeDto } from "@domains/offices/interfaces/office.dto";
+import { Office } from "@domains/offices/interfaces/office.interface";
 import { FormUtils } from "@core/utils/form";
+import { APP_DEFAULTS } from '@core/constants/app.constants';
 
 import { OfficesForm } from "../components/offices-form/offices-form";
 import { OfficesTable } from "../components/offices-table/offices-table";
@@ -27,10 +30,10 @@ export class OfficesAdminPage {
     createOfficeForm = this.fb.group({
         name: this.utils.requiredText(),
         externalId: this.utils.makeControl(''),
-        parentId: this.utils.makeControl<number | null>(null),
+        parentId: this.utils.requiredNumberNN(1),
         openingDate: this.utils.requiredText(new Date().toISOString().split('T')[0]),
-        locale: this.utils.makeControl('en'),
-        dateFormat: this.utils.makeControl('dd MMMM yyyy')
+        locale: this.utils.makeControl(APP_DEFAULTS.LOCALE),
+        dateFormat: this.utils.makeControl(APP_DEFAULTS.DATE_FORMAT)
     });
 
     // Controls for editing existing offices
@@ -73,14 +76,16 @@ export class OfficesAdminPage {
     // Methods
     createOffice() {
         if (this.createOfficeForm.invalid) return;
-        this.officesService.createOffice(this.createOfficeForm.value as Partial<Office>).subscribe({
+        const office: CreateOfficeDto = this.createOfficeForm.value as CreateOfficeDto;
+
+        this.officesService.createOffice(office).subscribe({
             next: () => this.createOfficeForm.reset({
                 name: '',
                 externalId: '',
-                parentId: null,
+                parentId: 1,
                 openingDate: new Date().toISOString().split('T')[0],
-                locale: 'en',
-                dateFormat: 'dd MMMM yyyy'
+                locale: APP_DEFAULTS.LOCALE,
+                dateFormat: APP_DEFAULTS.DATE_FORMAT
             }),
             error: err => this.error.set(err.message || 'Failed to create office')
         });
@@ -90,7 +95,7 @@ export class OfficesAdminPage {
         const controls = this.officeControls[office.id];
         if (!controls) return;
 
-        const payload: Partial<Office> = {
+        const payload: UpdateOfficeDto = {
             name: controls.name.value,
             externalId: controls.externalId.value,
             parentId: controls.parentId.value ?? undefined,

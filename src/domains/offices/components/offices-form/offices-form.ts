@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { ReactiveFormsModule, FormGroup } from "@angular/forms";
 
-import { Office } from "../../services/offices.service";
+import { Office } from "@domains/offices/interfaces/office.interface";
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -26,5 +26,5 @@ export class OfficesForm {
     @Input() form!: FormGroup;
     @Input() offices: Office[] = [];
 
-    @Output() submit = new EventEmitter<void>();
+    @Output() submit = new EventEmitter<Office>();
 }

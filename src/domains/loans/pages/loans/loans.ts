@@ -9,6 +9,7 @@ import { ClientsService } from '@domains/clients/services/clients.service';
 import { FormUtils } from '@core/utils/form';
 import { formatDateForApi, parseApiDate } from '@core/utils/date';
 import { extractId, extractString } from '@core/utils/mappers';
+import { APP_DEFAULTS } from '@core/constants/app.constants';
 
 import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
 import { Loan } from '@domains/loans/interfaces/loan.interface';
@@ -19,11 +20,6 @@ import { LoanForm } from '../../components/loans/loans-form/loans-form';
 import { LoanTable } from '../../components/loans/loans-table/loans-table';
 import { LoanDetails } from '../../components/loans/loans-details/loans-details';
 
-const APP_DEFAULTS = {
-    DATE_FORMAT: 'dd MMMM yyyy',
-    LOCALE: 'en',
-    STRATEGY: 'mifos-standard-strategy',
-};
 
 @Component({
     selector: 'app-loans-page',

@@ -13,7 +13,6 @@
     <mat-form-field appearance="fill">
         <mat-label>Parent Office</mat-label>
         <mat-select formControlName="parentId">
-            <mat-option [value]="null">Head Office</mat-option>
             @for (office of offices; track office.id) {
             <mat-option [value]="office.id">{{ office.name }}</mat-option>
             }

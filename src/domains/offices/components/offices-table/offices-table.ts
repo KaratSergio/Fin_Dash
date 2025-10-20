@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { ReactiveFormsModule, FormControl } from "@angular/forms";
 import { FormatDatePipe } from "@shared/pipes/format-date.pipe";
 
-import { Office } from "../../services/offices.service";
+import { Office } from "@domains/offices/interfaces/office.interface";
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
