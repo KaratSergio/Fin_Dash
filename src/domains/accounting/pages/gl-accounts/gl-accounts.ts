@@ -48,6 +48,13 @@ export class GLAccountsPage {
 
     // Sync edit controls with accounts list
     private syncControls = effect(() => {
+        const ids = new Set(this.accounts().map(a => a.id));
+
+        // removing unnecessary controls
+        for (const id of Object.keys(this.accountControls)) {
+            if (!ids.has(Number(id))) delete this.accountControls[Number(id)]
+        }
+
         this.accounts().forEach((acc) => {
             if (!this.accountControls[acc.id]) {
                 this.accountControls[acc.id] = {
