@@ -3,17 +3,17 @@
 
     @if (loading()) {
     <div>Loading...</div>
-    } @else {
-    @if (error()) {
+    } @else if (error()) {
     <div class="error">{{ error() }}</div>
     } @else {
     <h2 class="title">Create New GL Account</h2>
-    <app-gl-accounts-form [form]="createForm" (create)="createAccount()"></app-gl-accounts-form>
+    <app-gl-accounts-form [form]="createForm" [typeOptions]="typeOptions()" [usageOptions]="usageOptions()"
+        [tagOptions]="tagOptions()" [parentOptions]="parentOptions()" (create)="createAccount()">
+    </app-gl-accounts-form>
 
     <h2 class="title">List of GL Accounts</h2>
     <app-gl-accounts-table [accounts]="accounts()" [accountControls]="accountControls" (update)="updateAccount($event)"
         (delete)="deleteAccount($event)">
     </app-gl-accounts-table>
-    }
     }
 </div>

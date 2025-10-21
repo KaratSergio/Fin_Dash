@@ -18,6 +18,42 @@
         Manual Entries Allowed
     </mat-checkbox>
 
+    <!-- Type Select -->
+    <mat-form-field appearance="fill">
+        <mat-label>Account Type</mat-label>
+        <mat-select formControlName="typeId">
+            @for (type of typeOptions ; track type.id )
+            {<mat-option [value]="type.id">{{ type.value }}</mat-option>}
+        </mat-select>
+    </mat-form-field>
+
+    <!-- Usage Select -->
+    <mat-form-field appearance="fill">
+        <mat-label>Account Usage</mat-label>
+        <mat-select formControlName="usageId">
+            @for (u of usageOptions; track u.id)
+            {<mat-option [value]="u.id">{{ u.value }}</mat-option>}
+        </mat-select>
+    </mat-form-field>
+
+    <!-- Parent Select -->
+    <mat-form-field appearance="fill">
+        <mat-label>Parent Account</mat-label>
+        <mat-select formControlName="parentId">
+            @for (p of parentOptions; track p.id)
+            {<mat-option [value]="p.id">{{ p.value }}</mat-option>}
+        </mat-select>
+    </mat-form-field>
+
+    <!-- Tag Select -->
+    <mat-form-field appearance="fill">
+        <mat-label>Tag</mat-label>
+        <mat-select formControlName="tagId">
+            @for (tag of tagOptions; track tag.id)
+            {<mat-option [value]="tag.id">{{ tag.value }}</mat-option>}
+        </mat-select>
+    </mat-form-field>
+
     <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
         Create Account
     </button>

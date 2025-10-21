@@ -17,7 +17,7 @@ export class FormUtils {
         return this.makeControl(value, [Validators.required, Validators.email]);
     }
 
-    optionalNumber(value: number | null = null) {
+    optionalNumber(value: number = 0) {
         return this.makeControl(value);
     }
 

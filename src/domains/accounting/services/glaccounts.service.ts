@@ -1,43 +1,17 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
+import { GLAccount } from '../interfaces/gl-account.interface';
+import {
+    GLAccountCreateDto, GLAccountUpdateDto,
+    GLAccountsTemplateResponseDto,
+} from '../interfaces/gl-account.dto';
 
 // Ledger accounts represent an Individual account within an Organizations Chart Of Accounts(COA)
 //  and are assigned a name and unique number by which they can be identified.
 //  All transactions relating to a company's assets, liabilities, owners' equity,
 //  revenue and expenses are recorded against these accounts.
-export interface GLAccount {
-    id: number;                         // Unique account ID
-    name: string;                       // Account name
-    glCode: string;                     // General Ledger code
-    disabled: boolean;                  // Whether the account is disabled
-    manualEntriesAllowed: boolean;      // Whether manual journal entries are allowed
-    type: {                             // Account type (e.g., ASSET, LIABILITY)
-        id: number;
-        code: string;
-        value: string;
-    };
-    usage: {                            // Usage type (e.g., HEADER or DETAIL)
-        id: number;
-        code: string;
-        value: string;
-    };
-    tagId?: number;                     // Optional tag identifier
-    parentId?: number;                  // Optional parent account ID
-    description?: string;               // Optional account description
-    organizationRunningBalance?: number;// Running balance for the organization
-}
 
-
-// Represents the template data for creating GL Accounts
-// (used to populate dropdowns or default values)
-export interface GLAccountsTemplateResponse {
-    assetHeaderAccountOptions: GLAccount[];     // Asset accounts
-    liabilityHeaderAccountOptions: GLAccount[]; // Liability accounts
-    equityHeaderAccountOptions: GLAccount[];    // Equity accounts
-    incomeHeaderAccountOptions: GLAccount[];    // Income accounts
-    expenseHeaderAccountOptions: GLAccount[];   // Expense accounts
-}
 
 @Injectable({ providedIn: 'root' })
 export class GLAccountsService {
@@ -48,7 +22,6 @@ export class GLAccountsService {
     loading = signal(false);
     error = signal<string | null>(null);
 
-    // CRUD
     // Fetch all General Ledger Accounts
     getAllAccounts() {
         this.loading.set(true);
@@ -64,16 +37,15 @@ export class GLAccountsService {
                     return of([]);
                 }),
                 tap(() => this.loading.set(false))
-            )
-            .subscribe();
+            ).subscribe();
     }
 
-
+    // CRUD
     // Retrieve GL Accounts Template
     // Provides reference data for creating a new account
     getAccountsTemplate() {
         return this.http
-            .get<GLAccountsTemplateResponse>(`${this.baseUrl}/template`)
+            .get<GLAccountsTemplateResponseDto>(`${this.baseUrl}/template`)
             .pipe(
                 catchError((err) => {
                     this.error.set(err.message || 'Failed to load GL accounts template');
@@ -83,7 +55,7 @@ export class GLAccountsService {
     }
 
     // Create a new General Ledger Account
-    createAccount(payload: Partial<GLAccount>) {
+    createAccount(payload: GLAccountCreateDto) {
         return this.http
             .post(this.baseUrl, payload)
             .pipe(tap(() => this.getAllAccounts()),
@@ -96,7 +68,7 @@ export class GLAccountsService {
 
 
     // Update an existing General Ledger Account
-    updateAccount(id: number, payload: Partial<GLAccount>) {
+    updateAccount(id: number, payload: GLAccountUpdateDto) {
         return this.http
             .put(`${this.baseUrl}/${id}`, payload)
             .pipe(tap(() => this.getAllAccounts()),
