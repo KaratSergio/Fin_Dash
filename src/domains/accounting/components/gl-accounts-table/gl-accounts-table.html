@@ -19,8 +19,8 @@
                     <mat-checkbox [formControl]="accountControls[acc.id].manualEntriesAllowed"></mat-checkbox>
                 </td>
                 <td>
-                    <button mat-button color="primary" (click)="update.emit(acc.id)">Update</button>
-                    <button mat-button color="warn" (click)="delete.emit(acc.id)">Delete</button>
+                    <button (click)="update.emit(acc.id)">Update</button>
+                    <button (click)="delete.emit(acc.id)">Delete</button>
                 </td>
             </tr>
             } @empty {

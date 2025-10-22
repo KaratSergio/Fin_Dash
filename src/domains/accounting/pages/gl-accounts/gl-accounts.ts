@@ -36,8 +36,8 @@ export class GLAccountsPage {
         glCode: this.utils.requiredText(),
         description: this.utils.makeControl(""),
         manualEntriesAllowed: this.utils.makeControl(true),
-        typeId: this.utils.requiredNumberNN(0),
-        usageId: this.utils.requiredNumberNN(0),
+        type: this.utils.requiredNumberNN(0),
+        usage: this.utils.requiredNumberNN(0),
         parentId: this.utils.optionalNumber(),
         tagId: this.utils.optionalNumber(),
     });
@@ -66,21 +66,21 @@ export class GLAccountsPage {
 
             // tags
             const tags = [
-                ...template.allowedAssetsTagOptions,
-                ...template.allowedLiabilitiesTagOptions,
-                ...template.allowedEquityTagOptions,
-                ...template.allowedIncomeTagOptions,
-                ...template.allowedExpensesTagOptions,
+                ...template.allowedAssetsTagOptions ?? [],
+                ...template.allowedLiabilitiesTagOptions ?? [],
+                ...template.allowedEquityTagOptions ?? [],
+                ...template.allowedIncomeTagOptions ?? [],
+                ...template.allowedExpensesTagOptions ?? [],
             ];
             this.tagOptions.set(tags.map(t => ({ id: t.id, value: t.name })));
 
             // Parent Accounts - Consolidating All Header Accounts
             const parents = [
-                ...template.assetHeaderAccountOptions,
-                ...template.liabilityHeaderAccountOptions,
-                ...template.equityHeaderAccountOptions,
-                ...template.incomeHeaderAccountOptions,
-                ...template.expenseHeaderAccountOptions,
+                ...template.assetHeaderAccountOptions ?? [],
+                ...template.liabilityHeaderAccountOptions ?? [],
+                ...template.equityHeaderAccountOptions ?? [],
+                ...template.incomeHeaderAccountOptions ?? [],
+                ...template.expenseHeaderAccountOptions ?? [],
             ];
             this.parentOptions.set(parents.map(a => ({ id: a.id, value: a.name })));
         });
@@ -119,12 +119,14 @@ export class GLAccountsPage {
     createAccount() {
         if (this.createForm.invalid) return;
 
-        const dto = this.createForm.getRawValue();
+        const dto: GLAccountCreateDto = this.createForm.getRawValue();
+        if (!dto.parentId) delete dto.parentId;
+        if (!dto.tagId) delete dto.tagId;
 
         this.glService.createAccount(dto).subscribe({
             next: () => this.createForm.reset({
                 name: "", glCode: "", description: "", manualEntriesAllowed: true,
-                typeId: 0, usageId: 0, parentId: 0, tagId: 0
+                type: 0, usage: 0, parentId: 0, tagId: 0
             }),
             error: (err) => this.error.set(err.message || "Failed to create account"),
         });

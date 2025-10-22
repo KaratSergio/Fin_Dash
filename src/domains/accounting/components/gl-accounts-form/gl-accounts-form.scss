@@ -1,27 +1,20 @@
 .create-account {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    // gap: 1rem;
     margin: 1rem 0;
-    padding: 0 0.5rem;
-
-    .name-input {
-        flex: 0.25;
-    }
-
-    .code-input {
-        flex: 0.15;
-    }
-
-    .desc-input {
-        flex: 1;
-    }
 
     mat-checkbox {
         flex: 0.3;
     }
 
+    .desc-input {
+        grid-column: 1 / -1;
+    }
+
     button {
-        flex: 0.2;
+        grid-column: 1 / -1;
+        justify-self: start;
+        margin: 1rem 0 0 0.5rem;
     }
 }

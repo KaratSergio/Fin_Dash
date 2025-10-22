@@ -30,19 +30,4 @@ export class GLAccountsForm {
     @Input() tagOptions: { id: number, value: string }[] = [];
 
     @Output() create = new EventEmitter<GLAccount>();
-
-    ngOnChanges(changes: any) {
-        if (changes['typeOptions']) {
-            console.log('[GLAccountsForm] typeOptions:', this.typeOptions);
-        }
-        if (changes['usageOptions']) {
-            console.log('[GLAccountsForm] usageOptions:', this.usageOptions);
-        }
-        if (changes['parentOptions']) {
-            console.log('[GLAccountsForm] parentOptions:', this.parentOptions);
-        }
-        if (changes['tagOptions']) {
-            console.log('[GLAccountsForm] tagOptions:', this.tagOptions);
-        }
-    }
 }

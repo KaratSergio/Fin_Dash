@@ -5,10 +5,11 @@ export interface GLAccountCreateDto {
     glCode: string;
     description: string;
     manualEntriesAllowed: boolean;
-    typeId: number;
-    usageId: number;
-    parentId: number;
-    tagId: number;
+    type: number;
+    usage: number;
+
+    parentId?: number;
+    tagId?: number;
 }
 
 export interface GLAccountUpdateDto extends Partial<GLAccountCreateDto> { }

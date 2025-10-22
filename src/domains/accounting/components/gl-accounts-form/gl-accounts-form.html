@@ -1,27 +1,18 @@
 <form [formGroup]="form" (ngSubmit)="create.emit()" class="create-account">
-    <mat-form-field appearance="fill" class="name-input">
+    <mat-form-field appearance="fill">
         <mat-label>Account Name</mat-label>
         <input matInput formControlName="name" />
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="code-input">
+    <mat-form-field appearance="fill">
         <mat-label>GL Code</mat-label>
         <input matInput formControlName="glCode" />
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="desc-input">
-        <mat-label>Description</mat-label>
-        <input matInput formControlName="description" />
-    </mat-form-field>
-
-    <mat-checkbox formControlName="manualEntriesAllowed">
-        Manual Entries Allowed
-    </mat-checkbox>
-
     <!-- Type Select -->
     <mat-form-field appearance="fill">
         <mat-label>Account Type</mat-label>
-        <mat-select formControlName="typeId">
+        <mat-select formControlName="type">
             @for (type of typeOptions ; track type.id )
             {<mat-option [value]="type.id">{{ type.value }}</mat-option>}
         </mat-select>
@@ -30,7 +21,7 @@
     <!-- Usage Select -->
     <mat-form-field appearance="fill">
         <mat-label>Account Usage</mat-label>
-        <mat-select formControlName="usageId">
+        <mat-select formControlName="usage">
             @for (u of usageOptions; track u.id)
             {<mat-option [value]="u.id">{{ u.value }}</mat-option>}
         </mat-select>
@@ -52,6 +43,15 @@
             @for (tag of tagOptions; track tag.id)
             {<mat-option [value]="tag.id">{{ tag.value }}</mat-option>}
         </mat-select>
+    </mat-form-field>
+
+    <!-- <mat-checkbox formControlName="manualEntriesAllowed">
+        Manual Entries Allowed
+    </mat-checkbox> -->
+
+    <mat-form-field appearance="fill" class="desc-input">
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description" />
     </mat-form-field>
 
     <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">

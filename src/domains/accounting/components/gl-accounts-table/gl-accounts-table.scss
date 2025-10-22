@@ -2,11 +2,32 @@
     table {
         width: 100%;
         border-collapse: collapse;
+        table-layout: fixed;
 
         th,
         td {
             padding: 0.25rem 0.5rem;
             border: 1px solid #cccccc86;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 160px;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 80px;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 140px;
+        }
+
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 140px;
         }
 
         input {
