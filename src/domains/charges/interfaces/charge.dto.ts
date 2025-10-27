@@ -1,6 +1,6 @@
 import { FormControl } from "@angular/forms";
 
-interface ChargeBaseFields {
+export interface ChargeBaseFields {
     name: string;
     amount: number;
     currencyCode: string;

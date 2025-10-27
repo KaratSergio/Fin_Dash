@@ -1,8 +1,9 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, catchError, of } from 'rxjs';
-import { Charge, ChargeTemplate } from '../interfaces/charge.interface';
-import { ChargeCreateDto, ChargeUpdateDto } from '../interfaces/charge.dto';
+import { firstValueFrom } from 'rxjs';
+import { Charge, ChargeTemplate, } from '../interfaces/charge.interface';
+import { ChargeCreateDto, ChargeUpdateDto, ChargeBaseFields } from '../interfaces/charge.dto';
+import { handleError, AppError } from '@core/utils/error'
 
 @Injectable({ providedIn: 'root' })
 export class ChargesService {
@@ -11,25 +12,20 @@ export class ChargesService {
 
     charges = signal<Charge[]>([]);
     loading = signal(false);
-    error = signal<string | null>(null);
-
-    // Fetch all charges
-    private fetchCharges() {
-        this.loading.set(true);
-        this.http
-            .get<Charge[]>(this.baseUrl)
-            .pipe(tap(list => this.charges.set(list)),
-                catchError(err => {
-                    this.error.set(err.message || 'Failed to load charges');
-                    return of([]);
-                }),
-                tap(() => this.loading.set(false))
-            ).subscribe();
-    }
+    error = signal<AppError | null>(null);
 
     // Get charges list
-    getCharges() {
-        this.fetchCharges();
+    async getCharges() {
+        try {
+            this.loading.set(true);
+            const list = await firstValueFrom(this.http.get<Charge[]>(this.baseUrl));
+            this.charges.set(list);
+        } catch (err) {
+            this.error.set(handleError(err, 'Failed to load charges'))
+            this.charges.set([]);
+        } finally {
+            this.loading.set(false);
+        }
     }
 
     // Get single charge
@@ -39,7 +35,7 @@ export class ChargesService {
     }
 
     // Create charge
-    createCharge(data: { name: string; amount: number; currencyCode: string; penalty: boolean }) {
+    async createCharge(data: Pick<ChargeBaseFields, 'name' | 'amount' | 'currencyCode' | 'penalty'>) {
         const payload: ChargeCreateDto = {
             active: true,
             chargeAppliesTo: 1, // Loans
@@ -51,13 +47,12 @@ export class ChargesService {
             ...data
             // taxGroupId: 1
         };
-        return this.http
-            .post<Charge>(this.baseUrl, payload)
-            .pipe(tap(() => this.fetchCharges()));
+        await firstValueFrom(this.http.post<Charge>(this.baseUrl, payload));
+        await this.getCharges();
     }
 
     // Update charge
-    updateCharge(chargeId: number, data: ChargeUpdateDto) {
+    async updateCharge(chargeId: number, data: ChargeUpdateDto) {
         const payload: ChargeUpdateDto = {
             active: true,
             chargeAppliesTo: 1,
@@ -69,21 +64,18 @@ export class ChargesService {
             ...data
             // taxGroupId: 1
         };
-        return this.http
-            .put<Charge>(`${this.baseUrl}/${chargeId}`, payload)
-            .pipe(tap(() => this.fetchCharges()));
+        await firstValueFrom(this.http.put<Charge>(`${this.baseUrl}/${chargeId}`, payload));
+        await this.getCharges();
     }
 
     // Delete charge
-    deleteCharge(chargeId: number) {
-        return this.http
-            .delete<void>(`${this.baseUrl}/${chargeId}`)
-            .pipe(tap(() => this.fetchCharges()));
+    async deleteCharge(chargeId: number) {
+        await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${chargeId}`));
+        await this.getCharges();
     }
 
     // Get template for creating charge
     getChargeTemplate() {
-        return this.http
-            .get<ChargeTemplate>(`${this.baseUrl}/template`);
+        return this.http.get<ChargeTemplate>(`${this.baseUrl}/template`);
     }
 }

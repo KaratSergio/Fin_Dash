@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@core/auth/auth.service';
-import { handleError, AuthError } from '@core/utils/error';
+import { handleError, AppError } from '@core/utils/error';
 
 @Component({
   selector: 'app-logout',
@@ -29,7 +29,7 @@ export class Logout {
   private router = inject(Router);
 
   loading = signal(false);
-  error = signal<AuthError | null>(null);
+  error = signal<AppError | null>(null);
 
   async logout() {
     this.loading.set(true);
