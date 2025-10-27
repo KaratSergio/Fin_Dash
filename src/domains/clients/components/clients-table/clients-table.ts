@@ -7,7 +7,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { NgxMaskDirective } from "ngx-mask";
 
-import { Client } from "../../services/clients.service";
+import { Client } from "@domains/clients/Interfaces/client.interface";
 import { OfficesService } from "@domains/offices/services/offices.service";
 
 @Component({

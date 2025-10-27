@@ -1,20 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-
-export interface Client {
-    id: number;                // Client ID
-    externalId: string;        // External system ID (optional)
-    firstname: string;         // First name of the client
-    lastname: string;          // Last name of the client
-    displayName: string;       // Full display name (optional)
-    mobileNo: string;          // Mobile phone number (optional)
-    emailAddress: string;      // Email address (optional)
-    officeId: number;          // Office ID the client belongs to
-    officeName: string;        // Office name the client belongs to (optional)
-    active: boolean;           // Is client active? (optional)
-    activationDate: string;    // Date when client was activated (yyyy-MM-dd) (optional)
-}
+import { Client } from '../Interfaces/client.interface';
+import {
+    CreateClientDto, UpdateClientDto,
+    TransferClientDto, ClientQueryParams, ClientsResponse
+} from '../Interfaces/client.dto';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
@@ -25,9 +16,8 @@ export class ClientsService {
     loading = signal(false);
     error = signal<string | null>(null);
 
-    // CRUD
     // Fetch Clients
-    private fetchClients(params?: { offset?: number; limit?: number; orderBy?: string; sortOrder?: 'ASC' | 'DESC' }) {
+    private fetchClients(params?: ClientQueryParams) {
         this.loading.set(true);
 
         let httpParams = new HttpParams();
@@ -39,7 +29,7 @@ export class ClientsService {
         }
 
         this.http
-            .get<{ pageItems: Client[]; totalFilteredRecords: number }>(this.baseUrl, { params: httpParams })
+            .get<ClientsResponse>(this.baseUrl, { params: httpParams })
             .pipe(tap(res => this.clients.set(res.pageItems)),
 
                 catchError(err => {
@@ -51,7 +41,7 @@ export class ClientsService {
             ).subscribe();
     }
 
-
+    // CRUD
     // Get all clients
     getClients() {
         this.fetchClients();
@@ -64,22 +54,14 @@ export class ClientsService {
     }
 
     // Create client
-    createClient(client: Partial<Client>) {
+    createClient(client: CreateClientDto) {
         return this.http
             .post<Client>(this.baseUrl, client)
             .pipe(tap(() => this.fetchClients()));
     }
 
     // Update client base data by ID
-    updateClient(clientId: number, data: any) {
-        const payload = {
-            firstname: data.firstname,
-            lastname: data.lastname,
-            emailAddress: data.emailAddress,
-            mobileNo: data.mobileNo,
-            externalId: data.externalId,
-        };
-
+    updateClient(clientId: number, payload: UpdateClientDto) {
         return this.http
             .put(`${this.baseUrl}/${clientId}`, payload)
             .pipe(tap(() => this.fetchClients()));
@@ -97,7 +79,7 @@ export class ClientsService {
     // submitting a transfer request (transferClientPropose)
     // and accepting the transfer request. (transferClientAccept)
     transferClientPropose(clientId: number, destinationOfficeId: number) {
-        const payload = {
+        const payload: TransferClientDto = {
             destinationOfficeId,
             transferDate: new Date().toISOString().split("T")[0],
             dateFormat: "yyyy-MM-dd",
@@ -110,7 +92,7 @@ export class ClientsService {
     }
 
     transferClientAccept(clientId: number, destinationOfficeId: number) {
-        const payload = {
+        const payload: TransferClientDto = {
             destinationOfficeId,
             transferDate: new Date().toISOString().split("T")[0],
             dateFormat: "yyyy-MM-dd",

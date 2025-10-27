@@ -3,7 +3,12 @@ import { FormBuilder, FormControl } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { provideNgxMask } from 'ngx-mask';
 
-import { ClientsService, Client } from "@domains/clients/services/clients.service";
+import { ClientsService } from "@domains/clients/services/clients.service";
+import { Client } from "@domains/clients/Interfaces/client.interface";
+import {
+    CreateClientDto, UpdateClientDto,
+    TransferClientDto, ClientQueryParams, ClientsResponse
+} from '@domains/clients/Interfaces/client.dto';
 import { OfficesService } from "@domains/offices/services/offices.service";
 import { FormUtils } from "@core/utils/form";
 
@@ -84,19 +89,22 @@ export class ClientsPage {
     createClient() {
         if (this.createClientForm.invalid) return;
         const f = this.createClientForm.value;
-        const payload = {
-            firstname: f.firstname,
-            lastname: f.lastname,
-            emailAddress: f.emailAddress,
-            mobileNo: f.mobileNo || undefined,
+        const payload: CreateClientDto = {
+            firstname: f.firstname ?? '',
+            lastname: f.lastname ?? '',
+            emailAddress: f.emailAddress ?? '',
+            mobileNo: f.mobileNo ?? '',
             officeId: Number(f.officeId),
-            externalId: f.externalId || undefined,
+            externalId: f.externalId ?? '',
             legalFormId: Number(f.legalFormId),
             active: true,
             activationDate: new Date().toISOString().split("T")[0],
             dateFormat: "yyyy-MM-dd",
             locale: "en"
         };
+        console.log('====================================');
+        console.log('client payload', payload);
+        console.log('====================================');
         this.clientsService.createClient(payload).subscribe({
             next: () => this.createClientForm.reset(),
             error: err => this.error.set(err.message || "Failed to create client")
@@ -106,12 +114,12 @@ export class ClientsPage {
     updateClient(client: Client) {
         const controls = this.clientControls[client.id];
         if (!controls) return;
-        const payload = {
-            firstname: controls.firstname.value,
-            lastname: controls.lastname.value,
-            emailAddress: controls.emailAddress.value,
-            mobileNo: controls.mobileNo.value,
-            externalId: client.externalId,
+        const payload: UpdateClientDto = {
+            firstname: controls.firstname.value ?? '',
+            lastname: controls.lastname.value ?? '',
+            emailAddress: controls.emailAddress.value ?? '',
+            mobileNo: controls.mobileNo.value ?? '',
+            externalId: client.externalId ?? '',
         };
         this.clientsService.updateClient(client.id, payload).subscribe({
             error: err => this.error.set(err.message || "Failed to update client")

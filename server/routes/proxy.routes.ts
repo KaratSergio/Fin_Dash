@@ -6,7 +6,7 @@ export const proxyRoutes = Router();
 
 proxyRoutes.use(async (req, res) => {
     try {
-        const token = req.session?.fineractToken;
+        const token = req.session.fineractToken;
         if (!token) return res.status(401).json({ message: 'Not authenticated' });
 
         const body = ['POST', 'PUT', 'PATCH'].includes(req.method)

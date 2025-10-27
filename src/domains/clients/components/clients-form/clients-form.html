@@ -22,9 +22,8 @@
     <mat-form-field appearance="fill">
         <mat-label>Office</mat-label>
         <mat-select formControlName="officeId">
-            @for (office of offices; track office.id) {
-            <mat-option [value]="office.id">{{ office.name }}</mat-option>
-            }
+            @for (office of offices; track office.id)
+            {<mat-option [value]="office.id">{{ office.name }}</mat-option>}
         </mat-select>
     </mat-form-field>
 

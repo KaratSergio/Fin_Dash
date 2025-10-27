@@ -23,9 +23,8 @@
                 <td>
                     <mat-form-field appearance="outline" class="table-field-select">
                         <mat-select [formControl]="clientControls[client.id].office">
-                            @for (office of officesService.offices(); track office.id) {
-                            <mat-option [value]="office.id">{{ office.name }}</mat-option>
-                            }
+                            @for (office of officesService.offices(); track office.id)
+                            {<mat-option [value]="office.id">{{ office.name }}</mat-option>}
                         </mat-select>
                     </mat-form-field>
                 </td>

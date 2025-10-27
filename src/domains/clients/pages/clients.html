@@ -3,20 +3,16 @@
 
     @if (loading()) {
     <div>Loading...</div>
-    } @else {
-    @if (error()) {
+    } @else if (error()){
     <div class="error">{{ error() }}</div>
     } @else {
-
     <h2 class="title">Create New Client</h2>
-    <app-client-form [form]="createClientForm" [offices]="officesService.offices()" (submitForm)="createClient()">
+    <app-client-form [form]="createClientForm" [offices]="officesService.offices()" (create)="createClient()">
     </app-client-form>
 
     <h2 class="title">List of Clients</h2>
     <app-client-table [clients]="clients()" [clientControls]="clientControls" [officesService]="officesService"
         (update)="updateClient($event)" (transfer)="transferClient($event)" (delete)="deleteClient($event)">
     </app-client-table>
-
-    }
     }
 </div>
