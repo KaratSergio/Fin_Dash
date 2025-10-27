@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { ReactiveFormsModule, FormGroup } from "@angular/forms";
 import { CurrencyOption } from "@domains/currencies/services/currencies.service";
+import { Charge } from "@domains/charges/interfaces/charge.interface";
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,5 +24,5 @@ export class ChargesForm {
     @Input() form!: FormGroup;
     @Input() currencies: CurrencyOption[] = [];
 
-    @Output() create = new EventEmitter<void>();
+    @Output() create = new EventEmitter<Charge>();
 }

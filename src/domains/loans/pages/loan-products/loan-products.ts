@@ -49,7 +49,7 @@ export class LoanProductsPage {
     // Product Editing Form
     productForm = this.fb.group({
         name: this.utils.requiredText(),
-        shortName: this.utils.requiredText('', 4),
+        shortName: this.utils.requiredText<string>('', 4),
         principal: this.utils.requiredNumber(),
         interestRatePerPeriod: this.utils.requiredNumber(),
         // numberOfRepayments: this.utils.requiredNumber(),

@@ -1,50 +1,8 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of } from 'rxjs';
-
-export interface Charge {
-    id: number;
-    name: string;
-    chargeTimeType: { id: number; value: string };
-    chargeCalculationType?: { id: number; value: string };
-    currency?: {
-        code: string;
-        name: string;
-        displaySymbol?: string;
-    };
-    amount: number;
-    penalty: boolean;
-    status: string;
-    chargeType: 'FEE' | 'PENALTY';
-}
-
-export interface ChargePayload {
-    active: boolean;
-    amount: number;
-    chargeAppliesTo: number;
-    chargeCalculationType: number;
-    chargePaymentMode: number;
-    chargeTimeType: number;
-    currencyCode: string;
-    enablePaymentType: boolean;
-    feeFrequency?: string;
-    feeInterval?: string;
-    feeOnMonthDay?: string;
-    locale: string;
-    maxCap?: number;
-    minCap?: number;
-    monthDayFormat?: string;
-    name: string;
-    paymentTypeId?: number;
-    penalty: boolean;
-    taxGroupId?: number;
-}
-
-export interface ChargeTemplate {
-    chargeTimeTypeOptions: Array<{ id: number; value: string }>;
-    chargeCalculationTypeOptions: Array<{ id: number; value: string }>;
-    currencyOptions: Array<{ code: string; name: string }>;
-}
+import { Charge, ChargeTemplate } from '../interfaces/charge.interface';
+import { ChargeCreateDto, ChargeUpdateDto } from '../interfaces/charge.dto';
 
 @Injectable({ providedIn: 'root' })
 export class ChargesService {
@@ -82,19 +40,16 @@ export class ChargesService {
 
     // Create charge
     createCharge(data: { name: string; amount: number; currencyCode: string; penalty: boolean }) {
-        const payload: ChargePayload = {
+        const payload: ChargeCreateDto = {
             active: true,
-            amount: data.amount,
             chargeAppliesTo: 1, // Loans
             chargeCalculationType: 1,
             chargePaymentMode: 1,
             chargeTimeType: 1,
-            currencyCode: data.currencyCode,
             enablePaymentType: true,
             locale: 'en',
-            name: data.name,
-            penalty: data.penalty
-            // taxGroupId: 1;
+            ...data
+            // taxGroupId: 1
         };
         return this.http
             .post<Charge>(this.baseUrl, payload)
@@ -102,20 +57,17 @@ export class ChargesService {
     }
 
     // Update charge
-    updateCharge(chargeId: number, data: { name: string; amount: number; currencyCode: string; penalty: boolean }) {
-        const payload: ChargePayload = {
+    updateCharge(chargeId: number, data: ChargeUpdateDto) {
+        const payload: ChargeUpdateDto = {
             active: true,
-            amount: data.amount,
             chargeAppliesTo: 1,
             chargeCalculationType: 1,
             chargePaymentMode: 1,
             chargeTimeType: 1,
-            currencyCode: data.currencyCode,
             enablePaymentType: true,
             locale: 'en',
-            name: data.name,
-            penalty: data.penalty
-            // taxGroupId: 1;
+            ...data
+            // taxGroupId: 1
         };
         return this.http
             .put<Charge>(`${this.baseUrl}/${chargeId}`, payload)

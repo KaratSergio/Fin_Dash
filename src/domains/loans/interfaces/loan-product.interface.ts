@@ -19,7 +19,7 @@ export interface Status {
 export interface LoanProduct {
     id: number;
     name: string;
-    shortName?: string;
+    shortName: string;
     description?: string;
     principal?: number;
     interestRatePerPeriod?: number;
