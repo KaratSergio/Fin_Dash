@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { CurrencyOption } from '@domains/currencies/services/currencies.service';
+import { CurrencyOption } from '@domains/currencies/interfaces/currency.interface';
 import { Charge } from '@domains/charges/interfaces/charge.interface';
 
 import { MatFormFieldModule } from '@angular/material/form-field';

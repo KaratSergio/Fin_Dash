@@ -1,81 +1,66 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, catchError, of } from 'rxjs';
-
-export interface CurrencyOption {
-  code: string; // Currency code, e.g., "USD"
-  decimalPlaces: number; // Number of decimal places
-  displayLabel: string; // Currency label with symbol
-  displaySymbol: string; // Symbol, e.g., "$"
-  inMultiplesOf: number; // Multiples for transactions
-  name: string; // Full name of the currency
-  nameCode: string; // Name code, e.g., "currency.USD"
-}
-
-export interface CurrencyConfigResponse {
-  currencyOptions: CurrencyOption[]; // All available currencies
-  selectedCurrencyOptions: CurrencyOption[]; // Permitted currencies
-}
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { tap, catchError, of, startWith, switchMap } from 'rxjs';
+import { AppError } from '@core/utils/error';
+import { CurrencyOption, CurrencyConfigResponse } from '../interfaces/currency.interface';
 
 @Injectable({ providedIn: 'root' })
 export class CurrenciesService {
   private http = inject(HttpClient);
   private baseUrl = 'api/fineract/currencies';
 
-  allCurrencies = signal<CurrencyOption[]>([]);
-  selectedCurrencies = signal<CurrencyOption[]>([]);
-  loading = signal(false);
-  error = signal<string | null>(null);
+  readonly allCurrencies = signal<CurrencyOption[]>([]);
+  readonly selectedCurrencies = signal<CurrencyOption[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<AppError | null>(null);
+  private readonly reload = signal(0);
 
-  // Fetch currency configuration with optional fields parameter
-  private fetchCurrencies(fields?: string) {
-    this.loading.set(true);
+  // automatically fetch currencies whenever reload changes
+  private currenciesLoader = toSignal(
+    toObservable(this.reload).pipe(
+      startWith(0),
+      tap(() => {
+        this.loading.set(true);
+        this.error.set(null);
+      }),
+      switchMap(() =>
+        this.http.get<CurrencyConfigResponse>(this.baseUrl).pipe(
+          tap((res) => {
+            this.allCurrencies.set(res.currencyOptions || []);
+            this.selectedCurrencies.set(res.selectedCurrencyOptions || []);
+          }),
+          catchError((err) => {
+            this.error.set(err.message || 'Failed to load currencies');
+            return of({ currencyOptions: [], selectedCurrencyOptions: [] });
+          }),
+        )
+      ),
+      tap(() => this.loading.set(false)),
+    ),
+    { initialValue: null }
+  );
 
-    // Add fields query param if provided
-    let url = this.baseUrl;
-    if (fields) {
-      url += `?fields=${fields}`;
-    }
+  // log errors
+  private logErrors = effect(() => {
+    const err = this.error();
+    if (err) console.warn('[CurrenciesService]', err);
+  });
 
-    this.http
-      .get<CurrencyConfigResponse>(url)
-      .pipe(
-        tap((res) => {
-          this.allCurrencies.set(res.currencyOptions || []);
-          this.selectedCurrencies.set(res.selectedCurrencyOptions || []);
-        }),
-        catchError((err) => {
-          this.error.set(err.message || 'Failed to load currencies');
-          return of({ currencyOptions: [], selectedCurrencyOptions: [] });
-        }),
-        tap(() => this.loading.set(false)),
-      )
-      .subscribe();
+  // trigger reload
+  refresh() {
+    this.reload.update((n) => n + 1);
   }
 
-  // CRUD
-  // Public method to refresh currencies (optionally only selected)
-  getCurrencies(onlySelected = false) {
-    if (onlySelected) this.fetchCurrencies('selectedCurrencyOptions');
-    else this.fetchCurrencies();
-  }
-
-  // Update permitted currencies (send array of currency codes)
+  // update permitted currencies
   updateCurrencies(codes: string[]) {
     const payload = { currencies: codes };
     return this.http.put(this.baseUrl, payload).pipe(
-      tap(() => this.fetchCurrencies()),
+      tap(() => this.refresh()), // automatically reload after update
       catchError((err) => {
         this.error.set(err.message || 'Failed to update currencies');
         return of(null);
-      }),
+      })
     );
   }
 }
-
-// in use
-// Get all currencies
-// currenciesService.getCurrencies();
-
-// Get only selected currencies
-// currenciesService.getCurrencies(true);

@@ -46,7 +46,7 @@ export class ChargesPage {
 
   // Load currencies & charges
   private loadData = effect(() => {
-    this.currenciesService.getCurrencies();
+    this.currenciesService.refresh();
     this.chargesService.refresh();
   });
 
