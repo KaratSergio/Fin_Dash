@@ -2,13 +2,12 @@ import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith } from 'rxjs';
+import { AppError } from '@core/utils/error';
 import { GLAccount } from '../interfaces/gl-account.interface';
 import {
-  GLAccountCreateDto,
-  GLAccountUpdateDto,
+  GLAccountCreateDto,GLAccountUpdateDto,
   GLAccountsTemplateResponseDto,
 } from '../interfaces/gl-account.dto';
-import { AppError } from '@core/utils/error';
 
 @Injectable({ providedIn: 'root' })
 export class GLAccountsService {

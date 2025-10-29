@@ -47,7 +47,7 @@ export class ChargesPage {
   // Load currencies & charges
   private loadData = effect(() => {
     this.currenciesService.getCurrencies();
-    this.chargesService.getCharges();
+    this.chargesService.refresh();
   });
 
   // Sync charge controls
@@ -94,26 +94,27 @@ export class ChargesPage {
   }
 
   // Methods
-  async createCharge() {
+  createCharge() {
     if (this.createChargeForm.invalid) return;
     const formValue = this.createChargeForm.value as ChargeCreateDto;
 
-    try {
-      await this.chargesService.createCharge(formValue);
-      this.createChargeForm.reset({
-        name: '',
-        amount: 0,
-        currencyCode: '',
-        penalty: false,
-        chargeType: 'FEE',
-      });
-    } catch (err) {
-      const error = handleError(err, 'Failed to create charge');
-      this.error.set(error);
-    }
+    this.chargesService.createCharge(formValue).subscribe({
+      next: () => {
+        this.createChargeForm.reset({
+          name: '',
+          amount: 0,
+          currencyCode: '',
+          penalty: false,
+          chargeType: 'FEE',
+        });
+      },
+      error: (err) => {
+        this.error.set(handleError(err, 'Failed to create charge'));
+      },
+    });
   }
 
-  async updateCharge(chargeId: number) {
+  updateCharge(chargeId: number) {
     const controls = this.chargeControls[chargeId];
     if (!controls) return;
     const payload: ChargeUpdateDto = {
@@ -122,20 +123,19 @@ export class ChargesPage {
       currencyCode: controls.currencyCode.value,
       penalty: controls.penalty.value,
     };
-    try {
-      await this.chargesService.updateCharge(chargeId, payload);
-    } catch (err) {
-      const error = handleError(err, 'Failed to update charge');
-      this.error.set(error);
-    }
+
+    this.chargesService.updateCharge(chargeId, payload).subscribe({
+      error: (err) => {
+        this.error.set(handleError(err, 'Failed to update charge'));
+      },
+    });
   }
 
-  async deleteCharge(chargeId: number) {
-    try {
-      await this.chargesService.deleteCharge(chargeId);
-    } catch (err) {
-      const error = handleError(err, 'Failed to delete charge');
-      this.error.set(error);
-    }
+  deleteCharge(chargeId: number) {
+    this.chargesService.deleteCharge(chargeId).subscribe({
+      error: (err) => {
+        this.error.set(handleError(err, 'Failed to delete charge'));
+      },
+    });
   }
 }
