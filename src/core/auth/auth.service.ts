@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { FineractAuthResponse } from '@server/types/api-types';
-import { Permission } from '@domains/roles/services/permission.service';
+import { Permission } from '@domains/roles/interfaces/permission.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

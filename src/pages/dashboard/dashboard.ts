@@ -22,6 +22,6 @@ export class Dashboard {
 
   init = (() => {
     // queueMicrotask(() => this.currenciesService.getCurrencies());
-    queueMicrotask(() => this.permissionsService.getPermissions());
+    queueMicrotask(() => this.permissionsService.refresh());
   })();
 }

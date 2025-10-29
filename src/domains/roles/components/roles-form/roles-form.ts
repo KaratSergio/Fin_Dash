@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
-import { Role } from '@domains/roles/services/roles.service';
+import { Role } from '@domains/roles/interfaces/role.interface';
 
 @Component({
   selector: 'app-roles-form',

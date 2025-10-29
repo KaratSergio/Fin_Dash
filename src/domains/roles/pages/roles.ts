@@ -2,7 +2,8 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { FormUtils } from '@core/utils/form';
-import { RolesService, Role } from '@domains/roles/services/roles.service';
+import { RolesService } from '@domains/roles/services/roles.service';
+import { Role } from '@domains/roles/interfaces/role.interface';
 
 import { RolesForm } from '../components/roles-form/roles-form';
 import { RolesTable } from '../components/roles-table/roles-table';
@@ -21,7 +22,7 @@ export class RolesAdminPage {
 
   roles = this.roleService.roles;
   loading = this.roleService.loading;
-  error = signal<string | null>(null);
+  error = this.roleService.error;
 
   // Form for creating role
   createRoleForm = this.fb.group({
@@ -39,7 +40,7 @@ export class RolesAdminPage {
   > = {};
 
   // Load roles initially
-  private loadRoles = effect(() => this.roleService.getRoles());
+  private loadRoles = effect(() => this.roleService.refresh());
 
   // Sync role controls
   private syncControls = effect(() => {
@@ -60,10 +61,7 @@ export class RolesAdminPage {
   // Methods
   createRole() {
     if (this.createRoleForm.invalid) return;
-    this.roleService.createRole(this.createRoleForm.value).subscribe({
-      next: () => this.createRoleForm.reset({ name: '', description: '' }),
-      error: (err) => this.error.set(err.message || 'Failed to create role'),
-    });
+    this.roleService.createRole(this.createRoleForm.value)
   }
 
   updateRole(roleId: number) {
@@ -75,22 +73,16 @@ export class RolesAdminPage {
       description: controls.description.value,
     };
 
-    this.roleService.updateRole(roleId, payload as Role).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to update role'),
-    });
+    this.roleService.updateRole(roleId, payload as Role)
   }
 
   deleteRole(roleId: number) {
-    this.roleService.deleteRole(roleId).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to delete role'),
-    });
+    this.roleService.deleteRole(roleId)
   }
 
   // actions
   toggleRole(role: Role) {
     const action = role.disabled ? this.roleService.enableRole : this.roleService.disableRole;
-    action.call(this.roleService, role.id).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to toggle role'),
-    });
+    action.call(this.roleService, role.id)
   }
 }

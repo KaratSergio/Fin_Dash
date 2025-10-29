@@ -1,4 +1,4 @@
-import { Role } from '@domains/roles/services/roles.service';
+import { Role } from '@domains/roles/interfaces/role.interface';
 
 export interface AppUser {
   id: number; // User ID

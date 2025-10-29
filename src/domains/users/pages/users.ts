@@ -59,7 +59,7 @@ export class UsersAdminPage {
   // Load users, roles, offices
   private loadData = effect(() => {
     this.usersService.getUsers();
-    this.rolesService.getRoles();
+    this.rolesService.refresh();
     this.officesService.getOffices();
   });
 
