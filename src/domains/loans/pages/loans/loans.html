@@ -1,25 +1,38 @@
 <div class="loans">
-    <h1>Loans</h1>
+  <h1>Loans</h1>
 
-    @if(loading()) {
+  @if (loading()) {
     <div>Loading...</div>
-    } @else if (error()) {
+  } @else if (error()) {
     <div class="error">{{ error() }}</div>
-    } @else {
+  } @else {
     <h2 class="title">Create New Loan</h2>
-    <app-loan-form [loanCreateForm]="loanCreateForm" [clients]="clients()" [products]="loanProducts()"
-        (submitForm)="createLoan()" (productSelected)="selectedLoanProduct.set($event)">
+    <app-loan-form
+      [loanCreateForm]="loanCreateForm"
+      [clients]="clients()"
+      [products]="loanProducts()"
+      (submitForm)="createLoan()"
+      (productSelected)="selectedLoanProduct.set($event)"
+    >
     </app-loan-form>
 
     <h2 class="title">List Of Loans</h2>
-    <app-loan-table [loans]="loans()" (delete)="deleteLoan($event)" [activeLoanId]="selectedLoanId()"
-        (toggle)="toggleLoan($event)">
+    <app-loan-table
+      [loans]="loans()"
+      (delete)="deleteLoan($event)"
+      [activeLoanId]="selectedLoanId()"
+      (toggle)="toggleLoan($event)"
+    >
     </app-loan-table>
 
-    @if(selectedLoanId()) {
-    <app-loan-details [loanDetailsForm]="loanDetailsForm" [loanId]="selectedLoanId()!" (update)="updateLoan()"
-        (cancel)="cancelEdit()">
-    </app-loan-details>
+    @if (selectedLoanId()) {
+      <app-loan-details
+        [loanDetailsForm]="loanDetailsForm"
+        [loanId]="selectedLoanId()!"
+        (update)="updateLoan()"
+        (cancel)="cancelEdit()"
+      >
+      </app-loan-details>
     }
-    }
+  }
 </div>

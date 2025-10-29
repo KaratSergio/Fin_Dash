@@ -1,28 +1,28 @@
 export interface CreateLoanDto {
-    clientId: number;
-    productId: number;
-    principal: number;
+  clientId: number;
+  productId: number;
+  principal: number;
+  expectedDisbursementDate: string;
+  submittedOnDate: string;
+
+  loanTermFrequency: number;
+  loanTermFrequencyType: number;
+  numberOfRepayments: number;
+  repaymentEvery: number;
+  repaymentFrequencyType: number;
+  interestType: number;
+  interestCalculationPeriodType: number;
+  amortizationType: number;
+  interestRatePerPeriod: number;
+  transactionProcessingStrategyCode: string;
+  maxOutstandingLoanBalance: number;
+  loanType: string;
+
+  disbursementData: {
     expectedDisbursementDate: string;
-    submittedOnDate: string;
+    principal: number;
+  }[];
 
-    loanTermFrequency: number;
-    loanTermFrequencyType: number;
-    numberOfRepayments: number;
-    repaymentEvery: number;
-    repaymentFrequencyType: number;
-    interestType: number;
-    interestCalculationPeriodType: number;
-    amortizationType: number;
-    interestRatePerPeriod: number;
-    transactionProcessingStrategyCode: string;
-    maxOutstandingLoanBalance: number;
-    loanType: string;
-
-    disbursementData: {
-        expectedDisbursementDate: string;
-        principal: number;
-    }[];
-
-    locale: string;
-    dateFormat: string;
+  locale: string;
+  dateFormat: string;
 }

@@ -26,9 +26,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/shared/styles/global.scss"
-            ],
+            "styles": ["src/shared/styles/global.scss"],
             "server": "src/app/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -85,9 +83,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/shared/styles/global.scss"
-            ]
+            "styles": ["src/shared/styles/global.scss"]
           }
         }
       }

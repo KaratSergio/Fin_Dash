@@ -11,44 +11,48 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
 
 @Component({
-    selector: 'app-loan-form',
-    standalone: true,
-    imports: [
-        ReactiveFormsModule, MatFormFieldModule,
-        MatDatepickerModule, MatNativeDateModule,
-        MatSelectModule, MatInputModule, MatButtonModule
-    ],
-    templateUrl: './loans-form.html',
-    styleUrls: ['./loans-form.scss']
+  selector: 'app-loan-form',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
+  templateUrl: './loans-form.html',
+  styleUrls: ['./loans-form.scss'],
 })
 export class LoanForm {
-    @Input() loanCreateForm!: FormGroup;
-    @Input() products: LoanProduct[] = [];
-    @Input() clients: { id: number; firstname: string; lastname: string }[] = [];
+  @Input() loanCreateForm!: FormGroup;
+  @Input() products: LoanProduct[] = [];
+  @Input() clients: { id: number; firstname: string; lastname: string }[] = [];
 
-    @Output() submitForm = new EventEmitter<FormGroup>();
-    @Output() productSelected = new EventEmitter<LoanProduct>();
+  @Output() submitForm = new EventEmitter<FormGroup>();
+  @Output() productSelected = new EventEmitter<LoanProduct>();
 
-    onProductSelect(productId: number) {
-        const product = this.products.find(p => p.id === productId);
-        if (!product) return;
+  onProductSelect(productId: number) {
+    const product = this.products.find((p) => p.id === productId);
+    if (!product) return;
 
-        this.loanCreateForm.patchValue({
-            productId: product.id,
-            principal: product.principal ?? this.loanCreateForm.value.principal,
-            loanType: 'individual',
-            loanTermFrequency: product.numberOfRepayments,
-            loanTermFrequencyType: product.loanTermFrequencyType,
-            numberOfRepayments: product.numberOfRepayments,
-            repaymentEvery: product.repaymentEvery,
-            repaymentFrequencyType: product.repaymentFrequencyType,
-            interestType: product.interestType,
-            interestCalculationPeriodType: product.interestCalculationPeriodType,
-            amortizationType: product.amortizationType,
-            transactionProcessingStrategyCode: product.transactionProcessingStrategyCode,
-            interestRatePerPeriod: product.interestRatePerPeriod,
-        });
+    this.loanCreateForm.patchValue({
+      productId: product.id,
+      principal: product.principal ?? this.loanCreateForm.value.principal,
+      loanType: 'individual',
+      loanTermFrequency: product.numberOfRepayments,
+      loanTermFrequencyType: product.loanTermFrequencyType,
+      numberOfRepayments: product.numberOfRepayments,
+      repaymentEvery: product.repaymentEvery,
+      repaymentFrequencyType: product.repaymentFrequencyType,
+      interestType: product.interestType,
+      interestCalculationPeriodType: product.interestCalculationPeriodType,
+      amortizationType: product.amortizationType,
+      transactionProcessingStrategyCode: product.transactionProcessingStrategyCode,
+      interestRatePerPeriod: product.interestRatePerPeriod,
+    });
 
-        this.productSelected.emit(product);
-    }
+    this.productSelected.emit(product);
+  }
 }

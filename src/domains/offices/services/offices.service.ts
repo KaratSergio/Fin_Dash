@@ -9,100 +9,98 @@ import { CreateOfficeDto, UpdateOfficeDto, OfficeQueryDto } from '../interfaces/
 
 @Injectable({ providedIn: 'root' })
 export class OfficesService {
-    private http = inject(HttpClient);
-    private baseUrl = '/api/fineract/offices';
+  private http = inject(HttpClient);
+  private baseUrl = '/api/fineract/offices';
 
-    offices = signal<Office[]>([]);
-    loading = signal(false);
-    error = signal<string | null>(null);
+  offices = signal<Office[]>([]);
+  loading = signal(false);
+  error = signal<string | null>(null);
 
-    // fetch offices by params
-    private fetchOffices(params?: OfficeQueryDto) {
-        this.loading.set(true);
+  // fetch offices by params
+  private fetchOffices(params?: OfficeQueryDto) {
+    this.loading.set(true);
 
-        let httpParams = new HttpParams();
+    let httpParams = new HttpParams();
 
-        if (params) {
-            Object.entries(params).forEach(([k, v]) => {
-                if (v !== null) httpParams = httpParams.set(k, v.toString());
-            });
-        }
-
-        this.http.get<Office[]>(this.baseUrl, { params: httpParams })
-            .pipe(
-                tap(list => this.offices.set(list)),
-                catchError(err => {
-                    this.error.set(err.message || 'Failed to load offices');
-                    return of([]);
-                }),
-                tap(() => this.loading.set(false))
-            ).subscribe();
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== null) httpParams = httpParams.set(k, v.toString());
+      });
     }
 
-    // CRUD
-    // Get all offices list
-    getOffices(params?: OfficeQueryDto) {
-        this.fetchOffices(params);
-    }
+    this.http
+      .get<Office[]>(this.baseUrl, { params: httpParams })
+      .pipe(
+        tap((list) => this.offices.set(list)),
+        catchError((err) => {
+          this.error.set(err.message || 'Failed to load offices');
+          return of([]);
+        }),
+        tap(() => this.loading.set(false)),
+      )
+      .subscribe();
+  }
 
-    // Get office by ID
-    getOffice(officeId: number) {
-        return this.http.get<Office>(`${this.baseUrl}/${officeId}`);
-    }
+  // CRUD
+  // Get all offices list
+  getOffices(params?: OfficeQueryDto) {
+    this.fetchOffices(params);
+  }
 
-    // Create new office
-    createOffice(office: CreateOfficeDto) {
-        const payload = {
-            ...office,
-            openingDate: formatDateForApi(office.openingDate)
-        };
+  // Get office by ID
+  getOffice(officeId: number) {
+    return this.http.get<Office>(`${this.baseUrl}/${officeId}`);
+  }
 
-        return this.http
-            .post<Office>(this.baseUrl, payload)
-            .pipe(tap(() => this.fetchOffices()));
-    }
+  // Create new office
+  createOffice(office: CreateOfficeDto) {
+    const payload = {
+      ...office,
+      openingDate: formatDateForApi(office.openingDate),
+    };
 
-    // Update office by ID
-    updateOffice(officeId: number, office: UpdateOfficeDto) {
-        const payload: UpdateOfficeDto = {
-            ...office,
-            openingDate: office.openingDate
-                ? formatDateForApi(office.openingDate)
-                : undefined,
-            dateFormat: office.dateFormat ?? APP_DEFAULTS.DATE_FORMAT,
-            locale: office.locale ?? APP_DEFAULTS.LOCALE
-        }
+    return this.http.post<Office>(this.baseUrl, payload).pipe(tap(() => this.fetchOffices()));
+  }
 
-        return this.http
-            .put<Office>(`${this.baseUrl}/${officeId}`, payload)
-            .pipe(tap(() => this.fetchOffices()));
-    }
+  // Update office by ID
+  updateOffice(officeId: number, office: UpdateOfficeDto) {
+    const payload: UpdateOfficeDto = {
+      ...office,
+      openingDate: office.openingDate ? formatDateForApi(office.openingDate) : undefined,
+      dateFormat: office.dateFormat ?? APP_DEFAULTS.DATE_FORMAT,
+      locale: office.locale ?? APP_DEFAULTS.LOCALE,
+    };
 
-    // TEMPLATE
-    // Get office template
-    getTemplate() {
-        return this.http.get<Office>(`${this.baseUrl}/template`);
-    }
+    return this.http
+      .put<Office>(`${this.baseUrl}/${officeId}`, payload)
+      .pipe(tap(() => this.fetchOffices()));
+  }
 
-    // Upload office template
-    uploadTemplate(file: File) {
-        const formData = new FormData();
-        formData.append('file', file);
-        return this.http.post<void>(`${this.baseUrl}/uploadtemplate`, formData)
-            .pipe(tap(() => this.fetchOffices()));
-    }
+  // TEMPLATE
+  // Get office template
+  getTemplate() {
+    return this.http.get<Office>(`${this.baseUrl}/template`);
+  }
 
+  // Upload office template
+  uploadTemplate(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http
+      .post<void>(`${this.baseUrl}/uploadtemplate`, formData)
+      .pipe(tap(() => this.fetchOffices()));
+  }
 
-    // EXTERNAL ID
-    // Get an office using an external ID
-    getByExternalId(externalId: string) {
-        return this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`);
-    }
+  // EXTERNAL ID
+  // Get an office using an external ID
+  getByExternalId(externalId: string) {
+    return this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`);
+  }
 
-    // Update an office using an external ID
-    updateByExternalId(externalId: string, office: Partial<Office>) {
-        return this.http
-            .put<Office>(`${this.baseUrl}/external-id/${externalId}`, office)
-            .pipe(tap(() => this.fetchOffices()));
-    }
+  // Update an office using an external ID
+  updateByExternalId(externalId: string, office: Partial<Office>) {
+    return this.http
+      .put<Office>(`${this.baseUrl}/external-id/${externalId}`, office)
+      .pipe(tap(() => this.fetchOffices()));
+  }
 }

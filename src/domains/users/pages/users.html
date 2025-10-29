@@ -2,16 +2,26 @@
   <h1>Users <span [routerLink]="['/admin']">[admin]</span></h1>
 
   @if (loading()) {
-  <div>Loading...</div>
+    <div>Loading...</div>
   } @else if (error()) {
-  <div class="error">{{ error() }}</div>
+    <div class="error">{{ error() }}</div>
   } @else {
-  <h2 class="title">Create New User</h2>
-  <app-users-form [form]="createUserForm" [roles]="roles()" [offices]="officesService.offices()"
-    (create)="createUser()"></app-users-form>
+    <h2 class="title">Create New User</h2>
+    <app-users-form
+      [form]="createUserForm"
+      [roles]="roles()"
+      [offices]="officesService.offices()"
+      (create)="createUser()"
+    ></app-users-form>
 
-  <h2 class="title">List Of Users</h2>
-  <app-users-table [users]="users()" [roles]="roles()" [offices]="officesService.offices()"
-    [userControls]="userControls" (update)="updateUser($event)" (delete)="deleteUser($event)"></app-users-table>
+    <h2 class="title">List Of Users</h2>
+    <app-users-table
+      [users]="users()"
+      [roles]="roles()"
+      [offices]="officesService.offices()"
+      [userControls]="userControls"
+      (update)="updateUser($event)"
+      (delete)="deleteUser($event)"
+    ></app-users-table>
   }
 </div>

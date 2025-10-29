@@ -1,44 +1,44 @@
 <div class="offices-table">
-    <table>
-        <thead>
-            <tr>
-                <th>Opening Date</th>
-                <th>Name</th>
-                <th>External ID</th>
-                <th>Parent Office</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (office of offices; track office.id) {
-            <tr>
-                <td>{{ office.openingDate | formatDate }}</td>
-                <td><input [formControl]="officeControls[office.id].name"></td>
-                <td><input [formControl]="officeControls[office.id].externalId"></td>
-                <td>
-                    @if (office.parentId !== undefined && office.parentId !== null) {
-                    <mat-form-field appearance="outline" class="table-field-select">
-                        <mat-select [formControl]="officeControls[office.id].parentId">
-                            <mat-option [value]="null">Head Office</mat-option>
-                            @for (parent of offices; track parent.id) {
-                            <mat-option [value]="parent.id">{{ parent.name }}</mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
-                    } @else {
-                    <span style="color: gray; font-style: italic;">— No parent (Top-level office) —</span>
-                    }
-                </td>
-
-                <td>
-                    <button (click)="update.emit(office)">Update</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="5">No offices found</td>
-            </tr>
+  <table>
+    <thead>
+      <tr>
+        <th>Opening Date</th>
+        <th>Name</th>
+        <th>External ID</th>
+        <th>Parent Office</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (office of offices; track office.id) {
+        <tr>
+          <td>{{ office.openingDate | formatDate }}</td>
+          <td><input [formControl]="officeControls[office.id].name" /></td>
+          <td><input [formControl]="officeControls[office.id].externalId" /></td>
+          <td>
+            @if (office.parentId !== undefined && office.parentId !== null) {
+              <mat-form-field appearance="outline" class="table-field-select">
+                <mat-select [formControl]="officeControls[office.id].parentId">
+                  <mat-option [value]="null">Head Office</mat-option>
+                  @for (parent of offices; track parent.id) {
+                    <mat-option [value]="parent.id">{{ parent.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            } @else {
+              <span style="color: gray; font-style: italic">— No parent (Top-level office) —</span>
             }
-        </tbody>
-    </table>
+          </td>
+
+          <td>
+            <button (click)="update.emit(office)">Update</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5">No offices found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

@@ -1,17 +1,22 @@
 <div class="roles-admin">
-    <h1>Roles <span [routerLink]="['/admin']">[admin]</span></h1>
+  <h1>Roles <span [routerLink]="['/admin']">[admin]</span></h1>
 
-    @if (loading()) {
+  @if (loading()) {
     <div>Loading...</div>
-    } @else if (error()) {
+  } @else if (error()) {
     <div class="error">{{ error() }}</div>
-    } @else {
+  } @else {
     <h2 class="title">Create New Role</h2>
     <app-roles-form [form]="createRoleForm" (create)="createRole()"></app-roles-form>
 
     <h2 class="title">List Of Roles</h2>
-    <app-roles-table [roles]="roles()" [roleControls]="roleControls" (update)="updateRole($event)"
-        (delete)="deleteRole($event)" (toggle)="toggleRole($event)">
+    <app-roles-table
+      [roles]="roles()"
+      [roleControls]="roleControls"
+      (update)="updateRole($event)"
+      (delete)="deleteRole($event)"
+      (toggle)="toggleRole($event)"
+    >
     </app-roles-table>
-    }
+  }
 </div>

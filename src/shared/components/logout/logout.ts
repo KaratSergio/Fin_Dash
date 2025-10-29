@@ -13,16 +13,18 @@ import { handleError, AppError } from '@core/utils/error';
       <mat-icon>logout</mat-icon>
     </button>
   `,
-  styles: [`
-    button { 
-      cursor: pointer;
-      background-color: inherit;
-      border: none;
-    }
-    button mat-icon { 
-      color: white;
-    }
-  `]
+  styles: [
+    `
+      button {
+        cursor: pointer;
+        background-color: inherit;
+        border: none;
+      }
+      button mat-icon {
+        color: white;
+      }
+    `,
+  ],
 })
 export class Logout {
   private auth = inject(AuthService);

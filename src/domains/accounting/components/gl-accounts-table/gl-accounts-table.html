@@ -1,33 +1,35 @@
 <div class="gl-accounts-table">
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>GL Code</th>
-                <th>Description</th>
-                <th>Manual Entries</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (acc of accounts; track acc.id) {
-            <tr>
-                <td><input matInput [formControl]="accountControls[acc.id].name" /></td>
-                <td><input matInput [formControl]="accountControls[acc.id].glCode" /></td>
-                <td><input matInput [formControl]="accountControls[acc.id].description" /></td>
-                <td>
-                    <mat-checkbox [formControl]="accountControls[acc.id].manualEntriesAllowed"></mat-checkbox>
-                </td>
-                <td>
-                    <button (click)="update.emit(acc.id)">Update</button>
-                    <button (click)="delete.emit(acc.id)">Delete</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="5">No GL Accounts found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>GL Code</th>
+        <th>Description</th>
+        <th>Manual Entries</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (acc of accounts; track acc.id) {
+        <tr>
+          <td><input matInput [formControl]="accountControls[acc.id].name" /></td>
+          <td><input matInput [formControl]="accountControls[acc.id].glCode" /></td>
+          <td><input matInput [formControl]="accountControls[acc.id].description" /></td>
+          <td>
+            <mat-checkbox
+              [formControl]="accountControls[acc.id].manualEntriesAllowed"
+            ></mat-checkbox>
+          </td>
+          <td>
+            <button (click)="update.emit(acc.id)">Update</button>
+            <button (click)="delete.emit(acc.id)">Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5">No GL Accounts found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

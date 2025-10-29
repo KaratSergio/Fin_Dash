@@ -3,8 +3,8 @@ import { formatDateForApi } from '@core/utils/date';
 
 @Pipe({ name: 'formatDate' })
 export class FormatDatePipe implements PipeTransform {
-    transform(value: string | undefined): string {
-        if (!value) return '';
-        return formatDateForApi(value);
-    }
+  transform(value: string | undefined): string {
+    if (!value) return '';
+    return formatDateForApi(value);
+  }
 }

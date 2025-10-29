@@ -1,20 +1,20 @@
 .create-account {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    // gap: 1rem;
-    margin: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  // gap: 1rem;
+  margin: 1rem 0;
 
-    mat-checkbox {
-        flex: 0.3;
-    }
+  mat-checkbox {
+    flex: 0.3;
+  }
 
-    .desc-input {
-        grid-column: 1 / -1;
-    }
+  .desc-input {
+    grid-column: 1 / -1;
+  }
 
-    button {
-        grid-column: 1 / -1;
-        justify-self: start;
-        margin: 1rem 0 0 0.5rem;
-    }
+  button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin: 1rem 0 0 0.5rem;
+  }
 }

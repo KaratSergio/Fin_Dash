@@ -1,60 +1,64 @@
 <form [formGroup]="form" (ngSubmit)="create.emit()" class="create-account">
-    <mat-form-field appearance="fill">
-        <mat-label>Account Name</mat-label>
-        <input matInput formControlName="name" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Account Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
 
-    <mat-form-field appearance="fill">
-        <mat-label>GL Code</mat-label>
-        <input matInput formControlName="glCode" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>GL Code</mat-label>
+    <input matInput formControlName="glCode" />
+  </mat-form-field>
 
-    <!-- Type Select -->
-    <mat-form-field appearance="fill">
-        <mat-label>Account Type</mat-label>
-        <mat-select formControlName="type">
-            @for (type of typeOptions ; track type.id )
-            {<mat-option [value]="type.id">{{ type.value }}</mat-option>}
-        </mat-select>
-    </mat-form-field>
+  <!-- Type Select -->
+  <mat-form-field appearance="fill">
+    <mat-label>Account Type</mat-label>
+    <mat-select formControlName="type">
+      @for (type of typeOptions; track type.id) {
+        <mat-option [value]="type.id">{{ type.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <!-- Usage Select -->
-    <mat-form-field appearance="fill">
-        <mat-label>Account Usage</mat-label>
-        <mat-select formControlName="usage">
-            @for (u of usageOptions; track u.id)
-            {<mat-option [value]="u.id">{{ u.value }}</mat-option>}
-        </mat-select>
-    </mat-form-field>
+  <!-- Usage Select -->
+  <mat-form-field appearance="fill">
+    <mat-label>Account Usage</mat-label>
+    <mat-select formControlName="usage">
+      @for (u of usageOptions; track u.id) {
+        <mat-option [value]="u.id">{{ u.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <!-- Parent Select -->
-    <mat-form-field appearance="fill">
-        <mat-label>Parent Account</mat-label>
-        <mat-select formControlName="parentId">
-            @for (p of parentOptions; track p.id)
-            {<mat-option [value]="p.id">{{ p.value }}</mat-option>}
-        </mat-select>
-    </mat-form-field>
+  <!-- Parent Select -->
+  <mat-form-field appearance="fill">
+    <mat-label>Parent Account</mat-label>
+    <mat-select formControlName="parentId">
+      @for (p of parentOptions; track p.id) {
+        <mat-option [value]="p.id">{{ p.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <!-- Tag Select -->
-    <mat-form-field appearance="fill">
-        <mat-label>Tag</mat-label>
-        <mat-select formControlName="tagId">
-            @for (tag of tagOptions; track tag.id)
-            {<mat-option [value]="tag.id">{{ tag.value }}</mat-option>}
-        </mat-select>
-    </mat-form-field>
+  <!-- Tag Select -->
+  <mat-form-field appearance="fill">
+    <mat-label>Tag</mat-label>
+    <mat-select formControlName="tagId">
+      @for (tag of tagOptions; track tag.id) {
+        <mat-option [value]="tag.id">{{ tag.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <!-- <mat-checkbox formControlName="manualEntriesAllowed">
+  <!-- <mat-checkbox formControlName="manualEntriesAllowed">
         Manual Entries Allowed
     </mat-checkbox> -->
 
-    <mat-form-field appearance="fill" class="desc-input">
-        <mat-label>Description</mat-label>
-        <input matInput formControlName="description" />
-    </mat-form-field>
+  <mat-form-field appearance="fill" class="desc-input">
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="description" />
+  </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-        Create Account
-    </button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    Create Account
+  </button>
 </form>

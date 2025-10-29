@@ -13,150 +13,147 @@ import { LoanProductTable } from '../../components/loan-products/loan-products-t
 import { LoanProductDetails } from '../../components/loan-products/loan-products-details/loan-products-details';
 
 @Component({
-    selector: 'app-loan-products-page',
-    standalone: true,
-    imports: [
-        RouterModule, LoanProductForm,
-        LoanProductTable, LoanProductDetails
-    ],
-    templateUrl: './loan-products.html',
-    styleUrls: ['./loan-products.scss']
+  selector: 'app-loan-products-page',
+  standalone: true,
+  imports: [RouterModule, LoanProductForm, LoanProductTable, LoanProductDetails],
+  templateUrl: './loan-products.html',
+  styleUrls: ['./loan-products.scss'],
 })
 export class LoanProductsPage {
-    private fb = inject(FormBuilder);
-    private utils = new FormUtils(this.fb);
+  private fb = inject(FormBuilder);
+  private utils = new FormUtils(this.fb);
 
-    loanProductsService = inject(LoanProductsService);
+  loanProductsService = inject(LoanProductsService);
 
-    loanProducts = this.loanProductsService.loanProducts;
-    loading = this.loanProductsService.loading;
-    error = signal<string | null>(null);
+  loanProducts = this.loanProductsService.loanProducts;
+  loading = this.loanProductsService.loading;
+  error = signal<string | null>(null);
 
-    selectedProductId = signal<number | null>(null);
+  selectedProductId = signal<number | null>(null);
 
-    // New product creation form
-    createProductForm = this.fb.group({
-        name: this.utils.requiredText(),
-        shortName: this.utils.requiredText('', 4),
-        principal: this.utils.requiredNumber(),
-        interestRatePerPeriod: this.utils.requiredNumber(),
-        numberOfRepayments: this.utils.requiredNumber(),
-        interestType: this.utils.requiredNumber(),
-        amortizationType: this.utils.requiredNumber(),
-        repaymentFrequencyType: this.utils.requiredNumber(),
-    });
+  // New product creation form
+  createProductForm = this.fb.group({
+    name: this.utils.requiredText(),
+    shortName: this.utils.requiredText('', 4),
+    principal: this.utils.requiredNumber(),
+    interestRatePerPeriod: this.utils.requiredNumber(),
+    numberOfRepayments: this.utils.requiredNumber(),
+    interestType: this.utils.requiredNumber(),
+    amortizationType: this.utils.requiredNumber(),
+    repaymentFrequencyType: this.utils.requiredNumber(),
+  });
 
-    // Product Editing Form
-    productForm = this.fb.group({
-        name: this.utils.requiredText(),
-        shortName: this.utils.requiredText<string>('', 4),
-        principal: this.utils.requiredNumber(),
-        interestRatePerPeriod: this.utils.requiredNumber(),
-        // numberOfRepayments: this.utils.requiredNumber(),
-        // interestType: this.utils.requiredNumber(),
-        // amortizationType: this.utils.requiredNumber(),
-        // repaymentFrequencyType: this.utils.requiredNumber(),
-        // status: this.fb.control({ value: '', disabled: true }),
-    });
+  // Product Editing Form
+  productForm = this.fb.group({
+    name: this.utils.requiredText(),
+    shortName: this.utils.requiredText<string>('', 4),
+    principal: this.utils.requiredNumber(),
+    interestRatePerPeriod: this.utils.requiredNumber(),
+    // numberOfRepayments: this.utils.requiredNumber(),
+    // interestType: this.utils.requiredNumber(),
+    // amortizationType: this.utils.requiredNumber(),
+    // repaymentFrequencyType: this.utils.requiredNumber(),
+    // status: this.fb.control({ value: '', disabled: true }),
+  });
 
-    // Automatic data loading
-    private loadData = effect(() => {
+  // Automatic data loading
+  private loadData = effect(() => {
+    this.loanProductsService.getLoanProducts();
+  });
+
+  // Create Product
+  createProduct() {
+    if (this.createProductForm.invalid) return;
+    const f = this.createProductForm.value;
+
+    const dto: LoanProductCreateDto = {
+      name: f.name?.trim() || '',
+      shortName: f.shortName?.trim() || '',
+      principal: Number(f.principal),
+      interestRatePerPeriod: Number(f.interestRatePerPeriod),
+      numberOfRepayments: Number(f.numberOfRepayments),
+      interestType: Number(f.interestType),
+      amortizationType: Number(f.amortizationType),
+      repaymentFrequencyType: Number(f.repaymentFrequencyType),
+
+      currencyCode: 'USD',
+      digitsAfterDecimal: 2,
+      inMultiplesOf: 1,
+      repaymentEvery: 1,
+      interestRateFrequencyType: 2, // Per month
+      interestCalculationPeriodType: 1, // Same as repayment period
+      transactionProcessingStrategyCode: 'mifos-standard-strategy',
+      accountingRule: 1, // None (no accounting)
+      isInterestRecalculationEnabled: false,
+      daysInYearType: 1,
+      daysInMonthType: 1,
+
+      locale: 'en',
+      dateFormat: 'yyyy-MM-dd',
+    };
+
+    this.loanProductsService.createLoanProduct(dto).subscribe({
+      next: () => {
+        this.createProductForm.reset();
         this.loanProductsService.getLoanProducts();
+      },
+      error: (err) => this.error.set(err.message || 'Failed to create loan product'),
     });
+  }
 
-    // Create Product
-    createProduct() {
-        if (this.createProductForm.invalid) return;
-        const f = this.createProductForm.value;
+  // Selecting a product to edit
+  selectProduct(product: LoanProduct) {
+    this.selectedProductId.set(product.id);
+    this.productForm.patchValue({
+      name: product.name,
+      shortName: product.shortName,
+      principal: product.principal,
+      interestRatePerPeriod: product.interestRatePerPeriod,
+      // numberOfRepayments: product.numberOfRepayments,
+      // interestType: product.interestType?.id || 0,
+      // amortizationType: product.amortizationType?.id || 0,
+      // repaymentFrequencyType: product.repaymentFrequencyType?.id || 0,
+      // status: product.status || '',
+    });
+  }
 
-        const dto: LoanProductCreateDto = {
-            name: f.name?.trim() || '',
-            shortName: f.shortName?.trim() || '',
-            principal: Number(f.principal),
-            interestRatePerPeriod: Number(f.interestRatePerPeriod),
-            numberOfRepayments: Number(f.numberOfRepayments),
-            interestType: Number(f.interestType),
-            amortizationType: Number(f.amortizationType),
-            repaymentFrequencyType: Number(f.repaymentFrequencyType),
+  // Save changes
+  saveProduct() {
+    const productId = this.selectedProductId();
+    if (!productId || this.productForm.invalid) return;
 
-            currencyCode: 'USD',
-            digitsAfterDecimal: 2,
-            inMultiplesOf: 1,
-            repaymentEvery: 1,
-            interestRateFrequencyType: 2, // Per month
-            interestCalculationPeriodType: 1, // Same as repayment period
-            transactionProcessingStrategyCode: 'mifos-standard-strategy',
-            accountingRule: 1, // None (no accounting)
-            isInterestRecalculationEnabled: false,
-            daysInYearType: 1,
-            daysInMonthType: 1,
+    const f = this.productForm.value;
+    const dto: LoanProductUpdateDto = {
+      name: f.name?.trim(),
+      shortName: f.shortName?.trim(),
+      principal: Number(f.principal),
+      interestRatePerPeriod: Number(f.interestRatePerPeriod),
+      // numberOfRepayments: Number(f.numberOfRepayments),
+      // interestType: Number(f.interestType),
+      // amortizationType: Number(f.amortizationType),
+      // repaymentFrequencyType: Number(f.repaymentFrequencyType),
+    };
 
-            locale: 'en',
-            dateFormat: 'yyyy-MM-dd',
-        };
+    this.loanProductsService.updateLoanProduct(productId, dto).subscribe({
+      next: () => console.log('Loan product updated'),
+      error: (err) => this.error.set(err.message || 'Failed to update product'),
+    });
+  }
 
-        this.loanProductsService.createLoanProduct(dto).subscribe({
-            next: () => {
-                this.createProductForm.reset();
-                this.loanProductsService.getLoanProducts();
-            },
-            error: (err) => this.error.set(err.message || 'Failed to create loan product')
-        });
-    }
+  //  Reset edit
+  cancelEdit() {
+    const productId = this.selectedProductId();
+    if (!productId) return;
 
-    // Selecting a product to edit
-    selectProduct(product: LoanProduct) {
-        this.selectedProductId.set(product.id);
-        this.productForm.patchValue({
-            name: product.name,
-            shortName: product.shortName,
-            principal: product.principal,
-            interestRatePerPeriod: product.interestRatePerPeriod,
-            // numberOfRepayments: product.numberOfRepayments,
-            // interestType: product.interestType?.id || 0,
-            // amortizationType: product.amortizationType?.id || 0,
-            // repaymentFrequencyType: product.repaymentFrequencyType?.id || 0,
-            // status: product.status || '',
-        });
-    }
+    const product = this.loanProducts().find((p) => p.id === productId);
+    if (!product) return;
 
-    // Save changes
-    saveProduct() {
-        const productId = this.selectedProductId();
-        if (!productId || this.productForm.invalid) return;
+    this.selectProduct(product);
+  }
 
-        const f = this.productForm.value;
-        const dto: LoanProductUpdateDto = {
-            name: f.name?.trim(),
-            shortName: f.shortName?.trim(),
-            principal: Number(f.principal),
-            interestRatePerPeriod: Number(f.interestRatePerPeriod),
-            // numberOfRepayments: Number(f.numberOfRepayments),
-            // interestType: Number(f.interestType),
-            // amortizationType: Number(f.amortizationType),
-            // repaymentFrequencyType: Number(f.repaymentFrequencyType),
-        };
-
-        this.loanProductsService.updateLoanProduct(productId, dto).subscribe({
-            next: () => console.log('Loan product updated'),
-            error: (err) => this.error.set(err.message || 'Failed to update product')
-        });
-    }
-
-    //  Reset edit 
-    cancelEdit() {
-        const productId = this.selectedProductId();
-        if (!productId) return;
-
-        const product = this.loanProducts().find(p => p.id === productId);
-        if (!product) return;
-
-        this.selectProduct(product);
-    }
-
-    // Toggle loan product detail
-    toggleProduct(product: LoanProduct) {
-        if (this.selectedProductId() === product.id) this.selectedProductId.set(null);
-        else this.selectProduct(product);
-    }
+  // Toggle loan product detail
+  toggleProduct(product: LoanProduct) {
+    if (this.selectedProductId() === product.id) this.selectedProductId.set(null);
+    else this.selectProduct(product);
+  }
 }

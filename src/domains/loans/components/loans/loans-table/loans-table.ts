@@ -1,26 +1,29 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Loan } from "@domains/loans/interfaces/loan.interface";
-import { formatTimeline } from "@core/utils/date";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Loan } from '@domains/loans/interfaces/loan.interface';
+import { formatTimeline } from '@core/utils/date';
 
 @Component({
-    selector: "app-loan-table",
-    standalone: true,
-    imports: [ReactiveFormsModule],
-    templateUrl: "./loans-table.html",
-    styleUrls: ["./loans-table.scss"]
+  selector: 'app-loan-table',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './loans-table.html',
+  styleUrls: ['./loans-table.scss'],
 })
 export class LoanTable {
-    @Input() loans: Loan[] = [];
-    @Input() loanControls: Record<number, {
-        principal: FormControl<number | null>,
-        expectedDisbursementDate: FormControl<string | null>,
-        status: FormControl<string | null>
-    }> = {};
-    @Input() activeLoanId: number | null = null;
+  @Input() loans: Loan[] = [];
+  @Input() loanControls: Record<
+    number,
+    {
+      principal: FormControl<number | null>;
+      expectedDisbursementDate: FormControl<string | null>;
+      status: FormControl<string | null>;
+    }
+  > = {};
+  @Input() activeLoanId: number | null = null;
 
-    @Output() toggle = new EventEmitter<Loan>();
-    @Output() delete = new EventEmitter<number>();
+  @Output() toggle = new EventEmitter<Loan>();
+  @Output() delete = new EventEmitter<number>();
 
-    formatTimeline = formatTimeline;
+  formatTimeline = formatTimeline;
 }

@@ -1,48 +1,51 @@
-    .offices-table {
-        table {
-            width: 100%;
-            border-collapse: collapse;
+.offices-table {
+  table {
+    width: 100%;
+    border-collapse: collapse;
 
-            th,
-            td {
-                padding: 0.25rem 0.5rem;
-                border: 1px solid #cccccc86;
-            }
-
-            input {
-                width: 100%;
-                padding: 0.25rem 0.5rem;
-                color: white;
-                border: none;
-                background-color: inherit;
-            }
-
-            button {
-                width: 4.1rem;
-            }
-        }
+    th,
+    td {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #cccccc86;
     }
 
-    /* Selectors in table, custom styles */
-    .table-field-select.mat-mdc-form-field {
-        display: block !important;
+    input {
+      width: 100%;
+      padding: 0.25rem 0.5rem;
+      color: white;
+      border: none;
+      background-color: inherit;
     }
 
-    .table-field-select ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-        display: none !important;
+    button {
+      width: 4.1rem;
     }
+  }
+}
 
-    .table-field-select ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
-        border: none;
-    }
+/* Selectors in table, custom styles */
+.table-field-select.mat-mdc-form-field {
+  display: block !important;
+}
 
-    .table-field-select ::ng-deep .mdc-text-field--outlined .mat-mdc-form-field-infix,
-    .mdc-text-field--no-label .mat-mdc-form-field-infix {
-        padding-bottom: 0;
-    }
+.table-field-select ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
 
-    .table-field-select ::ng-deep .mat-mdc-form-field-infix {
-        min-height: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-    }
+.table-field-select
+  ::ng-deep
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled)
+  .mat-mdc-notch-piece {
+  border: none;
+}
+
+.table-field-select ::ng-deep .mdc-text-field--outlined .mat-mdc-form-field-infix,
+.mdc-text-field--no-label .mat-mdc-form-field-infix {
+  padding-bottom: 0;
+}
+
+.table-field-select ::ng-deep .mat-mdc-form-field-infix {
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}

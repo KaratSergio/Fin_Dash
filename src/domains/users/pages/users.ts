@@ -1,23 +1,23 @@
-import { Component, inject, signal, effect } from "@angular/core";
-import { RouterModule } from "@angular/router";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { Component, inject, signal, effect } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FormBuilder, FormControl } from '@angular/forms';
 
-import { UsersService } from "@domains/users/services/user.service";
-import { RolesService } from "@domains/roles/services/roles.service";
-import { OfficesService } from "@domains/offices/services/offices.service";
-import { AppUser } from "@domains/users/interfaces/user.interface";
+import { UsersService } from '@domains/users/services/user.service';
+import { RolesService } from '@domains/roles/services/roles.service';
+import { OfficesService } from '@domains/offices/services/offices.service';
+import { AppUser } from '@domains/users/interfaces/user.interface';
 import { CreateUserDto, UpdateUserDto } from '@domains/users/interfaces/user.dto';
-import { FormUtils } from "@core/utils/form";
+import { FormUtils } from '@core/utils/form';
 
-import { UsersForm } from "../components/users-form/users-form";
-import { UsersTable } from "../components/users-table/users-table";
+import { UsersForm } from '../components/users-form/users-form';
+import { UsersTable } from '../components/users-table/users-table';
 
 @Component({
-  selector: "app-admin-users",
+  selector: 'app-admin-users',
   standalone: true,
   imports: [RouterModule, UsersForm, UsersTable],
-  templateUrl: "./users.html",
-  styleUrls: ["./users.scss"]
+  templateUrl: './users.html',
+  styleUrls: ['./users.scss'],
 })
 export class UsersAdminPage {
   private fb = inject(FormBuilder);
@@ -40,18 +40,21 @@ export class UsersAdminPage {
     email: this.utils.requiredEmail(),
     password: this.utils.requiredText(),
     officeId: this.utils.optionalNumber(),
-    roles: this.utils.makeControl<number[]>([], [])
+    roles: this.utils.makeControl<number[]>([], []),
   });
 
   // Controls for editing users
-  userControls: Record<number, {
-    username: FormControl<string | null>;
-    firstname: FormControl<string | null>;
-    lastname: FormControl<string | null>;
-    email: FormControl<string | null>;
-    roles: FormControl<number[]>;
-    office: FormControl<number | null>;
-  }> = {};
+  userControls: Record<
+    number,
+    {
+      username: FormControl<string | null>;
+      firstname: FormControl<string | null>;
+      lastname: FormControl<string | null>;
+      email: FormControl<string | null>;
+      roles: FormControl<number[]>;
+      office: FormControl<number | null>;
+    }
+  > = {};
 
   // Load users, roles, offices
   private loadData = effect(() => {
@@ -63,7 +66,7 @@ export class UsersAdminPage {
   // Sync controls with latest data
   private syncControls = effect(() => {
     const list: AppUser[] = this.users();
-    list.forEach(u => {
+    list.forEach((u) => {
       if (!this.userControls[u.id]) {
         this.userControls[u.id] = {
           username: new FormControl(u.username ?? ''),
@@ -71,7 +74,7 @@ export class UsersAdminPage {
           lastname: new FormControl(u.lastname ?? ''),
           email: new FormControl(u.email ?? ''),
           roles: new FormControl<number[]>(u.roles ?? [], { nonNullable: true }),
-          office: new FormControl(u.officeId ?? null)
+          office: new FormControl(u.officeId ?? null),
         };
       } else {
         const controls = this.userControls[u.id];
@@ -104,7 +107,7 @@ export class UsersAdminPage {
 
     this.usersService.createUser(payload).subscribe({
       next: () => this.createUserForm.reset(),
-      error: err => this.error.set(err.message || "Failed to create user")
+      error: (err) => this.error.set(err.message || 'Failed to create user'),
     });
   }
 
@@ -118,17 +121,17 @@ export class UsersAdminPage {
       lastname: controls.lastname.value ?? '',
       email: controls.email.value ?? '',
       roles: controls.roles.value ?? [],
-      officeId: controls.office.value ?? undefined
+      officeId: controls.office.value ?? undefined,
     };
 
     this.usersService.updateUser(user.id, payload).subscribe({
-      error: err => this.error.set(err.message || "Failed to update user")
+      error: (err) => this.error.set(err.message || 'Failed to update user'),
     });
   }
 
   deleteUser(id: number) {
     this.usersService.deleteUser(id).subscribe({
-      error: err => this.error.set(err.message || "Failed to delete user")
+      error: (err) => this.error.set(err.message || 'Failed to delete user'),
     });
   }
 }

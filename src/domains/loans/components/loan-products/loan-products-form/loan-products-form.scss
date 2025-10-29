@@ -1,16 +1,16 @@
 .loan-products-form {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    // gap: 1rem 2rem;
-    margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  // gap: 1rem 2rem;
+  margin-bottom: 1rem;
 
-    mat-form-field {
-        width: 100%;
-    }
+  mat-form-field {
+    width: 100%;
+  }
 
-    button {
-        grid-column: 1 / -1;
-        justify-self: start;
-        margin: 1rem 0 0 0.5rem;
-    }
+  button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin: 1rem 0 0 0.5rem;
+  }
 }

@@ -1,26 +1,25 @@
 .create-charge {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
 
-    mat-form-field {
-        flex: 1 1 200px;
+  mat-form-field {
+    flex: 1 1 200px;
+  }
+
+  mat-checkbox {
+    margin-top: 1.5rem;
+
+    ::ng-deep .mat-internal-form-field > label {
+      color: white;
     }
+  }
 
-    mat-checkbox {
-        margin-top: 1.5rem;
-
-        ::ng-deep .mat-internal-form-field>label {
-            color: white;
-        }
-    }
-
-
-    button {
-        margin-top: 1.5rem;
-        height: 36px;
-        align-self: flex-start;
-    }
+  button {
+    margin-top: 1.5rem;
+    height: 36px;
+    align-self: flex-start;
+  }
 }

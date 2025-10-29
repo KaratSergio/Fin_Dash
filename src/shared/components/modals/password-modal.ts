@@ -1,9 +1,9 @@
 import { Component, signal, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-    selector: 'app-password-modal',
-    standalone: true,
-    template: `
+  selector: 'app-password-modal',
+  standalone: true,
+  template: `
     <div class="modal-backdrop">
       <div class="modal">
         <h3>Change Password</h3>
@@ -20,8 +20,8 @@ import { Component, signal, Input, Output, EventEmitter } from '@angular/core';
       </div>
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       .modal-backdrop {
         position: fixed;
         top: 0;
@@ -61,24 +61,24 @@ import { Component, signal, Input, Output, EventEmitter } from '@angular/core';
         padding: 0.25rem 0.5rem;
       }
     `,
-    ],
+  ],
 })
 export class PasswordModal {
-    @Input() userId?: number;
-    @Output() save = new EventEmitter<{ userId: number; password: string }>();
-    @Output() close = new EventEmitter<void>();
+  @Input() userId?: number;
+  @Output() save = new EventEmitter<{ userId: number; password: string }>();
+  @Output() close = new EventEmitter<void>();
 
-    password = signal('');
+  password = signal('');
 
-    submit() {
-        if (this.userId && this.password()) {
-            this.save.emit({ userId: this.userId, password: this.password() });
-            this.password.set('');
-        }
+  submit() {
+    if (this.userId && this.password()) {
+      this.save.emit({ userId: this.userId, password: this.password() });
+      this.password.set('');
     }
+  }
 
-    cancel() {
-        this.close.emit();
-        this.password.set('');
-    }
+  cancel() {
+    this.close.emit();
+    this.password.set('');
+  }
 }

@@ -10,33 +10,37 @@ import { toSignal } from '@angular/core/rxjs-interop';
   imports: [RouterOutlet, Sidebar],
   template: `
     <div class="app-container">
-      @if (showSidebar()) {<app-sidebar></app-sidebar>}
+      @if (showSidebar()) {
+        <app-sidebar></app-sidebar>
+      }
 
       <main class="main-content">
         <router-outlet></router-outlet>
       </main>
     </div>
   `,
-  styles: [`
-    .app-container {
-      display: flex;
-      height: 100vh;
-    }
+  styles: [
+    `
+      .app-container {
+        display: flex;
+        height: 100vh;
+      }
 
-    .main-content {
-      flex: 1;
-      overflow-y: auto;
-    }
-  `],
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+      }
+    `,
+  ],
 })
 export class App {
   private router = inject(Router);
 
   private navigationEnd = toSignal(
     this.router.events.pipe(
-      filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd)
+      filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd),
     ),
-    { initialValue: null }
+    { initialValue: null },
   );
 
   showSidebar = computed(() => {

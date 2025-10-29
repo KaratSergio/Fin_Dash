@@ -1,27 +1,26 @@
 # FinDash — Admin & User Dashboard for Apache Fineract
 
-
-
 ## Project Overview
 
 **FinDash** is a frontend application built with **Angular 20** for interacting with the **Apache Fineract REST API** (v1.13.0-SNAPSHOT).  
-The project is designed to fully leverage all available Fineract endpoints, providing a complete interface for managing users, roles, offices, and other platform entities.  
+The project is designed to fully leverage all available Fineract endpoints, providing a complete interface for managing users, roles, offices, and other platform entities.
 
 - [Apache Fineract Backend](https://github.com/KaratSergio/fineract)
-> Demo credentials (for testing purposes):
-> - **Username:** `mifos`
-> - **Password:** `password`
+  > Demo credentials (for testing purposes):
+  >
+  > - **Username:** `mifos`
+  > - **Password:** `password`
 
 ---
 
 ## Technology Stack
 
-- **Frontend:** Angular 20 (Standalone Components, Signals)  
-- **Server-side rendering:** Angular SSR + Express  
-- **State & HTTP:** RxJS + Angular HttpClient  
-- **Styling:** CSS / SCSS  
-- **Testing:** Jasmine + Karma  
-- **Formatting:** Prettier  
+- **Frontend:** Angular 20 (Standalone Components, Signals)
+- **Server-side rendering:** Angular SSR + Express
+- **State & HTTP:** RxJS + Angular HttpClient
+- **Styling:** CSS / SCSS
+- **Testing:** Jasmine + Karma
+- **Formatting:** Prettier
 
 ---
 
@@ -35,6 +34,7 @@ The project is designed to fully leverage all available Fineract endpoints, prov
 ---
 
 ### example of client structure
+
 ```
 src/
 ├── app/                                 # bootstrap, main module and routes
@@ -59,14 +59,14 @@ src/
 │       └── form.ts
 │
 ├── shared/                              # fully reusable components/pipes/styles
-│   ├── components/                      
+│   ├── components/
 │   ├── pipes/
 │   │   └── format-date.pipe.ts
 │   └── styles/
 │       └── global.scss
 │
 ├── domains/                             # the main part is domains corresponding to endpoint groups
-│   ├── accounting/                      
+│   ├── accounting/
 │   │   ├── services/
 │   │   │   └── glaccounts.service.ts
 │   │   ├── components/

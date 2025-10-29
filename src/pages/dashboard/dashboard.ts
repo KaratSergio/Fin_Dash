@@ -10,7 +10,7 @@ import { PermissionsService } from '@src/domains/roles/services/permission.servi
 })
 export class Dashboard {
   // currenciesService = inject(CurrenciesService);
-  permissionsService = inject(PermissionsService)
+  permissionsService = inject(PermissionsService);
 
   // allCurrencies = this.currenciesService.allCurrencies;
   // selectedCurrencies = this.currenciesService.selectedCurrencies;
@@ -19,7 +19,6 @@ export class Dashboard {
   permissions = this.permissionsService.permissions;
   loading = this.permissionsService.loading;
   error = this.permissionsService.error;
-
 
   init = (() => {
     // queueMicrotask(() => this.currenciesService.getCurrencies());

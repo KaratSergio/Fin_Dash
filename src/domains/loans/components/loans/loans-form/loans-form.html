@@ -1,34 +1,35 @@
 <form class="loans-form" [formGroup]="loanCreateForm" (ngSubmit)="submitForm.emit()">
+  <mat-form-field>
+    <mat-label>Client</mat-label>
+    <mat-select formControlName="clientId">
+      @for (c of clients; track c.id) {
+        <mat-option [value]="c.id">{{ c.firstname }} {{ c.lastname }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Client</mat-label>
-        <mat-select formControlName="clientId">
-            @for (c of clients; track c.id) {
-            <mat-option [value]="c.id">{{ c.firstname }} {{ c.lastname }}</mat-option>
-            }
-        </mat-select>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Loan Product</mat-label>
+    <mat-select formControlName="productId" (selectionChange)="onProductSelect($event.value)">
+      @for (p of products; track p.id) {
+        <mat-option [value]="p.id">{{ p.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Loan Product</mat-label>
-        <mat-select formControlName="productId" (selectionChange)="onProductSelect($event.value)">
-            @for (p of products; track p.id) {
-            <mat-option [value]="p.id">{{ p.name }}</mat-option>
-            }
-        </mat-select>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Principal</mat-label>
+    <input matInput type="number" formControlName="principal" />
+  </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Principal</mat-label>
-        <input matInput type="number" formControlName="principal" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Expected Disbursement Date</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="expectedDisbursementDate" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
 
-    <mat-form-field appearance="fill">
-        <mat-label>Expected Disbursement Date</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="expectedDisbursementDate" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-
-    <button mat-raised-button type="submit" color="primary" [disabled]="loanCreateForm.invalid">Create Loan</button>
+  <button mat-raised-button type="submit" color="primary" [disabled]="loanCreateForm.invalid">
+    Create Loan
+  </button>
 </form>

@@ -1,38 +1,40 @@
 <div class="loan-products-table">
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Short Name</th>
-                <th>Principal</th>
-                <th>Interest Rate</th>
-                <th>Number of Repayments</th>
-                <th>Interest Type</th>
-                <th>Amortization Type</th>
-                <th>Repayment Frequency</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (p of loanProducts; track p.id) {
-            <tr>
-                <td><input [value]="p.name" readonly /></td>
-                <td><input [value]="p.shortName" readonly /></td>
-                <td><input type="number" [value]="p.principal" readonly /></td>
-                <td><input type="number" [value]="p.interestRatePerPeriod" readonly /></td>
-                <td><input type="number" [value]="p.numberOfRepayments" readonly /></td>
-                <td><input [value]="displayOption(p.interestType)" readonly /></td>
-                <td><input [value]="displayOption(p.amortizationType)" readonly /></td>
-                <td><input [value]="displayOption(p.repaymentFrequencyType)" readonly /></td>
-                <td>
-                    <button (click)="toggle.emit(p)">{{ activeProductId === p.id ? 'Hide' : 'Show' }}</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="9">No loan products found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Short Name</th>
+        <th>Principal</th>
+        <th>Interest Rate</th>
+        <th>Number of Repayments</th>
+        <th>Interest Type</th>
+        <th>Amortization Type</th>
+        <th>Repayment Frequency</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (p of loanProducts; track p.id) {
+        <tr>
+          <td><input [value]="p.name" readonly /></td>
+          <td><input [value]="p.shortName" readonly /></td>
+          <td><input type="number" [value]="p.principal" readonly /></td>
+          <td><input type="number" [value]="p.interestRatePerPeriod" readonly /></td>
+          <td><input type="number" [value]="p.numberOfRepayments" readonly /></td>
+          <td><input [value]="displayOption(p.interestType)" readonly /></td>
+          <td><input [value]="displayOption(p.amortizationType)" readonly /></td>
+          <td><input [value]="displayOption(p.repaymentFrequencyType)" readonly /></td>
+          <td>
+            <button (click)="toggle.emit(p)">
+              {{ activeProductId === p.id ? 'Hide' : 'Show' }}
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="9">No loan products found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

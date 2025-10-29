@@ -15,7 +15,11 @@ import { MatIconModule } from '@angular/material/icon';
         <a routerLink="/charges" routerLinkActive="active">Charges</a>
 
         <!-- Accounts Group -->
-        <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
+        <div
+          class="menu-group"
+          routerLinkActive="active-group"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
           <a (click)="toggleMenu('accounts')">
             Accounts
             <mat-icon class="arrow">
@@ -24,28 +28,32 @@ import { MatIconModule } from '@angular/material/icon';
           </a>
 
           <div class="sub-links">
-            @if(menuState.accounts()) {
+            @if (menuState.accounts()) {
               <a routerLink="/accounts/gl-accounts" routerLinkActive="active-sub">GL Accounts</a>
             }
           </div>
         </div>
 
         <!-- Loans Group -->
-      <div class="menu-group" routerLinkActive="active-group" [routerLinkActiveOptions]="{ exact: false }">
-        <a (click)="toggleMenu('loans')">
-          Loans
-          <mat-icon class="arrow">
-            {{ menuState.loans() ? 'expand_more' : 'chevron_right' }}
-          </mat-icon>
-        </a>
+        <div
+          class="menu-group"
+          routerLinkActive="active-group"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
+          <a (click)="toggleMenu('loans')">
+            Loans
+            <mat-icon class="arrow">
+              {{ menuState.loans() ? 'expand_more' : 'chevron_right' }}
+            </mat-icon>
+          </a>
 
-        <div class="sub-links">
-          @if(menuState.loans()) {
-            <a routerLink="/loans/list" routerLinkActive="active-sub">Loans</a>
-            <a routerLink="/loans/products" routerLinkActive="active-sub">Loan Products</a>
-          } 
+          <div class="sub-links">
+            @if (menuState.loans()) {
+              <a routerLink="/loans/list" routerLinkActive="active-sub">Loans</a>
+              <a routerLink="/loans/products" routerLinkActive="active-sub">Loan Products</a>
+            }
+          </div>
         </div>
-      </div>
 
         <a routerLink="/admin" routerLinkActive="active">Admin</a>
       </div>
@@ -55,76 +63,78 @@ import { MatIconModule } from '@angular/material/icon';
       </div>
     </nav>
   `,
-  styles: [`
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100vh;
-      padding: 1rem;
-      border-right: 2px solid #c3eb25;
-
-      .links {
+  styles: [
+    `
+      .sidebar {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-      }
+        justify-content: space-between;
+        height: 100vh;
+        padding: 1rem;
+        border-right: 2px solid #c3eb25;
 
-      a {
-        text-decoration: none;
-        color: white;
-        padding: 0.25rem 0;
-        position: relative;
-        cursor: pointer;
-      }
+        .links {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
 
-      a:hover {
-        color: #c3eb25;
-      }
+        a {
+          text-decoration: none;
+          color: white;
+          padding: 0.25rem 0;
+          position: relative;
+          cursor: pointer;
+        }
 
-      a.active,
-      a.active-group {
-        color: #c3eb25;
-        font-weight: bold;
-      }
+        a:hover {
+          color: #c3eb25;
+        }
 
-      a.active-group::before {
-        content: '';
-        position: absolute;
-        left: -1rem;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background-color: #c3eb25;
-        border-radius: 2px;
-      }
+        a.active,
+        a.active-group {
+          color: #c3eb25;
+          font-weight: bold;
+        }
 
-      a.active-sub {
-        color: #c3eb25;
-        font-weight: normal;
-      }
+        a.active-group::before {
+          content: '';
+          position: absolute;
+          left: -1rem;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background-color: #c3eb25;
+          border-radius: 2px;
+        }
 
-      .menu-group {
-        display: flex;
-        flex-direction: column;
-      }
+        a.active-sub {
+          color: #c3eb25;
+          font-weight: normal;
+        }
 
-      .sub-links {
-        display: flex;
-        flex-direction: column;
-        padding-left: 1rem;
-        gap: 0.25rem;
-      }
+        .menu-group {
+          display: flex;
+          flex-direction: column;
+        }
 
-      .arrow {
-        float: right;
-      }
+        .sub-links {
+          display: flex;
+          flex-direction: column;
+          padding-left: 1rem;
+          gap: 0.25rem;
+        }
 
-      .logout {
-        margin-top: auto;
+        .arrow {
+          float: right;
+        }
+
+        .logout {
+          margin-top: auto;
+        }
       }
-    }
-  `]
+    `,
+  ],
 })
 export class Sidebar {
   menuState = {

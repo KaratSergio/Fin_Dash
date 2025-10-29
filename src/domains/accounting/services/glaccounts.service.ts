@@ -1,93 +1,125 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, catchError, of } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { tap, catchError, of, switchMap, startWith } from 'rxjs';
 import { GLAccount } from '../interfaces/gl-account.interface';
 import {
-    GLAccountCreateDto, GLAccountUpdateDto,
-    GLAccountsTemplateResponseDto,
+  GLAccountCreateDto,
+  GLAccountUpdateDto,
+  GLAccountsTemplateResponseDto,
 } from '../interfaces/gl-account.dto';
-
-// Ledger accounts represent an Individual account within an Organizations Chart Of Accounts(COA)
-//  and are assigned a name and unique number by which they can be identified.
-//  All transactions relating to a company's assets, liabilities, owners' equity,
-//  revenue and expenses are recorded against these accounts.
-
+import { AppError } from '@core/utils/error';
 
 @Injectable({ providedIn: 'root' })
 export class GLAccountsService {
-    private http = inject(HttpClient);
-    private baseUrl = 'api/fineract/glaccounts';
+  private http = inject(HttpClient);
+  private baseUrl = 'api/fineract/glaccounts';
 
-    accounts = signal<GLAccount[]>([]);
-    loading = signal(false);
-    error = signal<string | null>(null);
+  // signals
+  readonly accounts = signal<GLAccount[]>([]);
+  readonly total = computed(() => this.accounts().length);
+  readonly loading = signal(false);
+  readonly error = signal<AppError | null>(null);
+  private readonly reload = signal(0);
 
-    // Fetch all General Ledger Accounts
-    getAllAccounts() {
+  // cache
+  private cache: GLAccount[] | null = null;
+  private cacheTime = 0;
+  private readonly CACHE_TTL = 300_000; // 5 min
+
+  // template as reactive signal (single load)
+  readonly template = toSignal(
+    this.http.get<GLAccountsTemplateResponseDto>(`${this.baseUrl}/template`).pipe(
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to load GL template');
+        return of(null);
+      }),
+    ),
+    { initialValue: null },
+  );
+
+  // automatically re-fetch accounts when reload changes
+  readonly accountsLoader = toSignal(
+    toObservable(this.reload).pipe(
+      startWith(0),
+      tap(() => {
         this.loading.set(true);
+        this.error.set(null);
+      }),
+      switchMap(() => {
+        const now = Date.now();
 
-        this.http
-            .get<GLAccount[]>(this.baseUrl)
-            .pipe(
-                tap((res) => {
-                    this.accounts.set(res || []);
-                }),
-                catchError((err) => {
-                    this.error.set(err.message || 'Failed to load GL accounts');
-                    return of([]);
-                }),
-                tap(() => this.loading.set(false))
-            ).subscribe();
-    }
+        if (this.cache && now - this.cacheTime < this.CACHE_TTL) {
+          return of(this.cache);
+        }
 
-    // CRUD
-    // Retrieve GL Accounts Template
-    // Provides reference data for creating a new account
-    getAccountsTemplate() {
-        return this.http
-            .get<GLAccountsTemplateResponseDto>(`${this.baseUrl}/template`)
-            .pipe(
-                catchError((err) => {
-                    this.error.set(err.message || 'Failed to load GL accounts template');
-                    return of(null);
-                })
-            );
-    }
+        return this.http.get<GLAccount[]>(this.baseUrl).pipe(
+          tap((res) => {
+            this.cache = res;
+            this.cacheTime = Date.now();
+          }),
+          catchError((err) => {
+            this.error.set(err.message || 'Failed to load GL accounts');
+            return of([]);
+          }),
+        );
+      }),
+      tap(() => this.loading.set(false)),
+    ),
+    { initialValue: [] },
+  );
 
-    // Create a new General Ledger Account
-    createAccount(payload: GLAccountCreateDto) {
-        return this.http
-            .post(this.baseUrl, payload)
-            .pipe(tap(() => this.getAllAccounts()),
-                catchError((err) => {
-                    this.error.set(err.message || 'Failed to create GL account');
-                    return of(null);
-                })
-            );
-    }
+  // keep accounts signal in sync with loader
+  private syncAccounts = effect(() => {
+    const list = this.accountsLoader();
+    if (list) this.accounts.set(list);
+  });
 
+  // log errors
+  private logErrors = effect(() => {
+    const err = this.error();
+    if (err) console.warn('[GLAccountsService]', err);
+  });
 
-    // Update an existing General Ledger Account
-    updateAccount(id: number, payload: GLAccountUpdateDto) {
-        return this.http
-            .put(`${this.baseUrl}/${id}`, payload)
-            .pipe(tap(() => this.getAllAccounts()),
-                catchError((err) => {
-                    this.error.set(err.message || 'Failed to update GL account');
-                    return of(null);
-                })
-            );
-    }
+  refresh() {
+    this.cache = null;
+    this.reload.update((n) => n + 1);
+  }
 
-    // Delete a General Ledger Account
-    deleteAccount(id: number) {
-        return this.http
-            .delete(`${this.baseUrl}/${id}`)
-            .pipe(tap(() => this.getAllAccounts()),
-                catchError((err) => {
-                    this.error.set(err.message || 'Failed to delete GL account');
-                    return of(null);
-                })
-            );
-    }
+  // CRUD
+  createAccount(payload: GLAccountCreateDto) {
+    this.loading.set(true);
+    return this.http.post(this.baseUrl, payload).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to create GL account');
+        return of(null);
+      }),
+      tap(() => this.loading.set(false)),
+    );
+  }
+
+  updateAccount(id: number, payload: GLAccountUpdateDto) {
+    this.loading.set(true);
+    return this.http.put(`${this.baseUrl}/${id}`, payload).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to update GL account');
+        return of(null);
+      }),
+      tap(() => this.loading.set(false)),
+    );
+  }
+
+  deleteAccount(id: number) {
+    this.loading.set(true);
+    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to delete GL account');
+        return of(null);
+      }),
+      tap(() => this.loading.set(false)),
+    );
+  }
 }

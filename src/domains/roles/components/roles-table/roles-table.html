@@ -1,32 +1,35 @@
 <div class="roles-table">
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (role of roles; track role.id) {
-            <tr>
-                <td><input matInput [formControl]="roleControls[role.id].name"></td>
-                <td><input matInput [formControl]="roleControls[role.id].description"></td>
-                <td>{{ role.disabled ? 'Disabled' : 'Enabled' }}</td>
-                <td>
-                    <button (click)="toggle.emit(role)" [attr.data-status-btn]="role.disabled ? 'enabled' : 'disabled'">
-                        {{ role.disabled ? 'Enable' : 'Disable' }}
-                    </button>
-                    <button (click)="update.emit(role.id)">Update</button>
-                    <button (click)="delete.emit(role.id)">Delete</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="4">No roles found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (role of roles; track role.id) {
+        <tr>
+          <td><input matInput [formControl]="roleControls[role.id].name" /></td>
+          <td><input matInput [formControl]="roleControls[role.id].description" /></td>
+          <td>{{ role.disabled ? 'Disabled' : 'Enabled' }}</td>
+          <td>
+            <button
+              (click)="toggle.emit(role)"
+              [attr.data-status-btn]="role.disabled ? 'enabled' : 'disabled'"
+            >
+              {{ role.disabled ? 'Enable' : 'Disable' }}
+            </button>
+            <button (click)="update.emit(role.id)">Update</button>
+            <button (click)="delete.emit(role.id)">Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4">No roles found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

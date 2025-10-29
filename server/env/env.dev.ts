@@ -5,7 +5,7 @@ export const env = {
 
   serverUrl: 'http://localhost:4000', // express server
 
-  apiBase: 'https://localhost:8443/fineract-provider/api/v1', // fineract local 
+  apiBase: 'https://localhost:8443/fineract-provider/api/v1', // fineract local
 
   authPath: '/authentication?tenantIdentifier=default',
 

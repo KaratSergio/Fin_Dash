@@ -26,10 +26,12 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
   // ---------------------------
   // Middleware
   // ---------------------------
-  app.use(cors({
-    origin: `${env.clientUrl}`,
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      origin: `${env.clientUrl}`,
+      credentials: true,
+    }),
+  );
 
   app.use(express.json());
   app.use(cookieParser());

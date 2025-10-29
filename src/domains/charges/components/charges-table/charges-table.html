@@ -1,39 +1,39 @@
 <div class="charges-table">
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Currency</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for(charge of charges; track charge.id) {
-            <tr>
-                <td><input matInput [formControl]="chargeControls[charge.id].name"></td>
-                <td><input matInput type="number" [formControl]="chargeControls[charge.id].amount"></td>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Currency</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (charge of charges; track charge.id) {
+        <tr>
+          <td><input matInput [formControl]="chargeControls[charge.id].name" /></td>
+          <td><input matInput type="number" [formControl]="chargeControls[charge.id].amount" /></td>
 
-                <td>
-                    <mat-form-field appearance="outline" class="table-field-select">
-                        <mat-select [formControl]="chargeControls[charge.id].currencyCode">
-                            @for(currency of currencies; track currency.code) {
-                            <mat-option [value]="currency.code">{{ currency.displayLabel }}</mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
-                </td>
+          <td>
+            <mat-form-field appearance="outline" class="table-field-select">
+              <mat-select [formControl]="chargeControls[charge.id].currencyCode">
+                @for (currency of currencies; track currency.code) {
+                  <mat-option [value]="currency.code">{{ currency.displayLabel }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </td>
 
-                <td>
-                    <button (click)="update.emit(charge.id)">Update</button>
-                    <button (click)="delete.emit(charge.id)">Delete</button>
-                </td>
-            </tr>
-            } @empty {
-            <tr>
-                <td colspan="5">No charges found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+          <td>
+            <button (click)="update.emit(charge.id)">Update</button>
+            <button (click)="delete.emit(charge.id)">Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5">No charges found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

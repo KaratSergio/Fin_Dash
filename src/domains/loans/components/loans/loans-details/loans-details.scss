@@ -1,18 +1,17 @@
 .loan-details {
-    margin-top: 1rem;
+  margin-top: 1rem;
 
-    h3 {
-        margin-left: 0.5rem;
+  h3 {
+    margin-left: 0.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    button {
+      margin-left: 0.5rem;
     }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-
-        button {
-            margin-left: 0.5rem;
-        }
-    }
-
+  }
 }

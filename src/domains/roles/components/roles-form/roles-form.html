@@ -1,14 +1,15 @@
 <form [formGroup]="form" (ngSubmit)="create.emit()" class="create-role">
+  <mat-form-field appearance="fill" class="name-input">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
 
-    <mat-form-field appearance="fill" class="name-input">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name">
-    </mat-form-field>
+  <mat-form-field appearance="fill" class="desc-field">
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="description" />
+  </mat-form-field>
 
-    <mat-form-field appearance="fill" class="desc-field">
-        <mat-label>Description</mat-label>
-        <input matInput formControlName="description">
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Create Role</button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    Create Role
+  </button>
 </form>

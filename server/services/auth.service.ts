@@ -3,7 +3,6 @@ import { env } from '../env/env.dev';
 import { isFineractAuthResponse } from '../types/api-types';
 import { fetchFineract } from '../utils/agent';
 
-
 // LOGIN
 export async function login(req: Request, res: Response) {
   const { username, password } = req.body;
@@ -13,7 +12,7 @@ export async function login(req: Request, res: Response) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify({ username, password }),
     });
@@ -49,4 +48,3 @@ export function logout(req: Request, res: Response) {
     res.json({ success: true });
   });
 }
-

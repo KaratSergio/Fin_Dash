@@ -6,21 +6,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'app-loan-products-details',
-    standalone: true,
-    imports: [
-        ReactiveFormsModule, MatFormFieldModule,
-        MatInputModule, MatButtonModule
-    ],
-    templateUrl: './loan-products-details.html',
-    styleUrls: ['./loan-products-details.scss']
+  selector: 'app-loan-products-details',
+  standalone: true,
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  templateUrl: './loan-products-details.html',
+  styleUrls: ['./loan-products-details.scss'],
 })
 export class LoanProductDetails {
-    @Input() productForm!: FormGroup;
-    @Input() productId!: number;
+  @Input() productForm!: FormGroup;
+  @Input() productId!: number;
 
-    @Output() save = new EventEmitter<void>();
-    @Output() cancel = new EventEmitter<void>();
+  @Output() save = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
-    onSubmit() { if (this.productForm.valid) this.save.emit() };
+  onSubmit() {
+    if (this.productForm.valid) this.save.emit();
+  }
 }

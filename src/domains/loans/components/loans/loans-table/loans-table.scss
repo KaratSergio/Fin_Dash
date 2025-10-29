@@ -1,24 +1,24 @@
 .loans-table {
-    table {
-        width: 100%;
-        border-collapse: collapse;
+  table {
+    width: 100%;
+    border-collapse: collapse;
 
-        th,
-        td {
-            padding: 0.25rem 0.5rem;
-            border: 1px solid #cccccc86;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.25rem 0.5rem;
-            color: white;
-            border: none;
-            background-color: inherit;
-        }
-
-        button {
-            padding: 0 0.25rem;
-        }
+    th,
+    td {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #cccccc86;
     }
+
+    input {
+      width: 100%;
+      padding: 0.25rem 0.5rem;
+      color: white;
+      border: none;
+      background-color: inherit;
+    }
+
+    button {
+      padding: 0 0.25rem;
+    }
+  }
 }

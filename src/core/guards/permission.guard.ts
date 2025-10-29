@@ -3,22 +3,22 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 
 export const permissionGuard: CanActivateFn = (route) => {
-    const auth = inject(AuthService);
-    const router = inject(Router);
+  const auth = inject(AuthService);
+  const router = inject(Router);
 
-    const requiredPermission = route.data?.['permission'];
+  const requiredPermission = route.data?.['permission'];
 
-    // if !permission skip
-    if (!requiredPermission) return true;
+  // if !permission skip
+  if (!requiredPermission) return true;
 
-    // Admin have all permissions
-    if (auth.isAdmin) return true;
+  // Admin have all permissions
+  if (auth.isAdmin) return true;
 
-    // check permission
-    if (!auth.hasPermission(requiredPermission)) {
-        router.navigate(['/dashboard']);
-        return false;
-    }
+  // check permission
+  if (!auth.hasPermission(requiredPermission)) {
+    router.navigate(['/dashboard']);
+    return false;
+  }
 
-    return true;
+  return true;
 };

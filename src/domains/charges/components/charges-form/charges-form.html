@@ -1,25 +1,27 @@
 <form [formGroup]="form" (ngSubmit)="create.emit()" class="create-charge">
-    <mat-form-field appearance="fill">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name">
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
 
-    <mat-form-field appearance="fill">
-        <mat-label>Amount</mat-label>
-        <input matInput type="number" formControlName="amount">
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Amount</mat-label>
+    <input matInput type="number" formControlName="amount" />
+  </mat-form-field>
 
-    <mat-form-field appearance="fill">
-        <mat-label>Currency</mat-label>
-        <mat-select formControlName="currencyCode">
-            @for(currency of currencies; track currency.code) {
-            <mat-option [value]="currency.code">{{ currency.displayLabel }}</mat-option>
-            }
-        </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Currency</mat-label>
+    <mat-select formControlName="currencyCode">
+      @for (currency of currencies; track currency.code) {
+        <mat-option [value]="currency.code">{{ currency.displayLabel }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-    <!--for checkbox [disabled]="form.get('dueAtDisbursement')?.value" -->
-    <mat-checkbox formControlName="penalty">Penalty</mat-checkbox>
+  <!--for checkbox [disabled]="form.get('dueAtDisbursement')?.value" -->
+  <mat-checkbox formControlName="penalty">Penalty</mat-checkbox>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Create Charge</button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    Create Charge
+  </button>
 </form>

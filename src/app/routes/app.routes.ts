@@ -49,12 +49,16 @@ export const routes: Routes = [
 
   // --- Clients ---
   {
-    path: 'clients', component: ClientsPage, canActivate: [authGuard],
+    path: 'clients',
+    component: ClientsPage,
+    canActivate: [authGuard],
   },
 
   // --- Charges ---
   {
-    path: 'charges', component: ChargesPage, canActivate: [],
+    path: 'charges',
+    component: ChargesPage,
+    canActivate: [],
   },
 
   // --- Accounts group ---
@@ -67,7 +71,7 @@ export const routes: Routes = [
         path: 'gl-accounts',
         loadComponent: () =>
           import('../../domains/accounting/pages/gl-accounts/gl-accounts').then(
-            (m) => m.GLAccountsPage
+            (m) => m.GLAccountsPage,
           ),
       },
     ],
@@ -89,10 +93,16 @@ export const routes: Routes = [
     path: 'admin',
     children: [
       secure('', Admin),
-      secureLazy('offices', () => import('../../domains/offices/pages/offices').then(m => m.OfficesAdminPage)),
-      secureLazy('users', () => import('../../domains/users/pages/users').then(m => m.UsersAdminPage)),
-      secureLazy('roles', () => import('../../domains/roles/pages/roles').then(m => m.RolesAdminPage)),
-    ]
+      secureLazy('offices', () =>
+        import('../../domains/offices/pages/offices').then((m) => m.OfficesAdminPage),
+      ),
+      secureLazy('users', () =>
+        import('../../domains/users/pages/users').then((m) => m.UsersAdminPage),
+      ),
+      secureLazy('roles', () =>
+        import('../../domains/roles/pages/roles').then((m) => m.RolesAdminPage),
+      ),
+    ],
   },
 
   // --- Fallback (optional) ---

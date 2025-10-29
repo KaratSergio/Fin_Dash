@@ -1,7 +1,7 @@
 import 'express-session';
 
 declare module 'express-session' {
-    interface SessionData {
-        fineractToken: string;
-    }
+  interface SessionData {
+    fineractToken: string;
+  }
 }

@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { ReactiveFormsModule, FormGroup } from "@angular/forms";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 
-import { Office } from "@domains/offices/interfaces/office.interface";
+import { Office } from '@domains/offices/interfaces/office.interface';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,20 +11,23 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
-    selector: "app-offices-form",
-    standalone: true,
-    imports: [
-        ReactiveFormsModule,
-        MatFormFieldModule, MatInputModule,
-        MatSelectModule, MatButtonModule,
-        MatDatepickerModule, MatNativeDateModule
-    ],
-    templateUrl: "./offices-form.html",
-    styleUrls: ["./offices-form.scss"]
+  selector: 'app-offices-form',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
+  templateUrl: './offices-form.html',
+  styleUrls: ['./offices-form.scss'],
 })
 export class OfficesForm {
-    @Input() form!: FormGroup;
-    @Input() offices: Office[] = [];
+  @Input() form!: FormGroup;
+  @Input() offices: Office[] = [];
 
-    @Output() submit = new EventEmitter<Office>();
+  @Output() submit = new EventEmitter<Office>();
 }

@@ -1,33 +1,33 @@
 @let loan = loanDetailsForm.value;
 
-@if(loan) {
-<div class="loan-details">
+@if (loan) {
+  <div class="loan-details">
     <h3>Loan Details: #{{ loanId }}</h3>
 
     <form [formGroup]="loanDetailsForm" (ngSubmit)="update.emit()">
-        <mat-form-field>
-            <mat-label>Principal</mat-label>
-            <input matInput type="number" formControlName="principal" />
+      <mat-form-field>
+        <mat-label>Principal</mat-label>
+        <input matInput type="number" formControlName="principal" />
+      </mat-form-field>
+
+      <div formGroupName="timeline">
+        <mat-form-field appearance="fill">
+          <mat-label>Expected Disbursement Date</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="expectedDisbursementDate" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
+      </div>
 
-        <div formGroupName="timeline">
-            <mat-form-field appearance="fill">
-                <mat-label>Expected Disbursement Date</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="expectedDisbursementDate" />
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-        </div>
+      <mat-form-field>
+        <mat-label>Status</mat-label>
+        <input matInput type="text" formControlName="status" readonly />
+      </mat-form-field>
 
-        <mat-form-field>
-            <mat-label>Status</mat-label>
-            <input matInput type="text" formControlName="status" readonly />
-        </mat-form-field>
-
-        <div>
-            <button mat-raised-button color="primary" type="submit">Save</button>
-            <button mat-stroked-button type="button" (click)="cancel.emit()">Cancel</button>
-        </div>
+      <div>
+        <button mat-raised-button color="primary" type="submit">Save</button>
+        <button mat-stroked-button type="button" (click)="cancel.emit()">Cancel</button>
+      </div>
     </form>
-</div>
+  </div>
 }

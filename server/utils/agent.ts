@@ -5,5 +5,5 @@ import fetch, { RequestInit } from 'node-fetch';
 export const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 export async function fetchFineract(url: string, options: RequestInit = {}) {
-    return fetch(url, { ...options, agent: httpsAgent });
+  return fetch(url, { ...options, agent: httpsAgent });
 }
