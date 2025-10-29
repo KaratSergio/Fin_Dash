@@ -1,10 +1,10 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, startWith, switchMap } from 'rxjs';
+import { tap, catchError, of, startWith, switchMap, firstValueFrom} from 'rxjs';
 import { Permission } from '../interfaces/permission.interface';
 import { Role } from '../interfaces/role.interface';
-import { AppError } from '@core/utils/error';
+import { AppError, handleError } from '@core/utils/error';
 
 
 @Injectable({ providedIn: 'root' })
@@ -51,68 +51,71 @@ export class RolesService {
   }
 
   // CRUD
-  createRole(role: Partial<Role>) {
-    return this.http.post<Role>(this.baseUrl, role).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to create role');
-        return of(null);
-      })
-    );
+  async createRole(role: Partial<Role>) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.post<Role>(this.baseUrl, role));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create role'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  updateRole(roleId: number, role: Partial<Role>) {
-    const { disabled, ...payload } = role;
-    return this.http.put<Role>(`${this.baseUrl}/${roleId}`, payload).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update role');
-        return of(null);
-      })
-    );
+  async updateRole(roleId: number, role: Partial<Role>) {
+    this.loading.set(true);
+    try {
+      const { disabled, ...payload } = role;
+      await firstValueFrom(this.http.put<Role>(`${this.baseUrl}/${roleId}`, payload));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update role'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  deleteRole(roleId: number) {
-    return this.http.delete<void>(`${this.baseUrl}/${roleId}`).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to delete role');
-        return of(null);
-      })
-    );
+  async deleteRole(roleId: number) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${roleId}`));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to delete role'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  enableRole(roleId: number) {
-    return this.http.post<void>(`${this.baseUrl}/${roleId}?command=enable`, {}).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to enable role');
-        return of(null);
-      })
-    );
+  async enableRole(roleId: number) {
+    try {
+      await firstValueFrom(this.http.post<void>(`${this.baseUrl}/${roleId}?command=enable`, {}));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to enable role'));
+    }
   }
 
-  disableRole(roleId: number) {
-    return this.http.post<void>(`${this.baseUrl}/${roleId}?command=disable`, {}).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to disable role');
-        return of(null);
-      })
-    );
+  async disableRole(roleId: number) {
+    try {
+      await firstValueFrom(this.http.post<void>(`${this.baseUrl}/${roleId}?command=disable`, {}));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to disable role'));
+    }
   }
 
   getPermissions(roleId: number) {
     return this.http.get<Permission[]>(`${this.baseUrl}/${roleId}/permissions`);
   }
 
-  updatePermissions(roleId: number, permissions: Permission[]) {
-    return this.http.put<void>(`${this.baseUrl}/${roleId}/permissions`, permissions).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update role permissions');
-        return of(null);
-      })
-    );
+  async updatePermissions(roleId: number, permissions: Permission[]) {
+    try {
+      await firstValueFrom(this.http.put<void>(`${this.baseUrl}/${roleId}/permissions`, permissions));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update role permissions'));
+    }
   }
 }
