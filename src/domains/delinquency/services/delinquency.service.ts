@@ -1,95 +1,117 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, catchError, of } from 'rxjs';
-
-export interface DelinquencyRange {
-  id: number;
-  name: string;
-  minDays: number;
-  maxDays: number;
-}
-
-export interface DelinquencyBucket {
-  id: number;
-  name: string;
-  ranges: DelinquencyRange[];
-}
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { tap, catchError, of, startWith, switchMap } from 'rxjs';
+import { AppError } from '@core/utils/error';
+import { DelinquencyRange, DelinquencyBucket } from '../interfaces/delinquency.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DelinquencyService {
   private http = inject(HttpClient);
   private baseUrl = 'api/fineract/delinquency';
 
-  ranges = signal<DelinquencyRange[]>([]);
-  buckets = signal<DelinquencyBucket[]>([]);
-  loading = signal(false);
-  error = signal<string | null>(null);
+  // signals
+  readonly ranges = signal<DelinquencyRange[]>([]);
+  readonly buckets = signal<DelinquencyBucket[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<AppError | null>(null);
+  private readonly reload = signal(0);
 
-  // Fetch all ranges
-  getRanges() {
-    this.loading.set(true);
-    this.http
-      .get<DelinquencyRange[]>(`${this.baseUrl}/ranges`)
-      .pipe(
-        tap((list) => this.ranges.set(list)),
-        catchError((err) => {
-          this.error.set(err.message || 'Failed to load ranges');
-          return of([]);
-        }),
-        tap(() => this.loading.set(false)),
-      )
-      .subscribe();
+  // loader for ranges and buckets
+  private delinquencyLoader = toSignal(
+    toObservable(this.reload).pipe(
+      startWith(0),
+      tap(() => {
+        this.loading.set(true);
+        this.error.set(null);
+      }),
+      switchMap(() =>
+        this.http.get<{ ranges: DelinquencyRange[]; buckets: DelinquencyBucket[] }>(this.baseUrl).pipe(
+          tap((res) => {
+            this.ranges.set(res.ranges || []);
+            this.buckets.set(res.buckets || []);
+          }),
+          catchError((err) => {
+            this.error.set(err.message || 'Failed to load delinquency data');
+            return of({ ranges: [], buckets: [] });
+          })
+        )
+      ),
+      tap(() => this.loading.set(false))
+    ),
+    { initialValue: null }
+  );
+
+  // log errors
+  private logErrors = effect(() => {
+    const err = this.error();
+    if (err) console.warn('[DelinquencyService]', err);
+  });
+
+  // trigger reload
+  refresh() {
+    this.reload.update((n) => n + 1);
   }
 
   // CRUD Ranges
   createRange(range: Partial<DelinquencyRange>) {
-    return this.http
-      .post<DelinquencyRange>(`${this.baseUrl}/ranges`, range)
-      .pipe(tap(() => this.getRanges()));
+    return this.http.post<DelinquencyRange>(`${this.baseUrl}/ranges`, range).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to create range');
+        return of(null);
+      })
+    );
   }
 
   updateRange(id: number, range: Partial<DelinquencyRange>) {
-    return this.http
-      .put<DelinquencyRange>(`${this.baseUrl}/ranges/${id}`, range)
-      .pipe(tap(() => this.getRanges()));
+    return this.http.put<DelinquencyRange>(`${this.baseUrl}/ranges/${id}`, range).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to update range');
+        return of(null);
+      })
+    );
   }
 
   deleteRange(id: number) {
-    return this.http.delete<void>(`${this.baseUrl}/ranges/${id}`).pipe(tap(() => this.getRanges()));
-  }
-
-  // Fetch all buckets
-  getBuckets() {
-    this.loading.set(true);
-    this.http
-      .get<DelinquencyBucket[]>(`${this.baseUrl}/buckets`)
-      .pipe(
-        tap((list) => this.buckets.set(list)),
-        catchError((err) => {
-          this.error.set(err.message || 'Failed to load buckets');
-          return of([]);
-        }),
-        tap(() => this.loading.set(false)),
-      )
-      .subscribe();
+    return this.http.delete<void>(`${this.baseUrl}/ranges/${id}`).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to delete range');
+        return of(null);
+      })
+    );
   }
 
   // CRUD Buckets
   createBucket(bucket: Partial<DelinquencyBucket>) {
-    return this.http
-      .post<DelinquencyBucket>(`${this.baseUrl}/buckets`, bucket)
-      .pipe(tap(() => this.getBuckets()));
+    return this.http.post<DelinquencyBucket>(`${this.baseUrl}/buckets`, bucket).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to create bucket');
+        return of(null);
+      })
+    );
   }
 
   updateBucket(id: number, bucket: Partial<DelinquencyBucket>) {
-    return this.http
-      .put<DelinquencyBucket>(`${this.baseUrl}/buckets/${id}`, bucket)
-      .pipe(tap(() => this.getBuckets()));
+    return this.http.put<DelinquencyBucket>(`${this.baseUrl}/buckets/${id}`, bucket).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to update bucket');
+        return of(null);
+      })
+    );
   }
 
   deleteBucket(id: number) {
-    return this.http
-      .delete<void>(`${this.baseUrl}/buckets/${id}`)
-      .pipe(tap(() => this.getBuckets()));
+    return this.http.delete<void>(`${this.baseUrl}/buckets/${id}`).pipe(
+      tap(() => this.refresh()),
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to delete bucket');
+        return of(null);
+      })
+    );
   }
 }
