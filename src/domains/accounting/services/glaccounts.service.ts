@@ -1,11 +1,11 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, switchMap, startWith } from 'rxjs';
-import { AppError } from '@core/utils/error';
+import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
+import { AppError, handleError } from '@core/utils/error';
 import { GLAccount } from '../interfaces/gl-account.interface';
 import {
-  GLAccountCreateDto,GLAccountUpdateDto,
+  GLAccountCreateDto, GLAccountUpdateDto,
   GLAccountsTemplateResponseDto,
 } from '../interfaces/gl-account.dto';
 
@@ -38,7 +38,7 @@ export class GLAccountsService {
   );
 
   // automatically re-fetch accounts when reload changes
-  readonly accountsLoader = toSignal(
+  private accountsLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
       tap(() => {
@@ -57,6 +57,7 @@ export class GLAccountsService {
             this.cache = res;
             this.cacheTime = Date.now();
           }),
+          tap((list) => this.accounts.set(list)),
           catchError((err) => {
             this.error.set(err.message || 'Failed to load GL accounts');
             return of([]);
@@ -68,11 +69,6 @@ export class GLAccountsService {
     { initialValue: [] },
   );
 
-  // keep accounts signal in sync with loader
-  private syncAccounts = effect(() => {
-    const list = this.accountsLoader();
-    if (list) this.accounts.set(list);
-  });
 
   // log errors
   private logErrors = effect(() => {
@@ -80,45 +76,46 @@ export class GLAccountsService {
     if (err) console.warn('[GLAccountsService]', err);
   });
 
-  refresh() {
-    this.cache = null;
+  // trigger reload
+  refresh(force = false) {
+    if (force) this.cache = null; // if true = reset cache
     this.reload.update((n) => n + 1);
   }
 
   // CRUD
-  createAccount(payload: GLAccountCreateDto) {
+  async createAccount(payload: GLAccountCreateDto) {
     this.loading.set(true);
-    return this.http.post(this.baseUrl, payload).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to create GL account');
-        return of(null);
-      }),
-      tap(() => this.loading.set(false)),
-    );
+    try {
+      await firstValueFrom(this.http.post<GLAccount>(this.baseUrl, payload));
+      this.refresh(true); // reboot without cache
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create GL account'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  updateAccount(id: number, payload: GLAccountUpdateDto) {
+  async updateAccount(id: number, payload: GLAccountUpdateDto) {
     this.loading.set(true);
-    return this.http.put(`${this.baseUrl}/${id}`, payload).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update GL account');
-        return of(null);
-      }),
-      tap(() => this.loading.set(false)),
-    );
+    try {
+      await firstValueFrom(this.http.put<GLAccount>(`${this.baseUrl}/${id}`, payload));
+      this.refresh(true); // reboot without cache
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update GL account'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  deleteAccount(id: number) {
+  async deleteAccount(id: number) {
     this.loading.set(true);
-    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to delete GL account');
-        return of(null);
-      }),
-      tap(() => this.loading.set(false)),
-    );
+    try {
+      await firstValueFrom(this.http.delete(`${this.baseUrl}/${id}`));
+      this.refresh(true); // reboot without cache
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to delete GL account'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

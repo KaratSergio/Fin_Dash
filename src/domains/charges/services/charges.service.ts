@@ -1,8 +1,8 @@
 import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, switchMap, startWith } from 'rxjs';
-import { AppError } from '@core/utils/error';
+import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
+import { AppError, handleError } from '@core/utils/error';
 import { Charge, ChargeTemplate } from '../interfaces/charge.interface';
 import { ChargeCreateDto, ChargeUpdateDto, ChargeBaseFields } from '../interfaces/charge.dto';
 
@@ -27,9 +27,9 @@ export class ChargesService {
     ),
     { initialValue: null }
   );
-  
+
   // automatically re-fetch charges when reload changes
-  readonly chargesLoader = toSignal(
+  private chargesLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
       tap(() => {
@@ -38,6 +38,7 @@ export class ChargesService {
       }),
       switchMap(() =>
         this.http.get<Charge[]>(this.baseUrl).pipe(
+          tap((list) => this.charges.set(list)),
           catchError((err) => {
             this.error.set(err.message || 'Failed to load charges');
             return of([]);
@@ -48,12 +49,6 @@ export class ChargesService {
     ),
     { initialValue: [] }
   );
-
-  // keep charges signal in sync with loader
-  private syncCharges = effect(() => {
-    const list = this.chargesLoader();
-    if (list) this.charges.set(list);
-  });
 
   // log errors
   private logErrors = effect(() => {
@@ -67,64 +62,67 @@ export class ChargesService {
   }
 
   // CRUD
-  createCharge(data: Pick<ChargeBaseFields, 'name' | 'amount' | 'currencyCode' | 'penalty'>) {
+  async createCharge(data: Pick<ChargeBaseFields, 'name' | 'amount' | 'currencyCode' | 'penalty'>) {
     this.loading.set(true);
-    const payload: ChargeCreateDto = {
-      active: true,
-      chargeAppliesTo: 1,
-      chargeCalculationType: 1,
-      chargePaymentMode: 1,
-      chargeTimeType: 1,
-      enablePaymentType: true,
-      locale: 'en',
-      ...data,
-      // taxGroupId: 1,
-    };
 
-    return this.http.post<Charge>(this.baseUrl, payload).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to create charge');
-        return of(null);
-      }),
-      tap(() => this.loading.set(false))
-    );
+    try {
+      const payload: ChargeCreateDto = {
+        active: true,
+        chargeAppliesTo: 1,
+        chargeCalculationType: 1,
+        chargePaymentMode: 1,
+        chargeTimeType: 1,
+        enablePaymentType: true,
+        locale: 'en',
+        ...data,
+        // taxGroupId: 1,
+      };
+
+      await firstValueFrom(this.http.post<Charge>(this.baseUrl, payload))
+      this.refresh()
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create charge'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  updateCharge(chargeId: number, data: ChargeUpdateDto) {
+  async updateCharge(chargeId: number, data: ChargeUpdateDto) {
     this.loading.set(true);
-    const payload: ChargeUpdateDto = {
-      active: true,
-      chargeAppliesTo: 1,
-      chargeCalculationType: 1,
-      chargePaymentMode: 1,
-      chargeTimeType: 1,
-      enablePaymentType: true,
-      locale: 'en',
-      ...data,
-      // taxGroupId: 1,
-    };
 
-    return this.http.put<Charge>(`${this.baseUrl}/${chargeId}`, payload).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update charge');
-        return of(null);
-      }),
-      tap(() => this.loading.set(false))
-    );
+    try {
+      const payload: ChargeUpdateDto = {
+        active: true,
+        chargeAppliesTo: 1,
+        chargeCalculationType: 1,
+        chargePaymentMode: 1,
+        chargeTimeType: 1,
+        enablePaymentType: true,
+        locale: 'en',
+        ...data,
+        // taxGroupId: 1,
+      };
+
+      await firstValueFrom(this.http.put<Charge>(`${this.baseUrl}/${chargeId}`, payload));
+      this.refresh()
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update charge'));
+    } finally {
+      this.loading.set(false)
+    }
   }
 
-  deleteCharge(chargeId: number) {
+  async deleteCharge(chargeId: number) {
     this.loading.set(true);
-    return this.http.delete<void>(`${this.baseUrl}/${chargeId}`).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to delete charge');
-        return of(null);
-      }),
-      tap(() => this.loading.set(false))
-    );
+
+    try {
+      await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${chargeId}`));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to delete charge'));
+    } finally {
+      this.loading.set(false);
+    };
   }
 
   // get single charge

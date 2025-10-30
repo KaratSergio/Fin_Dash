@@ -98,19 +98,14 @@ export class ChargesPage {
     if (this.createChargeForm.invalid) return;
     const formValue = this.createChargeForm.value as ChargeCreateDto;
 
-    this.chargesService.createCharge(formValue).subscribe({
-      next: () => {
-        this.createChargeForm.reset({
-          name: '',
-          amount: 0,
-          currencyCode: '',
-          penalty: false,
-          chargeType: 'FEE',
-        });
-      },
-      error: (err) => {
-        this.error.set(handleError(err, 'Failed to create charge'));
-      },
+    this.chargesService.createCharge(formValue)
+
+    this.createChargeForm.reset({
+      name: '',
+      amount: 0,
+      currencyCode: '',
+      penalty: false,
+      chargeType: 'FEE',
     });
   }
 
@@ -124,18 +119,10 @@ export class ChargesPage {
       penalty: controls.penalty.value,
     };
 
-    this.chargesService.updateCharge(chargeId, payload).subscribe({
-      error: (err) => {
-        this.error.set(handleError(err, 'Failed to update charge'));
-      },
-    });
+    this.chargesService.updateCharge(chargeId, payload)
   }
 
   deleteCharge(chargeId: number) {
-    this.chargesService.deleteCharge(chargeId).subscribe({
-      error: (err) => {
-        this.error.set(handleError(err, 'Failed to delete charge'));
-      },
-    });
+    this.chargesService.deleteCharge(chargeId)
   }
 }
