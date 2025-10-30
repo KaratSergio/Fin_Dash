@@ -1,9 +1,8 @@
 .create-charge {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding: 0 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  // gap: 1rem;
+  margin: 1rem 0;
 
   mat-form-field {
     flex: 1 1 200px;
@@ -18,8 +17,8 @@
   }
 
   button {
-    margin-top: 1.5rem;
-    height: 36px;
-    align-self: flex-start;
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin: 1rem 0 0 0.5rem;
   }
 }

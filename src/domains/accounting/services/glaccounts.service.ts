@@ -69,7 +69,6 @@ export class GLAccountsService {
     { initialValue: [] },
   );
 
-
   // log errors
   private logErrors = effect(() => {
     const err = this.error();

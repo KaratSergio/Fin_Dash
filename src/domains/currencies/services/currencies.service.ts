@@ -1,8 +1,8 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, startWith, switchMap } from 'rxjs';
-import { AppError } from '@core/utils/error';
+import { tap, catchError, of, startWith, switchMap, firstValueFrom } from 'rxjs';
+import { AppError, handleError } from '@core/utils/error';
 import { CurrencyOption, CurrencyConfigResponse } from '../interfaces/currency.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -53,14 +53,16 @@ export class CurrenciesService {
   }
 
   // update permitted currencies
-  updateCurrencies(codes: string[]) {
-    const payload = { currencies: codes };
-    return this.http.put(this.baseUrl, payload).pipe(
-      tap(() => this.refresh()), // automatically reload after update
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update currencies');
-        return of(null);
-      })
-    );
+  async updateCurrencies(codes: string[]) {
+    this.loading.set(true);
+    try {
+      const payload = { currencies: codes };
+      await firstValueFrom(this.http.put(this.baseUrl, payload));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update currencies'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

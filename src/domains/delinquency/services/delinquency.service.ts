@@ -1,8 +1,8 @@
 import { Injectable, signal, inject, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, startWith, switchMap } from 'rxjs';
-import { AppError } from '@core/utils/error';
+import { tap, catchError, of, startWith, switchMap, firstValueFrom } from 'rxjs';
+import { AppError, handleError } from '@core/utils/error';
 import { DelinquencyRange, DelinquencyBucket } from '../interfaces/delinquency.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -54,64 +54,76 @@ export class DelinquencyService {
   }
 
   // CRUD Ranges
-  createRange(range: Partial<DelinquencyRange>) {
-    return this.http.post<DelinquencyRange>(`${this.baseUrl}/ranges`, range).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to create range');
-        return of(null);
-      })
-    );
+  async createRange(range: Partial<DelinquencyRange>) {
+    this.loading.set(true)
+    try {
+      await firstValueFrom(this.http.post<DelinquencyRange>(`${this.baseUrl}/ranges`, range));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create range'));
+    } finally {
+      this.loading.set(false)
+    }
   }
 
-  updateRange(id: number, range: Partial<DelinquencyRange>) {
-    return this.http.put<DelinquencyRange>(`${this.baseUrl}/ranges/${id}`, range).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update range');
-        return of(null);
-      })
-    );
+  async updateRange(id: number, range: Partial<DelinquencyRange>) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.put<DelinquencyRange>(`${this.baseUrl}/ranges/${id}`, range));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update range'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  deleteRange(id: number) {
-    return this.http.delete<void>(`${this.baseUrl}/ranges/${id}`).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to delete range');
-        return of(null);
-      })
-    );
+  async deleteRange(id: number) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/ranges/${id}`));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to delete range'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   // CRUD Buckets
-  createBucket(bucket: Partial<DelinquencyBucket>) {
-    return this.http.post<DelinquencyBucket>(`${this.baseUrl}/buckets`, bucket).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to create bucket');
-        return of(null);
-      })
-    );
+  async createBucket(bucket: Partial<DelinquencyBucket>) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.post<DelinquencyBucket>(`${this.baseUrl}/buckets`, bucket));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create bucket'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  updateBucket(id: number, bucket: Partial<DelinquencyBucket>) {
-    return this.http.put<DelinquencyBucket>(`${this.baseUrl}/buckets/${id}`, bucket).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to update bucket');
-        return of(null);
-      })
-    );
+  async updateBucket(id: number, bucket: Partial<DelinquencyBucket>) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.put<DelinquencyBucket>(`${this.baseUrl}/buckets/${id}`, bucket));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update bucket'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  deleteBucket(id: number) {
-    return this.http.delete<void>(`${this.baseUrl}/buckets/${id}`).pipe(
-      tap(() => this.refresh()),
-      catchError((err) => {
-        this.error.set(err.message || 'Failed to delete bucket');
-        return of(null);
-      })
-    );
+  async deleteBucket(id: number) {
+    this.loading.set(true);
+    try {
+      await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/buckets/${id}`));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to delete bucket'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

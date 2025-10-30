@@ -1,7 +1,12 @@
 .clients-form {
-  margin: 0 0 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  // gap: 1rem;
+  margin: 1rem 0;
 
   button {
-    margin-left: 2.5rem;
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin: 1rem 0 0 0.5rem;
   }
 }
