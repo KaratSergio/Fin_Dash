@@ -17,7 +17,7 @@ export class ChargesService {
   readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
 
-  // Get charges list
+  // Get template
   readonly template = toSignal(
     this.http.get<ChargeTemplate>(`${this.baseUrl}/template`).pipe(
       catchError((err) => {

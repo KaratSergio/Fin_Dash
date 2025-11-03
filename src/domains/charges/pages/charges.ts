@@ -10,7 +10,6 @@ import { ChargesForm } from '../components/charges-form/charges-form';
 import { ChargesTable } from '../components/charges-table/charges-table';
 import { Charge } from '../interfaces/charge.interface';
 import { ChargeUpdateDto, ChargeCreateDto, ChargeFormControl } from '../interfaces/charge.dto';
-import { handleError } from '@core/utils/error';
 
 @Component({
   selector: 'app-charges-page',

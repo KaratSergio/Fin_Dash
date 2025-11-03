@@ -4,14 +4,8 @@ import { RouterModule } from '@angular/router';
 import { provideNgxMask } from 'ngx-mask';
 
 import { ClientsService } from '@domains/clients/services/clients.service';
-import { Client } from '@domains/clients/Interfaces/client.interface';
-import {
-  CreateClientDto,
-  UpdateClientDto,
-  TransferClientDto,
-  ClientQueryParams,
-  ClientsResponse,
-} from '@domains/clients/Interfaces/client.dto';
+import { Client } from '@src/domains/clients/interfaces/client.interface';
+import { CreateClientDto, UpdateClientDto } from '@src/domains/clients/interfaces/client.dto';
 import { OfficesService } from '@domains/offices/services/offices.service';
 import { FormUtils } from '@core/utils/form';
 
@@ -61,7 +55,7 @@ export class ClientsPage {
   > = {};
 
   private loadData = effect(() => {
-    this.clientsService.getClients();
+    this.clientsService.refresh();
     this.officesService.getOffices();
   });
 
@@ -104,13 +98,7 @@ export class ClientsPage {
       dateFormat: 'yyyy-MM-dd',
       locale: 'en',
     };
-    console.log('====================================');
-    console.log('client payload', payload);
-    console.log('====================================');
-    this.clientsService.createClient(payload).subscribe({
-      next: () => this.createClientForm.reset(),
-      error: (err) => this.error.set(err.message || 'Failed to create client'),
-    });
+    this.clientsService.createClient(payload)
   }
 
   updateClient(client: Client) {
@@ -123,9 +111,7 @@ export class ClientsPage {
       mobileNo: controls.mobileNo.value ?? '',
       externalId: client.externalId ?? '',
     };
-    this.clientsService.updateClient(client.id, payload).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to update client'),
-    });
+    this.clientsService.updateClient(client.id, payload)
   }
 
   transferClient(client: Client) {
@@ -134,14 +120,10 @@ export class ClientsPage {
       this.error.set('Please select an office before transfer');
       return;
     }
-    this.clientsService.transferClientPropose(client.id, officeId).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to transfer client'),
-    });
+    this.clientsService.transferClientPropose(client.id, officeId)
   }
 
   deleteClient(id: number) {
-    this.clientsService.deleteClient(id).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to delete client'),
-    });
+    this.clientsService.deleteClient(id)
   }
 }

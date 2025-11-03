@@ -1,104 +1,170 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { tap, catchError, of } from 'rxjs';
-import { Client } from '../Interfaces/client.interface';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
+import { AppError, handleError } from '@core/utils/error';
+import { Client } from '../interfaces/client.interface';
 import {
   CreateClientDto,
   UpdateClientDto,
   TransferClientDto,
   ClientQueryParams,
   ClientsResponse,
-} from '../Interfaces/client.dto';
+} from '../interfaces/client.dto';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
   private http = inject(HttpClient);
   private baseUrl = 'api/fineract/clients';
 
-  clients = signal<Client[]>([]);
-  loading = signal(false);
-  error = signal<string | null>(null);
+  readonly clients = signal<Client[]>([]);
+  readonly total = computed(() => this.clients().length);
+  readonly loading = signal(false);
+  readonly error = signal<AppError | null>(null);
+  private readonly reload = signal(0);
+  private readonly queryParams = signal<ClientQueryParams | undefined>(undefined);
 
-  // Fetch Clients
-  private fetchClients(params?: ClientQueryParams) {
-    this.loading.set(true);
+  // Single loader that handles both cases - with and without params
+  private clientsLoader = toSignal(
+    toObservable(computed(() => ({ reload: this.reload(), params: this.queryParams() }))).pipe(
+      startWith({ reload: 0, params: undefined }),
+      tap(() => {
+        this.loading.set(true);
+        this.error.set(null);
+      }),
+      switchMap(({ params }) => {
+        let httpParams = new HttpParams();
+        if (params) {
+          Object.entries(params).forEach(([key, value]) => {
+            if (value != null) httpParams = httpParams.set(key, value.toString());
+          });
+        }
 
-    let httpParams = new HttpParams();
+        return this.http.get<ClientsResponse>(this.baseUrl, { params: httpParams }).pipe(
+          tap((response) => {
+            this.clients.set(response.pageItems || []);
+          }),
+          catchError((err) => {
+            this.error.set(err.message || 'Failed to load clients');
+            return of({ pageItems: [] as Client[], totalFilteredRecords: 0 });
+          })
+        );
+      }),
+      tap(() => this.loading.set(false))
+    ),
+    { initialValue: { pageItems: [] as Client[], totalFilteredRecords: 0 } }
+  );
 
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        if (v != null) httpParams = httpParams.set(k, v.toString());
-      });
-    }
+  // log errors
+  private logErrors = effect(() => {
+    const err = this.error();
+    if (err) console.warn('[ClientsService]', err);
+  });
 
-    this.http
-      .get<ClientsResponse>(this.baseUrl, { params: httpParams })
-      .pipe(
-        tap((res) => this.clients.set(res.pageItems)),
+  // trigger reload
+  refresh() {
+    this.reload.update((n) => n + 1);
+  }
 
-        catchError((err) => {
-          this.error.set(err.message || 'Failed to load clients');
-          return of({ pageItems: [] as Client[], totalFilteredRecords: 0 });
-        }),
+  // Set query parameters and trigger reload
+  setQueryParams(params: ClientQueryParams) {
+    this.queryParams.set(params);
+    this.refresh();
+  }
 
-        tap(() => this.loading.set(false)),
-      )
-      .subscribe();
+  // Clear query parameters
+  clearQueryParams() {
+    this.queryParams.set(undefined);
+    this.refresh();
   }
 
   // CRUD
-  // Get all clients
-  getClients() {
-    this.fetchClients();
+  async createClient(data: CreateClientDto) {
+    this.loading.set(true);
+
+    try {
+      await firstValueFrom(this.http.post<Client>(this.baseUrl, data));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create client'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // Get client by ID
-  getClient(id: number) {
-    return this.http.get<Client>(`${this.baseUrl}/${id}`);
+  async updateClient(clientId: number, data: UpdateClientDto) {
+    this.loading.set(true);
+
+    try {
+      await firstValueFrom(this.http.put<Client>(`${this.baseUrl}/${clientId}`, data));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update client'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // Create client
-  createClient(client: CreateClientDto) {
-    return this.http.post<Client>(this.baseUrl, client).pipe(tap(() => this.fetchClients()));
+  async deleteClient(clientId: number) {
+    this.loading.set(true);
+
+    try {
+      await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${clientId}`));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to delete client'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // Update client base data by ID
-  updateClient(clientId: number, payload: UpdateClientDto) {
-    return this.http
-      .put(`${this.baseUrl}/${clientId}`, payload)
-      .pipe(tap(() => this.fetchClients()));
+  // get single client
+  getClient(clientId: number) {
+    return this.http.get<Client>(`${this.baseUrl}/${clientId}`);
   }
 
-  // Removed  client
-  deleteClient(id: number) {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(tap(() => this.fetchClients()));
+  // Client transfer operations
+  async transferClientPropose(clientId: number, destinationOfficeId: number) {
+    this.loading.set(true);
+
+    try {
+      const payload: TransferClientDto = {
+        destinationOfficeId,
+        transferDate: new Date().toISOString().split('T')[0],
+        dateFormat: 'yyyy-MM-dd',
+        locale: 'en',
+      };
+
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/${clientId}?command=proposeTransfer`, payload)
+      );
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to propose client transfer'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // The endpoint for transferring a client between offices
-  // occurs in two stages:
-  // submitting a transfer request (transferClientPropose)
-  // and accepting the transfer request. (transferClientAccept)
-  transferClientPropose(clientId: number, destinationOfficeId: number) {
-    const payload: TransferClientDto = {
-      destinationOfficeId,
-      transferDate: new Date().toISOString().split('T')[0],
-      dateFormat: 'yyyy-MM-dd',
-      locale: 'en',
-    };
+  async transferClientAccept(clientId: number, destinationOfficeId: number) {
+    this.loading.set(true);
 
-    return this.http
-      .post(`${this.baseUrl}/${clientId}?command=proposeTransfer`, payload)
-      .pipe(tap(() => this.fetchClients()));
-  }
+    try {
+      const payload: TransferClientDto = {
+        destinationOfficeId,
+        transferDate: new Date().toISOString().split('T')[0],
+        dateFormat: 'yyyy-MM-dd',
+        locale: 'en',
+      };
 
-  transferClientAccept(clientId: number, destinationOfficeId: number) {
-    const payload: TransferClientDto = {
-      destinationOfficeId,
-      transferDate: new Date().toISOString().split('T')[0],
-      dateFormat: 'yyyy-MM-dd',
-      locale: 'en',
-    };
-
-    return this.http.post(`${this.baseUrl}/${clientId}?command=acceptTransfer`, payload);
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/${clientId}?command=acceptTransfer`, payload)
+      );
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to accept client transfer'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

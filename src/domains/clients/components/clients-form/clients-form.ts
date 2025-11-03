@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { Client } from '@domains/clients/Interfaces/client.interface';
+import { Client } from '@src/domains/clients/interfaces/client.interface';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
