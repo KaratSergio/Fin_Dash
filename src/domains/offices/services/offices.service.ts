@@ -1,8 +1,10 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { tap, catchError, of } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
 import { formatDateForApi } from '@core/utils/date';
 import { APP_DEFAULTS } from '@core/constants/app.constants';
+import { AppError, handleError } from '@core/utils/error';
 
 import { Office } from '../interfaces/office.interface';
 import { CreateOfficeDto, UpdateOfficeDto, OfficeQueryDto } from '../interfaces/office.dto';
@@ -12,95 +14,166 @@ export class OfficesService {
   private http = inject(HttpClient);
   private baseUrl = '/api/fineract/offices';
 
-  offices = signal<Office[]>([]);
-  loading = signal(false);
-  error = signal<string | null>(null);
+  readonly offices = signal<Office[]>([]);
+  readonly total = computed(() => this.offices().length);
+  readonly loading = signal(false);
+  readonly error = signal<AppError | null>(null);
+  private readonly reload = signal(0);
+  private readonly queryParams = signal<OfficeQueryDto | undefined>(undefined);
 
-  // fetch offices by params
-  private fetchOffices(params?: OfficeQueryDto) {
-    this.loading.set(true);
+  // Template signal
+  readonly template = toSignal(
+    this.http.get<Office>(`${this.baseUrl}/template`).pipe(
+      catchError((err) => {
+        this.error.set(err.message || 'Failed to load office template');
+        return of(null);
+      })
+    ),
+    { initialValue: null }
+  );
 
-    let httpParams = new HttpParams();
+  // Single loader that handles both cases - with and without params
+  private officesLoader = toSignal(
+    toObservable(computed(() => ({ reload: this.reload(), params: this.queryParams() }))).pipe(
+      startWith({ reload: 0, params: undefined }),
+      tap(() => {
+        this.loading.set(true);
+        this.error.set(null);
+      }),
+      switchMap(({ params }) => {
+        let httpParams = new HttpParams();
+        if (params) {
+          Object.entries(params).forEach(([key, value]) => {
+            if (value !== null) httpParams = httpParams.set(key, value.toString());
+          });
+        }
 
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => {
-        if (v !== null) httpParams = httpParams.set(k, v.toString());
-      });
-    }
+        return this.http.get<Office[]>(this.baseUrl, { params: httpParams }).pipe(
+          tap((list) => this.offices.set(list)),
+          catchError((err) => {
+            this.error.set(err.message || 'Failed to load offices');
+            return of([]);
+          })
+        );
+      }),
+      tap(() => this.loading.set(false))
+    ),
+    { initialValue: [] }
+  );
 
-    this.http
-      .get<Office[]>(this.baseUrl, { params: httpParams })
-      .pipe(
-        tap((list) => this.offices.set(list)),
-        catchError((err) => {
-          this.error.set(err.message || 'Failed to load offices');
-          return of([]);
-        }),
-        tap(() => this.loading.set(false)),
-      )
-      .subscribe();
+  // log errors
+  private logErrors = effect(() => {
+    const err = this.error();
+    if (err) console.warn('[OfficesService]', err);
+  });
+
+  // trigger reload
+  refresh() {
+    this.reload.update((n) => n + 1);
+  }
+
+  // Set query parameters and trigger reload
+  setQueryParams(params: OfficeQueryDto) {
+    this.queryParams.set(params);
+    this.refresh();
+  }
+
+  // Clear query parameters
+  clearQueryParams() {
+    this.queryParams.set(undefined);
+    this.refresh();
   }
 
   // CRUD
-  // Get all offices list
-  getOffices(params?: OfficeQueryDto) {
-    this.fetchOffices(params);
+  async createOffice(data: CreateOfficeDto) {
+    this.loading.set(true);
+
+    try {
+      const payload = {
+        ...data,
+        openingDate: formatDateForApi(data.openingDate),
+      };
+
+      await firstValueFrom(this.http.post<Office>(this.baseUrl, payload));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to create office'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // Get office by ID
+  async updateOffice(officeId: number, data: UpdateOfficeDto) {
+    this.loading.set(true);
+
+    try {
+      const payload: UpdateOfficeDto = {
+        ...data,
+        openingDate: data.openingDate ? formatDateForApi(data.openingDate) : undefined,
+        dateFormat: data.dateFormat ?? APP_DEFAULTS.DATE_FORMAT,
+        locale: data.locale ?? APP_DEFAULTS.LOCALE,
+      };
+
+      await firstValueFrom(this.http.put<Office>(`${this.baseUrl}/${officeId}`, payload));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update office'));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // get single office
   getOffice(officeId: number) {
     return this.http.get<Office>(`${this.baseUrl}/${officeId}`);
   }
 
-  // Create new office
-  createOffice(office: CreateOfficeDto) {
-    const payload = {
-      ...office,
-      openingDate: formatDateForApi(office.openingDate),
-    };
+  // Template operations
+  async uploadTemplate(file: File) {
+    this.loading.set(true);
 
-    return this.http.post<Office>(this.baseUrl, payload).pipe(tap(() => this.fetchOffices()));
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await firstValueFrom(this.http.post<void>(`${this.baseUrl}/uploadtemplate`, formData));
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to upload office template'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // Update office by ID
-  updateOffice(officeId: number, office: UpdateOfficeDto) {
-    const payload: UpdateOfficeDto = {
-      ...office,
-      openingDate: office.openingDate ? formatDateForApi(office.openingDate) : undefined,
-      dateFormat: office.dateFormat ?? APP_DEFAULTS.DATE_FORMAT,
-      locale: office.locale ?? APP_DEFAULTS.LOCALE,
-    };
+  // External ID operations
+  async getByExternalId(externalId: string) {
+    this.loading.set(true);
 
-    return this.http
-      .put<Office>(`${this.baseUrl}/${officeId}`, payload)
-      .pipe(tap(() => this.fetchOffices()));
+    try {
+      const office = await firstValueFrom(
+        this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`)
+      );
+      return office;
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to get office by external ID'));
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  // TEMPLATE
-  // Get office template
-  getTemplate() {
-    return this.http.get<Office>(`${this.baseUrl}/template`);
-  }
+  async updateByExternalId(externalId: string, data: Partial<Office>) {
+    this.loading.set(true);
 
-  // Upload office template
-  uploadTemplate(file: File) {
-    const formData = new FormData();
-    formData.append('file', file);
-    return this.http
-      .post<void>(`${this.baseUrl}/uploadtemplate`, formData)
-      .pipe(tap(() => this.fetchOffices()));
-  }
-
-  // EXTERNAL ID
-  // Get an office using an external ID
-  getByExternalId(externalId: string) {
-    return this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`);
-  }
-
-  // Update an office using an external ID
-  updateByExternalId(externalId: string, office: Partial<Office>) {
-    return this.http
-      .put<Office>(`${this.baseUrl}/external-id/${externalId}`, office)
-      .pipe(tap(() => this.fetchOffices()));
+    try {
+      await firstValueFrom(
+        this.http.put<Office>(`${this.baseUrl}/external-id/${externalId}`, data)
+      );
+      this.refresh();
+    } catch (err) {
+      this.error.set(handleError(err, 'Failed to update office by external ID'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

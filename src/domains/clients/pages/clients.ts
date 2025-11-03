@@ -56,7 +56,7 @@ export class ClientsPage {
 
   private loadData = effect(() => {
     this.clientsService.refresh();
-    this.officesService.getOffices();
+    this.officesService.refresh();
   });
 
   private syncControls = effect(() => {

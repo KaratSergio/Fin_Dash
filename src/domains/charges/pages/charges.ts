@@ -92,7 +92,7 @@ export class ChargesPage {
     controls.penalty.setValue(charge.penalty ?? false, { emitEvent: false });
   }
 
-  // Methods
+  // Actions
   createCharge() {
     if (this.createChargeForm.invalid) return;
     const formValue = this.createChargeForm.value as ChargeCreateDto;

@@ -1,9 +1,11 @@
-import { Component, inject, signal, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Component, inject, effect } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
+
 import { OfficesService } from '@domains/offices/services/offices.service';
 import { CreateOfficeDto, UpdateOfficeDto } from '@domains/offices/interfaces/office.dto';
 import { Office } from '@domains/offices/interfaces/office.interface';
+
 import { FormUtils } from '@core/utils/form';
 import { APP_DEFAULTS } from '@core/constants/app.constants';
 
@@ -23,8 +25,9 @@ export class OfficesAdminPage {
   officesService = inject(OfficesService);
 
   offices = this.officesService.offices;
+  total = this.officesService.total;
   loading = this.officesService.loading;
-  error = signal<string | null>(null);
+  error = this.officesService.error;
 
   // Form for creating office
   createOfficeForm = this.fb.group({
@@ -37,28 +40,29 @@ export class OfficesAdminPage {
   });
 
   // Controls for editing existing offices
-  officeControls: Record<
-    number,
-    {
-      name: FormControl<string>;
-      externalId: FormControl<string>;
-      parentId: FormControl<number | null>;
-      openingDate: FormControl<string>;
-    }
-  > = {};
+  officeControls: Record<number, {
+    name: FormControl<string>;
+    externalId: FormControl<string>;
+    parentId: FormControl<number | null>;
+    openingDate: FormControl<string>;
+  }> = {};
 
   // Load offices initially
-  private loadOffices = effect(() => {
-    this.officesService.getOffices({
-      fields: 'id,externalId,name,openingDate,parentId',
-      orderBy: 'name',
-      sortOrder: 'ASC',
-    });
-  });
+  private loadOffices = effect(
+    () => {
+      this.officesService.setQueryParams({
+        fields: 'id,externalId,name,openingDate,parentId',
+        orderBy: 'name',
+        sortOrder: 'ASC',
+      });
+    },
+    { allowSignalWrites: true }
+  );
 
   // Sync office controls
   private syncControls = effect(() => {
-    this.offices().forEach((office) => {
+    const offices = this.offices();
+    offices.forEach((office) => {
       if (!this.officeControls[office.id]) {
         this.officeControls[office.id] = {
           name: this.utils.requiredText(office.name),
@@ -74,24 +78,33 @@ export class OfficesAdminPage {
         controls.openingDate.setValue(office.openingDate ?? '', { emitEvent: false });
       }
     });
+
+    // Clean up controls for offices that no longer exist
+    const currentOfficeIds = new Set(offices.map(office => office.id));
+    Object.keys(this.officeControls).forEach(idStr => {
+      const id = Number(idStr);
+      if (!currentOfficeIds.has(id)) {
+        delete this.officeControls[id];
+      }
+    });
   });
 
-  // Methods
+  // Actions
   createOffice() {
     if (this.createOfficeForm.invalid) return;
+
     const office: CreateOfficeDto = this.createOfficeForm.value as CreateOfficeDto;
 
-    this.officesService.createOffice(office).subscribe({
-      next: () =>
-        this.createOfficeForm.reset({
-          name: '',
-          externalId: '',
-          parentId: 1,
-          openingDate: new Date().toISOString().split('T')[0],
-          locale: APP_DEFAULTS.LOCALE,
-          dateFormat: APP_DEFAULTS.DATE_FORMAT,
-        }),
-      error: (err) => this.error.set(err.message || 'Failed to create office'),
+    this.officesService.createOffice(office);
+
+    // Reset form immediately (optimistic update)
+    this.createOfficeForm.reset({
+      name: '',
+      externalId: '',
+      parentId: 1,
+      openingDate: new Date().toISOString().split('T')[0],
+      locale: APP_DEFAULTS.LOCALE,
+      dateFormat: APP_DEFAULTS.DATE_FORMAT,
     });
   }
 
@@ -106,8 +119,26 @@ export class OfficesAdminPage {
       openingDate: controls.openingDate.value,
     };
 
-    this.officesService.updateOffice(office.id, payload).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to update office'),
+    this.officesService.updateOffice(office.id, payload);
+  }
+
+  // Refresh offices manually if needed
+  refreshOffices() {
+    this.officesService.refresh();
+  }
+
+  // Clear any filters/search
+  clearFilters() {
+    this.officesService.clearQueryParams();
+  }
+
+  // Search/filter offices
+  searchOffices(params: { search?: string; parentId?: number }) {
+    this.officesService.setQueryParams({
+      ...params,
+      fields: 'id,externalId,name,openingDate,parentId',
+      orderBy: 'name',
+      sortOrder: 'ASC',
     });
   }
 }

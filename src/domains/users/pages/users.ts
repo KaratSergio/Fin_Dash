@@ -60,7 +60,7 @@ export class UsersAdminPage {
   private loadData = effect(() => {
     this.usersService.getUsers();
     this.rolesService.refresh();
-    this.officesService.getOffices();
+    this.officesService.refresh();
   });
 
   // Sync controls with latest data
