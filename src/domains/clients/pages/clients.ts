@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { provideNgxMask } from 'ngx-mask';
@@ -29,7 +29,7 @@ export class ClientsPage {
 
   clients = this.clientsService.clients;
   loading = this.clientsService.loading;
-  error = signal<string | null>(null);
+  error = this.clientsService.error;
 
   /// form for creating a new client
   createClientForm = this.fb.group({
@@ -116,10 +116,7 @@ export class ClientsPage {
 
   transferClient(client: Client) {
     const officeId = this.clientControls[client.id]?.office.value;
-    if (!officeId) {
-      this.error.set('Please select an office before transfer');
-      return;
-    }
+    if (!officeId) return;
     this.clientsService.transferClientPropose(client.id, officeId)
   }
 

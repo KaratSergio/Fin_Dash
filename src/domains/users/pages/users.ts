@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormControl } from '@angular/forms';
 
@@ -30,7 +30,7 @@ export class UsersAdminPage {
   users = this.usersService.users;
   roles = this.rolesService.roles;
   loading = this.usersService.loading;
-  error = signal<string | null>(null);
+  error = this.usersService.error;
 
   // Create User Form
   createUserForm = this.fb.group({
@@ -58,7 +58,7 @@ export class UsersAdminPage {
 
   // Load users, roles, offices
   private loadData = effect(() => {
-    this.usersService.getUsers();
+    this.usersService.refresh();
     this.rolesService.refresh();
     this.officesService.refresh();
   });
@@ -88,7 +88,7 @@ export class UsersAdminPage {
     });
   });
 
-  // Methods
+  // Actions
   createUser() {
     if (this.createUserForm.invalid) return;
     const f = this.createUserForm.value;
@@ -105,10 +105,7 @@ export class UsersAdminPage {
       repeatPassword: f.password ?? '',
     };
 
-    this.usersService.createUser(payload).subscribe({
-      next: () => this.createUserForm.reset(),
-      error: (err) => this.error.set(err.message || 'Failed to create user'),
-    });
+    this.usersService.createUser(payload)
   }
 
   updateUser(user: AppUser) {
@@ -124,14 +121,10 @@ export class UsersAdminPage {
       officeId: controls.office.value ?? undefined,
     };
 
-    this.usersService.updateUser(user.id, payload).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to update user'),
-    });
+    this.usersService.updateUser(user.id, payload)
   }
 
   deleteUser(id: number) {
-    this.usersService.deleteUser(id).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to delete user'),
-    });
+    this.usersService.deleteUser(id)
   }
 }
