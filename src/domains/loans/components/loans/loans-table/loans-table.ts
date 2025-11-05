@@ -12,14 +12,12 @@ import { formatTimeline } from '@core/utils/date';
 })
 export class LoanTable {
   @Input() loans: Loan[] = [];
-  @Input() loanControls: Record<
-    number,
+  @Input() loanControls: Record<number,
     {
       principal: FormControl<number | null>;
       expectedDisbursementDate: FormControl<string | null>;
       status: FormControl<string | null>;
-    }
-  > = {};
+    }> = {};
   @Input() activeLoanId: number | null = null;
 
   @Output() toggle = new EventEmitter<Loan>();

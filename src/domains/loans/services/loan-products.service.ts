@@ -1,10 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
-// types
-import { LoanProduct } from '../interfaces/loan-product.interface';
-import { LoanProductCreateDto } from '../interfaces/dto/loan-product-create.dto';
-import { LoanProductUpdateDto } from '../interfaces/dto/loan-product-update.dto';
+import type { LoanProduct } from '../interfaces/loan-product.interface';
+import type { LoanProductCreateDto, LoanProductUpdateDto } from '../interfaces/dto/loan-product.dto';
 
 // A Loan product is a template that is used when creating a loan.
 // Much of the template definition can be overridden during loan creation.

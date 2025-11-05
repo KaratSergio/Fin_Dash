@@ -4,9 +4,8 @@ import { RouterModule } from '@angular/router';
 import { FormUtils } from '@core/utils/form';
 
 import { LoanProductsService } from '@domains/loans/services/loan-products.service';
-import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
-import { LoanProductCreateDto } from '@domains/loans/interfaces/dto/loan-product-create.dto';
-import { LoanProductUpdateDto } from '@domains/loans/interfaces/dto/loan-product-update.dto';
+import type { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
+import type { LoanProductCreateDto, LoanProductUpdateDto } from '@domains/loans/interfaces/dto/loan-product.dto';
 
 import { LoanProductForm } from '../../components/loan-products/loan-products-form/loan-products-form';
 import { LoanProductTable } from '../../components/loan-products/loan-products-table/loan-products-table';

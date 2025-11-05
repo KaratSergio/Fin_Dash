@@ -1,15 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
-
-import { Loan } from '../interfaces/loan.interface';
-import { CreateLoanDto } from '../interfaces/dto/loan-create.dto';
-import { UpdateLoanDto } from '../interfaces/dto/loan-update.dto';
-import {
-  ApproveLoanDto,
-  DisburseLoanDto,
-  RejectLoanDto,
-} from '../interfaces/dto/loan-commands.dto';
+import type { Loan } from '../interfaces/loan.interface';
+import type { CreateLoanDto, UpdateLoanDto, ApproveLoanDto, DisburseLoanDto, RejectLoanDto } from '../interfaces/dto/loan.dto';
 
 @Injectable({ providedIn: 'root' })
 export class LoansService {

@@ -3,11 +3,9 @@
 
   @if (loading()) {
     <div>Loading...</div>
+  } @else if (error()){
+    <div class="error">{{ error() }}</div>
   } @else {
-    @if (error()) {
-      <div class="error">{{ error() }}</div>
-    }
-
     <h2 class="title">Create New Product</h2>
     <app-loan-products-form [form]="createProductForm" (submitForm)="createProduct()">
     </app-loan-products-form>

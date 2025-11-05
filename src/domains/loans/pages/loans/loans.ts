@@ -11,10 +11,9 @@ import { formatDateForApi, parseApiDate } from '@core/utils/date';
 import { extractId, extractString } from '@core/utils/mappers';
 import { APP_DEFAULTS } from '@core/constants/app.constants';
 
-import { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
-import { Loan } from '@domains/loans/interfaces/loan.interface';
-import { CreateLoanDto } from '@domains/loans/interfaces/dto/loan-create.dto';
-import { UpdateLoanDto } from '@domains/loans/interfaces/dto/loan-update.dto';
+import type { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
+import type { Loan } from '@domains/loans/interfaces/loan.interface';
+import type { CreateLoanDto, UpdateLoanDto } from '@domains/loans/interfaces/dto/loan.dto';
 
 import { LoanForm } from '../../components/loans/loans-form/loans-form';
 import { LoanTable } from '../../components/loans/loans-table/loans-table';
@@ -76,7 +75,7 @@ export class LoansPage {
   // Initial data
   private loadData = effect(() => {
     this.loansService.getLoans();
-    this.clientsService.getClients();
+    this.clientsService.refresh();
     this.loanProductsService.getLoanProducts();
   });
 
