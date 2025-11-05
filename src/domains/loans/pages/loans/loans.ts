@@ -74,9 +74,9 @@ export class LoansPage {
 
   // Initial data
   private loadData = effect(() => {
-    this.loansService.getLoans();
+    this.loansService.refresh();
     this.clientsService.refresh();
-    this.loanProductsService.getLoanProducts();
+    this.loanProductsService.refresh();
   });
 
   // Loan selection / form population
@@ -141,10 +141,7 @@ export class LoansPage {
       locale: APP_DEFAULTS.LOCALE,
     };
 
-    this.loansService.createLoan(dto).subscribe({
-      next: () => this.loanCreateForm.reset(),
-      error: (err) => this.error.set(err.message || 'Failed to create loan'),
-    });
+    this.loansService.createLoan(dto)
   }
 
   // Update loan
@@ -189,17 +186,12 @@ export class LoansPage {
       locale: APP_DEFAULTS.LOCALE,
     };
 
-    this.loansService.updateLoan(loanId, dto).subscribe({
-      next: () => this.loansService.getLoans(),
-      error: (err) => this.error.set(err.message || 'Failed to update loan'),
-    });
+    this.loansService.updateLoan(loanId, dto)
   }
 
   // Delete loan
   deleteLoan(id: number) {
-    this.loansService.deleteLoan(id).subscribe({
-      error: (err) => this.error.set(err.message || 'Failed to delete loan'),
-    });
+    this.loansService.deleteLoan(id)
   }
 
   // pull up the loan product fields when creating a loan

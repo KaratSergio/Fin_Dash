@@ -24,22 +24,6 @@ export class LoanChargesService {
   private readonly reload = signal(0);
   private readonly currentLoanId = signal<number | null>(null);
 
-  // Template signal
-  readonly template = toSignal(
-    toObservable(this.currentLoanId).pipe(
-      switchMap((loanId) => {
-        if (!loanId) return of(null);
-        return this.http.get<LoanChargeTemplate>(`${this.baseUrl}/${loanId}/charges/template`).pipe(
-          catchError((err) => {
-            this.error.set(handleError(err, 'Failed to load loan charge template'));
-            return of(null);
-          })
-        );
-      })
-    ),
-    { initialValue: null }
-  );
-
   // automatically re-fetch charges when reload or loanId changes
   private chargesLoader = toSignal(
     toObservable(computed(() => ({
@@ -227,6 +211,11 @@ export class LoanChargesService {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  // Get template by loan ID
+  getTemplate(loanId: number) {
+    return this.http.get<LoanChargeTemplate>(`${this.baseUrl}/${loanId}/charges/template`);
   }
 
   // Get template by external loan ID
