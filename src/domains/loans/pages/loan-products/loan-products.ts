@@ -26,7 +26,7 @@ export class LoanProductsPage {
 
   loanProducts = this.loanProductsService.loanProducts;
   loading = this.loanProductsService.loading;
-  error = signal<string | null>(null);
+  error = this.loanProductsService.error;
 
   selectedProductId = signal<number | null>(null);
 
@@ -57,7 +57,7 @@ export class LoanProductsPage {
 
   // Automatic data loading
   private loadData = effect(() => {
-    this.loanProductsService.getLoanProducts();
+    this.loanProductsService.refresh();
   });
 
   // Create Product
@@ -91,13 +91,7 @@ export class LoanProductsPage {
       dateFormat: 'yyyy-MM-dd',
     };
 
-    this.loanProductsService.createLoanProduct(dto).subscribe({
-      next: () => {
-        this.createProductForm.reset();
-        this.loanProductsService.getLoanProducts();
-      },
-      error: (err) => this.error.set(err.message || 'Failed to create loan product'),
-    });
+    this.loanProductsService.createLoanProduct(dto)
   }
 
   // Selecting a product to edit
@@ -133,10 +127,7 @@ export class LoanProductsPage {
       // repaymentFrequencyType: Number(f.repaymentFrequencyType),
     };
 
-    this.loanProductsService.updateLoanProduct(productId, dto).subscribe({
-      next: () => console.log('Loan product updated'),
-      error: (err) => this.error.set(err.message || 'Failed to update product'),
-    });
+    this.loanProductsService.updateLoanProduct(productId, dto)
   }
 
   //  Reset edit
