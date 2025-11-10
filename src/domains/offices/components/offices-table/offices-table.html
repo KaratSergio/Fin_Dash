@@ -4,7 +4,6 @@
       <tr>
         <th>Opening Date</th>
         <th>Name</th>
-        <th>External ID</th>
         <th>Parent Office</th>
         <th>Actions</th>
       </tr>
@@ -14,7 +13,6 @@
         <tr>
           <td>{{ office.openingDate | formatDate }}</td>
           <td><input [formControl]="officeControls[office.id].name" /></td>
-          <td><input [formControl]="officeControls[office.id].externalId" /></td>
           <td>
             @if (office.parentId !== undefined && office.parentId !== null) {
               <mat-form-field appearance="outline" class="table-field-select">
@@ -36,7 +34,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="5">No offices found</td>
+          <td colspan="4">No offices found</td>
         </tr>
       }
     </tbody>

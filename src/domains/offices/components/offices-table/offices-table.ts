@@ -20,7 +20,6 @@ export class OfficesTable {
     number,
     {
       name: FormControl<string>;
-      externalId: FormControl<string>;
       parentId: FormControl<number | null>;
       openingDate: FormControl<string>;
     }

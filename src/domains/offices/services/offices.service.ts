@@ -2,9 +2,8 @@ import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { formatDateForApi } from '@core/utils/date';
 import { APP_DEFAULTS } from '@core/constants/app.constants';
-import { AppError, handleError } from '@core/utils/error';
+import { AppError, handleError, formatDateForApi, genId } from '@core/utils';
 
 import { Office } from '../interfaces/office.interface';
 import { CreateOfficeDto, UpdateOfficeDto, OfficeQueryDto } from '../interfaces/office.dto';
@@ -91,6 +90,7 @@ export class OfficesService {
     try {
       const payload = {
         ...data,
+        externalId: genId(8),
         openingDate: formatDateForApi(data.openingDate),
       };
 

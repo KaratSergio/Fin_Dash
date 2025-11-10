@@ -32,7 +32,6 @@ export class OfficesAdminPage {
   // Form for creating office
   createOfficeForm = this.fb.group({
     name: this.utils.requiredText(),
-    externalId: this.utils.makeControl(''),
     parentId: this.utils.requiredNumberNN(1),
     openingDate: this.utils.requiredText(new Date().toISOString().split('T')[0]),
     locale: this.utils.makeControl(APP_DEFAULTS.LOCALE),
@@ -42,7 +41,6 @@ export class OfficesAdminPage {
   // Controls for editing existing offices
   officeControls: Record<number, {
     name: FormControl<string>;
-    externalId: FormControl<string>;
     parentId: FormControl<number | null>;
     openingDate: FormControl<string>;
   }> = {};
@@ -66,14 +64,12 @@ export class OfficesAdminPage {
       if (!this.officeControls[office.id]) {
         this.officeControls[office.id] = {
           name: this.utils.requiredText(office.name),
-          externalId: this.utils.makeControl(office.externalId ?? ''),
           parentId: this.utils.makeControl(office.parentId ?? null),
           openingDate: this.utils.requiredText(office.openingDate ?? ''),
         };
       } else {
         const controls = this.officeControls[office.id];
         controls.name.setValue(office.name, { emitEvent: false });
-        controls.externalId.setValue(office.externalId ?? '', { emitEvent: false });
         controls.parentId.setValue(office.parentId ?? null, { emitEvent: false });
         controls.openingDate.setValue(office.openingDate ?? '', { emitEvent: false });
       }
@@ -100,7 +96,6 @@ export class OfficesAdminPage {
     // Reset form immediately (optimistic update)
     this.createOfficeForm.reset({
       name: '',
-      externalId: '',
       parentId: 1,
       openingDate: new Date().toISOString().split('T')[0],
       locale: APP_DEFAULTS.LOCALE,
@@ -114,7 +109,6 @@ export class OfficesAdminPage {
 
     const payload: UpdateOfficeDto = {
       name: controls.name.value,
-      externalId: controls.externalId.value,
       parentId: controls.parentId.value ?? undefined,
       openingDate: controls.openingDate.value,
     };

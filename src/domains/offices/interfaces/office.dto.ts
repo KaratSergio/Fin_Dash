@@ -1,13 +1,14 @@
 interface OfficeDto {
   name: string;
-  externalId: string;
   parentId: number;
   dateFormat: string;
   locale: string;
   openingDate: string; // formatted for API
+
+  externalId?: string;
 }
 
-export interface CreateOfficeDto extends OfficeDto {}
+export interface CreateOfficeDto extends OfficeDto { }
 
 export type UpdateOfficeDto = Partial<OfficeDto>;
 

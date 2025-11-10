@@ -5,11 +5,6 @@
   </mat-form-field>
 
   <mat-form-field appearance="fill">
-    <mat-label>External ID</mat-label>
-    <input matInput formControlName="externalId" />
-  </mat-form-field>
-
-  <mat-form-field appearance="fill">
     <mat-label>Parent Office</mat-label>
     <mat-select formControlName="parentId">
       @for (office of offices; track office.id) {
