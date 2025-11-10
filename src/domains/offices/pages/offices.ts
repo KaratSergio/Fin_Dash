@@ -1,9 +1,10 @@
 import { RouterModule } from '@angular/router';
 import { Component, inject, effect } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 import { OfficesService } from '@domains/offices/services/offices.service';
 import { CreateOfficeDto, UpdateOfficeDto } from '@domains/offices/interfaces/office.dto';
+import { OfficeControlsMap } from '@domains/offices/interfaces/office-controls.interface';
 import { Office } from '@domains/offices/interfaces/office.interface';
 
 import { FormUtils } from '@core/utils/form';
@@ -39,11 +40,7 @@ export class OfficesAdminPage {
   });
 
   // Controls for editing existing offices
-  officeControls: Record<number, {
-    name: FormControl<string>;
-    parentId: FormControl<number | null>;
-    openingDate: FormControl<string>;
-  }> = {};
+  officeControls: OfficeControlsMap = {};
 
   // Load offices initially
   private loadOffices = effect(
