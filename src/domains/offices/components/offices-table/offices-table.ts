@@ -2,8 +2,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormatDatePipe } from '@shared/pipes/format-date.pipe';
 
-import { Office } from '@domains/offices/interfaces/office.interface';
-import { OfficeControlsMap } from '@domains/offices/interfaces/office-controls.interface';
+import type { Office } from '@domains/offices/interfaces/office.interface';
+import type { OfficeControls } from '@domains/offices/interfaces/office-controls.interface';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,7 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class OfficesTable {
   @Input() offices: Office[] = [];
-  @Input() officeControls: OfficeControlsMap = {};
+  @Input() officeControls: OfficeControls = {};
 
   @Output() update = new EventEmitter<Office>();
 }

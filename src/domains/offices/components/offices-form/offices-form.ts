@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 
-import { Office } from '@domains/offices/interfaces/office.interface';
+import type { Office } from '@domains/offices/interfaces/office.interface';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';

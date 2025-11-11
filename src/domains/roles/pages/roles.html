@@ -3,8 +3,6 @@
 
   @if (loading()) {
     <div>Loading...</div>
-  } @else if (error()) {
-    <div class="error">{{ error() }}</div>
   } @else {
     <h2 class="title">Create New Role</h2>
     <app-roles-form [form]="createRoleForm" (create)="createRole()"></app-roles-form>

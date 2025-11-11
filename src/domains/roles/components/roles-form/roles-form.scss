@@ -1,17 +1,19 @@
 .create-role {
-  display: flex;
-  margin: 0 0 1rem 0;
-  padding: 0 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 1rem 0;
 
   .name-input {
-    flex: 0.2;
+    width: 400px;
   }
 
-  .desc-field {
-    flex: 1;
+  .desc-input {
+    grid-column: 1 / -1;
   }
 
   button {
-    margin-left: 1rem;
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin: 1rem 0 0 0.5rem;
   }
 }

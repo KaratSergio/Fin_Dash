@@ -1,9 +1,11 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { FormUtils } from '@core/utils/form';
+
 import { RolesService } from '@domains/roles/services/roles.service';
-import { Role } from '@domains/roles/interfaces/role.interface';
+import type { Role } from '@domains/roles/interfaces/role.interface';
+import type { RoleControls } from '@domains/roles/interfaces/role-controls.interface';
 
 import { RolesForm } from '../components/roles-form/roles-form';
 import { RolesTable } from '../components/roles-table/roles-table';
@@ -22,7 +24,6 @@ export class RolesAdminPage {
 
   roles = this.roleService.roles;
   loading = this.roleService.loading;
-  error = this.roleService.error;
 
   // Form for creating role
   createRoleForm = this.fb.group({
@@ -31,13 +32,7 @@ export class RolesAdminPage {
   });
 
   // Controls for editing existing roles
-  roleControls: Record<
-    number,
-    {
-      name: FormControl<string>;
-      description: FormControl<string>;
-    }
-  > = {};
+  roleControls: RoleControls = {};
 
   // Load roles initially
   private loadRoles = effect(() => this.roleService.refresh());
@@ -58,29 +53,22 @@ export class RolesAdminPage {
     });
   });
 
-  // Methods
+  // Actions
   createRole() {
     if (this.createRoleForm.invalid) return;
     this.roleService.createRole(this.createRoleForm.value)
+    this.createRoleForm.reset();
   }
 
   updateRole(roleId: number) {
-    const controls = this.roleControls[roleId];
-    if (!controls) return;
-
-    const payload: Partial<Role> = {
-      name: controls.name.value,
-      description: controls.description.value,
-    };
-
-    this.roleService.updateRole(roleId, payload as Role)
+    const { name, description } = this.roleControls[roleId];
+    this.roleService.updateRole(roleId, { name: name.value, description: description.value } as Role);
   }
 
   deleteRole(roleId: number) {
     this.roleService.deleteRole(roleId)
   }
 
-  // actions
   toggleRole(role: Role) {
     const action = role.disabled ? this.roleService.enableRole : this.roleService.disableRole;
     action.call(this.roleService, role.id)

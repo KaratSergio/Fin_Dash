@@ -4,7 +4,7 @@ import { FormBuilder } from '@angular/forms';
 
 import { OfficesService } from '@domains/offices/services/offices.service';
 import { CreateOfficeDto, UpdateOfficeDto } from '@domains/offices/interfaces/office.dto';
-import { OfficeControlsMap } from '@domains/offices/interfaces/office-controls.interface';
+import { OfficeControls } from '@domains/offices/interfaces/office-controls.interface';
 import { Office } from '@domains/offices/interfaces/office.interface';
 
 import { FormUtils } from '@core/utils/form';
@@ -40,7 +40,7 @@ export class OfficesAdminPage {
   });
 
   // Controls for editing existing offices
-  officeControls: OfficeControlsMap = {};
+  officeControls: OfficeControls = {};
 
   // Load offices initially
   private loadOffices = effect(

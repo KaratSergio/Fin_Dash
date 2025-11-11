@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '@core/auth/auth.service';
+import { AuthService } from '@src/core/services/auth/auth.service';
 import { handleError, AppError } from '@core/utils/error';
 
 @Component({
