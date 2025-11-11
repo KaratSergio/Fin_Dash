@@ -1,10 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="submit.emit()" class="create-office">
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="name-input">
     <mat-label>Name</mat-label>
     <input matInput formControlName="name" />
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="office-select">
     <mat-label>Parent Office</mat-label>
     <mat-select formControlName="parentId">
       @for (office of offices; track office.id) {
@@ -13,7 +13,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="date-input">
     <mat-label>Opening Date</mat-label>
     <input matInput [matDatepicker]="picker" formControlName="openingDate" />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>

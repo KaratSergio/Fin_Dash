@@ -28,7 +28,6 @@ export class OfficesAdminPage {
   offices = this.officesService.offices;
   total = this.officesService.total;
   loading = this.officesService.loading;
-  error = this.officesService.error;
 
   // Form for creating office
   createOfficeForm = this.fb.group({
@@ -85,9 +84,7 @@ export class OfficesAdminPage {
   // Actions
   createOffice() {
     if (this.createOfficeForm.invalid) return;
-
     const office: CreateOfficeDto = this.createOfficeForm.value as CreateOfficeDto;
-
     this.officesService.createOffice(office);
 
     // Reset form immediately (optimistic update)
@@ -102,7 +99,6 @@ export class OfficesAdminPage {
 
   updateOffice(office: Office) {
     const controls = this.officeControls[office.id];
-    if (!controls) return;
 
     const payload: UpdateOfficeDto = {
       name: controls.name.value,

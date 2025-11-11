@@ -1,22 +1,24 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { APP_DEFAULTS } from '@core/constants/app.constants';
-import { AppError, handleError, formatDateForApi, genId } from '@core/utils';
 
-import { Office } from '../interfaces/office.interface';
-import { CreateOfficeDto, UpdateOfficeDto, OfficeQueryDto } from '../interfaces/office.dto';
+import type { Office } from '../interfaces/office.interface';
+import type { CreateOfficeDto, UpdateOfficeDto, OfficeQueryDto } from '../interfaces/office.dto';
+import { formatDateForApi, genId } from '@core/utils';
+import { APP_DEFAULTS } from '@core/constants/app.constants';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { OFFICE_NOTIFICATION_MESSAGES as MSG } from '../constants/notification-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class OfficesService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = '/api/fineract/offices';
 
   readonly offices = signal<Office[]>([]);
   readonly total = computed(() => this.offices().length);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
   private readonly queryParams = signal<OfficeQueryDto | undefined>(undefined);
 
@@ -24,21 +26,18 @@ export class OfficesService {
   readonly template = toSignal(
     this.http.get<Office>(`${this.baseUrl}/template`).pipe(
       catchError((err) => {
-        this.error.set(err.message || 'Failed to load office template');
+        this.notificationService.error(MSG.ERROR.LOAD_TEMPLATE);
         return of(null);
       })
     ),
     { initialValue: null }
   );
 
-  // Single loader that handles both cases - with and without params
+  // Offices loader
   private officesLoader = toSignal(
     toObservable(computed(() => ({ reload: this.reload(), params: this.queryParams() }))).pipe(
       startWith({ reload: 0, params: undefined }),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(({ params }) => {
         let httpParams = new HttpParams();
         if (params) {
@@ -50,7 +49,7 @@ export class OfficesService {
         return this.http.get<Office[]>(this.baseUrl, { params: httpParams }).pipe(
           tap((list) => this.offices.set(list)),
           catchError((err) => {
-            this.error.set(err.message || 'Failed to load offices');
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of([]);
           })
         );
@@ -59,12 +58,6 @@ export class OfficesService {
     ),
     { initialValue: [] }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[OfficesService]', err);
-  });
 
   // trigger reload
   refresh() {
@@ -86,7 +79,6 @@ export class OfficesService {
   // CRUD
   async createOffice(data: CreateOfficeDto) {
     this.loading.set(true);
-
     try {
       const payload = {
         ...data,
@@ -95,9 +87,10 @@ export class OfficesService {
       };
 
       await firstValueFrom(this.http.post<Office>(this.baseUrl, payload));
+      this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create office'));
+      this.notificationService.error(MSG.ERROR.CREATE);
     } finally {
       this.loading.set(false);
     }
@@ -105,7 +98,6 @@ export class OfficesService {
 
   async updateOffice(officeId: number, data: UpdateOfficeDto) {
     this.loading.set(true);
-
     try {
       const payload: UpdateOfficeDto = {
         ...data,
@@ -115,9 +107,10 @@ export class OfficesService {
       };
 
       await firstValueFrom(this.http.put<Office>(`${this.baseUrl}/${officeId}`, payload));
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update office'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -131,15 +124,15 @@ export class OfficesService {
   // Template operations
   async uploadTemplate(file: File) {
     this.loading.set(true);
-
     try {
       const formData = new FormData();
       formData.append('file', file);
 
       await firstValueFrom(this.http.post<void>(`${this.baseUrl}/uploadtemplate`, formData));
+      this.notificationService.success(MSG.SUCCESS.TEMPLATE_UPLOADED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to upload office template'));
+      this.notificationService.error(MSG.ERROR.UPLOAD_TEMPLATE);
     } finally {
       this.loading.set(false);
     }
@@ -148,14 +141,13 @@ export class OfficesService {
   // External ID operations
   async getByExternalId(externalId: string) {
     this.loading.set(true);
-
     try {
       const office = await firstValueFrom(
         this.http.get<Office>(`${this.baseUrl}/external-id/${externalId}`)
       );
       return office;
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to get office by external ID'));
+      this.notificationService.error(MSG.ERROR.GET_BY_EXTERNAL_ID);
       throw err;
     } finally {
       this.loading.set(false);
@@ -164,14 +156,14 @@ export class OfficesService {
 
   async updateByExternalId(externalId: string, data: Partial<Office>) {
     this.loading.set(true);
-
     try {
       await firstValueFrom(
         this.http.put<Office>(`${this.baseUrl}/external-id/${externalId}`, data)
       );
+      this.notificationService.success(MSG.SUCCESS.UPDATED_BY_EXTERNAL_ID);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update office by external ID'));
+      this.notificationService.error(MSG.ERROR.UPDATE_BY_EXTERNAL_ID);
     } finally {
       this.loading.set(false);
     }

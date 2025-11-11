@@ -3,8 +3,6 @@
 
   @if (loading()) {
     <div>Loading...</div>
-  } @else if (error()) {
-    <div class="error">{{ error() }}</div>
   } @else {
     <h2 class="title">Create New Office</h2>
     <app-offices-form [form]="createOfficeForm" [offices]="offices()" (submit)="createOffice()">
