@@ -11,6 +11,7 @@ import { FormUtils } from '@core/utils/form';
 
 import { ClientForm } from '../components/clients-form/clients-form';
 import { ClientTable } from '../components/clients-table/clients-table';
+import { ClientControls } from '../interfaces/client-controls.interface';
 
 @Component({
   selector: 'app-admin-clients',
@@ -29,7 +30,6 @@ export class ClientsPage {
 
   clients = this.clientsService.clients;
   loading = this.clientsService.loading;
-  error = this.clientsService.error;
 
   /// form for creating a new client
   createClientForm = this.fb.group({
@@ -43,16 +43,7 @@ export class ClientsPage {
   });
 
   // controls for editing existing clients
-  clientControls: Record<
-    number,
-    {
-      firstname: FormControl<string | null>;
-      lastname: FormControl<string | null>;
-      emailAddress: FormControl<string | null>;
-      mobileNo: FormControl<string | null>;
-      office: FormControl<number | null>;
-    }
-  > = {};
+  clientControls: ClientControls = {};
 
   private loadData = effect(() => {
     this.clientsService.refresh();

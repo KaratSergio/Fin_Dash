@@ -1,39 +1,34 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
-import { Client } from '../interfaces/client.interface';
-import {
-  CreateClientDto,
-  UpdateClientDto,
-  TransferClientDto,
-  ClientQueryParams,
-  ClientsResponse,
-} from '../interfaces/client.dto';
+import { tap, catchError, of, startWith, switchMap, firstValueFrom } from 'rxjs';
+
+import type { Client } from '../interfaces/client.interface';
+import type { ClientQueryParams, ClientsResponse, CreateClientDto, UpdateClientDto, TransferClientDto } from '../interfaces/client.dto';
+
+import { NotificationService } from '@core/services/notification/notification.service';
+import { CLIENT_NOTIFICATION_MESSAGES as MSG } from '../constants/notification-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/clients';
 
   readonly clients = signal<Client[]>([]);
-  readonly total = computed(() => this.clients().length);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
   private readonly queryParams = signal<ClientQueryParams | undefined>(undefined);
 
-  // Single loader that handles both cases - with and without params
+  // loader
   private clientsLoader = toSignal(
-    toObservable(computed(() => ({ reload: this.reload(), params: this.queryParams() }))).pipe(
-      startWith({ reload: 0, params: undefined }),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
-      switchMap(({ params }) => {
+    toObservable(this.reload).pipe(
+      startWith(0),
+      tap(() => this.loading.set(true)),
+      switchMap(() => {
         let httpParams = new HttpParams();
+        const params = this.queryParams();
+
         if (params) {
           Object.entries(params).forEach(([key, value]) => {
             if (value != null) httpParams = httpParams.set(key, value.toString());
@@ -45,7 +40,7 @@ export class ClientsService {
             this.clients.set(response.pageItems || []);
           }),
           catchError((err) => {
-            this.error.set(err.message || 'Failed to load clients');
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of({ pageItems: [] as Client[], totalFilteredRecords: 0 });
           })
         );
@@ -55,18 +50,12 @@ export class ClientsService {
     { initialValue: { pageItems: [] as Client[], totalFilteredRecords: 0 } }
   );
 
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[ClientsService]', err);
-  });
-
-  // trigger reload
+  // refresh loader
   refresh() {
     this.reload.update((n) => n + 1);
   }
 
-  // Set query parameters and trigger reload
+  // Set query parameters
   setQueryParams(params: ClientQueryParams) {
     this.queryParams.set(params);
     this.refresh();
@@ -79,27 +68,27 @@ export class ClientsService {
   }
 
   // CRUD
-  async createClient(data: CreateClientDto) {
+  async createClient(client: CreateClientDto) {
     this.loading.set(true);
-
     try {
-      await firstValueFrom(this.http.post<Client>(this.baseUrl, data));
+      await firstValueFrom(this.http.post<Client>(this.baseUrl, client));
+      this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create client'));
+      this.notificationService.error(MSG.ERROR.CREATE);
     } finally {
       this.loading.set(false);
     }
   }
 
-  async updateClient(clientId: number, data: UpdateClientDto) {
+  async updateClient(clientId: number, client: UpdateClientDto) {
     this.loading.set(true);
-
     try {
-      await firstValueFrom(this.http.put<Client>(`${this.baseUrl}/${clientId}`, data));
+      await firstValueFrom(this.http.put<Client>(`${this.baseUrl}/${clientId}`, client));
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update client'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -107,14 +96,34 @@ export class ClientsService {
 
   async deleteClient(clientId: number) {
     this.loading.set(true);
-
     try {
       await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${clientId}`));
+      this.notificationService.success(MSG.SUCCESS.DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete client'));
+      this.notificationService.error(MSG.ERROR.DELETE);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async activateClient(clientId: number) {
+    try {
+      await firstValueFrom(this.http.post<void>(`${this.baseUrl}/${clientId}?command=activate`, {}));
+      this.notificationService.success(MSG.SUCCESS.ACTIVATED);
+      this.refresh();
+    } catch (err) {
+      this.notificationService.error(MSG.ERROR.ACTIVATE);
+    }
+  }
+
+  async deactivateClient(clientId: number) {
+    try {
+      await firstValueFrom(this.http.post<void>(`${this.baseUrl}/${clientId}?command=deactivate`, {}));
+      this.notificationService.success(MSG.SUCCESS.DEACTIVATED);
+      this.refresh();
+    } catch (err) {
+      this.notificationService.error(MSG.ERROR.DEACTIVATE);
     }
   }
 
@@ -126,7 +135,6 @@ export class ClientsService {
   // Client transfer operations
   async transferClientPropose(clientId: number, destinationOfficeId: number) {
     this.loading.set(true);
-
     try {
       const payload: TransferClientDto = {
         destinationOfficeId,
@@ -138,9 +146,10 @@ export class ClientsService {
       await firstValueFrom(
         this.http.post(`${this.baseUrl}/${clientId}?command=proposeTransfer`, payload)
       );
+      this.notificationService.success(MSG.SUCCESS.TRANSFER_PROPOSED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to propose client transfer'));
+      this.notificationService.error(MSG.ERROR.TRANSFER_PROPOSE);
     } finally {
       this.loading.set(false);
     }
@@ -148,7 +157,6 @@ export class ClientsService {
 
   async transferClientAccept(clientId: number, destinationOfficeId: number) {
     this.loading.set(true);
-
     try {
       const payload: TransferClientDto = {
         destinationOfficeId,
@@ -160,11 +168,36 @@ export class ClientsService {
       await firstValueFrom(
         this.http.post(`${this.baseUrl}/${clientId}?command=acceptTransfer`, payload)
       );
+      this.notificationService.success(MSG.SUCCESS.TRANSFER_ACCEPTED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to accept client transfer'));
+      this.notificationService.error(MSG.ERROR.TRANSFER_ACCEPT);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async transferClientWithdraw(clientId: number) {
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/${clientId}?command=withdrawTransfer`, {})
+      );
+      this.notificationService.success(MSG.SUCCESS.TRANSFER_WITHDRAWN);
+      this.refresh();
+    } catch (err) {
+      this.notificationService.error(MSG.ERROR.TRANSFER_WITHDRAW);
+    }
+  }
+
+  async transferClientReject(clientId: number) {
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.baseUrl}/${clientId}?command=rejectTransfer`, {})
+      );
+      this.notificationService.success(MSG.SUCCESS.TRANSFER_REJECTED);
+      this.refresh();
+    } catch (err) {
+      this.notificationService.error(MSG.ERROR.TRANSFER_REJECT);
     }
   }
 }
