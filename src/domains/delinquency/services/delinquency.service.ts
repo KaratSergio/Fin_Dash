@@ -1,30 +1,29 @@
-import { Injectable, signal, inject, effect } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, startWith, switchMap, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
-import { DelinquencyRange, DelinquencyBucket } from '../interfaces/delinquency.interface';
+
+import { DelinquencyRange, DelinquencyBucket } from '@domains/delinquency/interfaces/delinquency.interface';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { DELINQUENCY_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/delinquency-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class DelinquencyService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/delinquency';
 
   // signals
   readonly ranges = signal<DelinquencyRange[]>([]);
   readonly buckets = signal<DelinquencyBucket[]>([]);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
 
   // loader for ranges and buckets
   private delinquencyLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(() =>
         this.http.get<{ ranges: DelinquencyRange[]; buckets: DelinquencyBucket[] }>(this.baseUrl).pipe(
           tap((res) => {
@@ -32,7 +31,7 @@ export class DelinquencyService {
             this.buckets.set(res.buckets || []);
           }),
           catchError((err) => {
-            this.error.set(err.message || 'Failed to load delinquency data');
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of({ ranges: [], buckets: [] });
           })
         )
@@ -41,12 +40,6 @@ export class DelinquencyService {
     ),
     { initialValue: null }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[DelinquencyService]', err);
-  });
 
   // trigger reload
   refresh() {
@@ -58,9 +51,10 @@ export class DelinquencyService {
     this.loading.set(true)
     try {
       await firstValueFrom(this.http.post<DelinquencyRange>(`${this.baseUrl}/ranges`, range));
+      this.notificationService.success(MSG.SUCCESS.RANGE_CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create range'));
+      this.notificationService.error(MSG.ERROR.RANGE_CREATE);
     } finally {
       this.loading.set(false)
     }
@@ -70,9 +64,10 @@ export class DelinquencyService {
     this.loading.set(true);
     try {
       await firstValueFrom(this.http.put<DelinquencyRange>(`${this.baseUrl}/ranges/${id}`, range));
+      this.notificationService.success(MSG.SUCCESS.RANGE_UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update range'));
+      this.notificationService.error(MSG.ERROR.RANGE_UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -82,9 +77,10 @@ export class DelinquencyService {
     this.loading.set(true);
     try {
       await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/ranges/${id}`));
+      this.notificationService.success(MSG.SUCCESS.RANGE_DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete range'));
+      this.notificationService.error(MSG.ERROR.RANGE_DELETE);
     } finally {
       this.loading.set(false);
     }
@@ -95,9 +91,10 @@ export class DelinquencyService {
     this.loading.set(true);
     try {
       await firstValueFrom(this.http.post<DelinquencyBucket>(`${this.baseUrl}/buckets`, bucket));
+      this.notificationService.success(MSG.SUCCESS.BUCKET_CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create bucket'));
+      this.notificationService.error(MSG.ERROR.BUCKET_CREATE);
     } finally {
       this.loading.set(false);
     }
@@ -107,9 +104,10 @@ export class DelinquencyService {
     this.loading.set(true);
     try {
       await firstValueFrom(this.http.put<DelinquencyBucket>(`${this.baseUrl}/buckets/${id}`, bucket));
+      this.notificationService.success(MSG.SUCCESS.BUCKET_UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update bucket'));
+      this.notificationService.error(MSG.ERROR.BUCKET_UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -119,9 +117,10 @@ export class DelinquencyService {
     this.loading.set(true);
     try {
       await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/buckets/${id}`));
+      this.notificationService.success(MSG.SUCCESS.BUCKET_DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete bucket'));
+      this.notificationService.error(MSG.ERROR.BUCKET_DELETE);
     } finally {
       this.loading.set(false);
     }

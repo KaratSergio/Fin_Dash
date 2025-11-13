@@ -7,7 +7,7 @@ import type { Client } from '../interfaces/client.interface';
 import type { ClientQueryParams, ClientsResponse, CreateClientDto, UpdateClientDto, TransferClientDto } from '../interfaces/client.dto';
 
 import { NotificationService } from '@core/services/notification/notification.service';
-import { CLIENT_NOTIFICATION_MESSAGES as MSG } from '../constants/notification-messages.const';
+import { CLIENT_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/client-messages.const';
 import { genId } from '@core/utils';
 
 @Injectable({ providedIn: 'root' })

@@ -7,7 +7,7 @@ import type { Permission } from '../interfaces/permission.interface';
 import type { Role } from '../interfaces/role.interface';
 
 import { NotificationService } from '@core/services/notification/notification.service';
-import { ROLE_NOTIFICATION_MESSAGES as MSG } from '../constants/notification-messages.const';
+import { ROLE_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/role-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class RolesService {

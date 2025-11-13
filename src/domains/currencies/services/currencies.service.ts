@@ -1,29 +1,28 @@
-import { Injectable, inject, signal, effect } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, startWith, switchMap, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
-import { CurrencyOption, CurrencyConfigResponse } from '../interfaces/currency.interface';
+
+import { CurrencyOption, CurrencyConfigResponse } from '@domains/currencies/interfaces/currency.interface';
+import { NotificationService } from '@core/services/notification/notification.service';
+import { CURRENCY_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/currency-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class CurrenciesService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/currencies';
 
   readonly allCurrencies = signal<CurrencyOption[]>([]);
   readonly selectedCurrencies = signal<CurrencyOption[]>([]);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
 
   // automatically fetch currencies whenever reload changes
   private currenciesLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(() =>
         this.http.get<CurrencyConfigResponse>(this.baseUrl).pipe(
           tap((res) => {
@@ -31,7 +30,7 @@ export class CurrenciesService {
             this.selectedCurrencies.set(res.selectedCurrencyOptions || []);
           }),
           catchError((err) => {
-            this.error.set(err.message || 'Failed to load currencies');
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of({ currencyOptions: [], selectedCurrencyOptions: [] });
           }),
         )
@@ -40,12 +39,6 @@ export class CurrenciesService {
     ),
     { initialValue: null }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[CurrenciesService]', err);
-  });
 
   // trigger reload
   refresh() {
@@ -58,9 +51,10 @@ export class CurrenciesService {
     try {
       const payload = { currencies: codes };
       await firstValueFrom(this.http.put(this.baseUrl, payload));
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update currencies'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }

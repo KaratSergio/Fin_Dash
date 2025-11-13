@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
-import { GLAccount } from '@domains/accounting/interfaces/gl-account.interface';
+import type { GLAccount } from '@domains/accounting/interfaces/gl-account.interface';
+import type { GLAccountControls } from '@domains/accounting/interfaces/gl-account-controls.interface';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,15 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 })
 export class GLAccountsTable {
   @Input() accounts: GLAccount[] = [];
-  @Input() accountControls: Record<
-    number,
-    {
-      name: FormControl<string>;
-      glCode: FormControl<string>;
-      description: FormControl<string>;
-      manualEntriesAllowed: FormControl<boolean>;
-    }
-  > = {};
+  @Input() accountControls: GLAccountControls = {};
 
   @Output() update = new EventEmitter<number>();
   @Output() delete = new EventEmitter<number>();

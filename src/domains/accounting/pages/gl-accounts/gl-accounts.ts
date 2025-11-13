@@ -4,7 +4,9 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { FormUtils } from '@core/utils/form';
 
 import { GLAccountsService } from '@domains/accounting/services/glaccounts.service';
-import { GLAccountCreateDto, GLAccountUpdateDto } from '@domains/accounting/interfaces/gl-account.dto';
+import type { GLAccountCreateDto, GLAccountUpdateDto } from '@domains/accounting/interfaces/gl-account.dto';
+import type { GLAccountControls } from '@domains/accounting/interfaces/gl-account-controls.interface';
+
 import { GLAccountsForm } from '@domains/accounting/components/gl-accounts-form/gl-accounts-form';
 import { GLAccountsTable } from '@domains/accounting/components/gl-accounts-table/gl-accounts-table';
 
@@ -22,7 +24,6 @@ export class GLAccountsPage {
 
   readonly accounts = this.glService.accounts;
   readonly loading = this.glService.loading;
-  readonly error = this.glService.error;
   readonly template = this.glService.template;
 
   readonly typeOptions = signal<{ id: number; value: string }[]>([]);
@@ -43,12 +44,7 @@ export class GLAccountsPage {
   });
 
   // Controls for editing each account
-  readonly accountControls: Record<number,{
-      name: FormControl<string>;
-      glCode: FormControl<string>;
-      description: FormControl<string>;
-      manualEntriesAllowed: FormControl<boolean>;
-    }> = {};
+  readonly accountControls: GLAccountControls = {};
 
   // Load accounts initially
   private loadAccounts = effect(() => {
@@ -141,17 +137,17 @@ export class GLAccountsPage {
     if (!dto.tagId) delete dto.tagId;
 
     this.glService.createAccount(dto);
-      
+
     this.createForm.reset({
-    name: '',
-    glCode: '',
-    description: '',
-    manualEntriesAllowed: true,
-    type: 0,
-    usage: 0,
-    parentId: 0,
-    tagId: 0,
-  });
+      name: '',
+      glCode: '',
+      description: '',
+      manualEntriesAllowed: true,
+      type: 0,
+      usage: 0,
+      parentId: 0,
+      tagId: 0,
+    });
   }
 
   updateAccount(id: number) {

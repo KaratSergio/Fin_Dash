@@ -8,7 +8,7 @@ import type { CreateOfficeDto, UpdateOfficeDto, OfficeQueryDto } from '../interf
 import { formatDateForApi, genId } from '@core/utils';
 import { APP_DEFAULTS } from '@core/constants/app.constants';
 import { NotificationService } from '@core/services/notification/notification.service';
-import { OFFICE_NOTIFICATION_MESSAGES as MSG } from '../constants/notification-messages.const';
+import { OFFICE_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/office-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class OfficesService {
