@@ -38,7 +38,6 @@ export class ClientsPage {
     mobileNo: this.utils.makeControl(''),
     emailAddress: this.utils.requiredEmail(),
     officeId: this.utils.optionalNumber(),
-    externalId: this.utils.makeControl(''),
     legalFormId: this.utils.makeControl(1, []), //! PERSON = 1
   });
 
@@ -82,7 +81,6 @@ export class ClientsPage {
       emailAddress: f.emailAddress ?? '',
       mobileNo: f.mobileNo ?? '',
       officeId: Number(f.officeId),
-      externalId: f.externalId ?? '',
       legalFormId: Number(f.legalFormId),
       active: true,
       activationDate: new Date().toISOString().split('T')[0],
@@ -90,6 +88,7 @@ export class ClientsPage {
       locale: 'en',
     };
     this.clientsService.createClient(payload)
+    this.createClientForm.reset()
   }
 
   updateClient(client: Client) {
@@ -99,8 +98,7 @@ export class ClientsPage {
       firstname: controls.firstname.value ?? '',
       lastname: controls.lastname.value ?? '',
       emailAddress: controls.emailAddress.value ?? '',
-      mobileNo: controls.mobileNo.value ?? '',
-      externalId: client.externalId ?? '',
+      mobileNo: controls.mobileNo.value ?? ''
     };
     this.clientsService.updateClient(client.id, payload)
   }

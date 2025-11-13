@@ -10,7 +10,6 @@ interface ClientBaseFields {
   lastname: string;
   emailAddress: string;
   mobileNo: string;
-  externalId: string;
 }
 
 export interface CreateClientDto extends ClientBaseFields, LocaleFields {
@@ -20,7 +19,7 @@ export interface CreateClientDto extends ClientBaseFields, LocaleFields {
   activationDate: string;
 }
 
-export interface UpdateClientDto extends ClientBaseFields {}
+export interface UpdateClientDto extends ClientBaseFields { }
 
 export interface TransferClientDto extends LocaleFields {
   destinationOfficeId: number;
@@ -33,8 +32,8 @@ export interface ClientsResponse {
 }
 
 export interface ClientQueryParams {
-  offset: number; // Offset (for pagination)
-  limit: number; // Number of records per page
-  orderBy: string; // Sorting field
-  sortOrder: 'ASC' | 'DESC'; // Sorting direction
+  offset: number;             // Offset (for pagination)
+  limit: number;              // Number of records per page
+  orderBy: string;            // Sorting field
+  sortOrder: 'ASC' | 'DESC';  // Sorting direction
 }

@@ -8,6 +8,7 @@ import type { ClientQueryParams, ClientsResponse, CreateClientDto, UpdateClientD
 
 import { NotificationService } from '@core/services/notification/notification.service';
 import { CLIENT_NOTIFICATION_MESSAGES as MSG } from '../constants/notification-messages.const';
+import { genId } from '@core/utils';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
@@ -70,8 +71,12 @@ export class ClientsService {
   // CRUD
   async createClient(client: CreateClientDto) {
     this.loading.set(true);
+    const payload = {
+      ...client,
+      externalId: genId(8),
+    }
     try {
-      await firstValueFrom(this.http.post<Client>(this.baseUrl, client));
+      await firstValueFrom(this.http.post<Client>(this.baseUrl, payload));
       this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh();
     } catch (err) {
