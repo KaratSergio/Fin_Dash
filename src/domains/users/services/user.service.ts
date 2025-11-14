@@ -1,30 +1,30 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
+
 import { AppUser } from '../interfaces/user.interface';
 import { CreateUserDto, UpdateUserDto } from '../interfaces/user.dto';
+
+import { NotificationService } from '@core/services/notification/notification.service';
+import { USER_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/user-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/users';
 
   readonly users = signal<AppUser[]>([]);
   readonly total = computed(() => this.users().length);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
 
   // automatically re-fetch users when reload changes
   private usersLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(() =>
         this.http.get<AppUser[]>(this.baseUrl).pipe(
           tap((list) => {
@@ -35,7 +35,7 @@ export class UsersService {
             this.users.set(normalized);
           }),
           catchError((err) => {
-            this.error.set(err.message || 'Failed to load users');
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of([]);
           })
         )
@@ -44,12 +44,6 @@ export class UsersService {
     ),
     { initialValue: [] }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[UsersService]', err);
-  });
 
   // trigger reload
   refresh() {
@@ -62,9 +56,10 @@ export class UsersService {
 
     try {
       await firstValueFrom(this.http.post<AppUser>(this.baseUrl, data));
+      this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create user'));
+      this.notificationService.error(MSG.ERROR.CREATE);
     } finally {
       this.loading.set(false);
     }
@@ -75,9 +70,10 @@ export class UsersService {
 
     try {
       await firstValueFrom(this.http.put<AppUser>(`${this.baseUrl}/${userId}`, data));
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update user'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -88,9 +84,10 @@ export class UsersService {
 
     try {
       await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${userId}`));
+      this.notificationService.success(MSG.SUCCESS.DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete user'));
+      this.notificationService.error(MSG.ERROR.DELETE);
     } finally {
       this.loading.set(false);
     }
@@ -109,8 +106,9 @@ export class UsersService {
       await firstValueFrom(
         this.http.post<void>(`${this.baseUrl}/${userId}/pwd`, { password: newPassword })
       );
+      this.notificationService.success(MSG.SUCCESS.PASSWORD_CHANGED);
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to change password'));
+      this.notificationService.error(MSG.ERROR.CHANGE_PASSWORD);
     } finally {
       this.loading.set(false);
     }

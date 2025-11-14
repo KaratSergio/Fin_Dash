@@ -3,8 +3,6 @@
 
   @if (loading()) {
     <div>Loading...</div>
-  } @else if (error()) {
-    <div class="error">{{ error() }}</div>
   } @else {
     <h2 class="title">Create New Charge</h2>
     <app-charges-form

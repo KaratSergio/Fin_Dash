@@ -5,8 +5,11 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { UsersService } from '@domains/users/services/user.service';
 import { RolesService } from '@domains/roles/services/roles.service';
 import { OfficesService } from '@domains/offices/services/offices.service';
-import { AppUser } from '@domains/users/interfaces/user.interface';
-import { CreateUserDto, UpdateUserDto } from '@domains/users/interfaces/user.dto';
+
+import type { AppUser } from '@domains/users/interfaces/user.interface';
+import type { CreateUserDto, UpdateUserDto } from '@domains/users/interfaces/user.dto';
+import type { UserControls } from '@domains/users/interfaces/user-controls.interface';
+
 import { FormUtils } from '@core/utils/form';
 
 import { UsersForm } from '../components/users-form/users-form';
@@ -30,7 +33,6 @@ export class UsersAdminPage {
   users = this.usersService.users;
   roles = this.rolesService.roles;
   loading = this.usersService.loading;
-  error = this.usersService.error;
 
   // Create User Form
   createUserForm = this.fb.group({
@@ -44,17 +46,7 @@ export class UsersAdminPage {
   });
 
   // Controls for editing users
-  userControls: Record<
-    number,
-    {
-      username: FormControl<string | null>;
-      firstname: FormControl<string | null>;
-      lastname: FormControl<string | null>;
-      email: FormControl<string | null>;
-      roles: FormControl<number[]>;
-      office: FormControl<number | null>;
-    }
-  > = {};
+  userControls: UserControls = {};
 
   // Load users, roles, offices
   private loadData = effect(() => {

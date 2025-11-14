@@ -7,7 +7,7 @@ import type { Charge, ChargeTemplate } from '../interfaces/charge.interface';
 import type { ChargeCreateDto, ChargeUpdateDto, ChargeBaseFields } from '../interfaces/charge.dto';
 
 import { NotificationService } from '@core/services/notification/notification.service';
-import { CHARGES_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/charge-messages.const';
+import { CHARGE_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/charge-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class ChargesService {

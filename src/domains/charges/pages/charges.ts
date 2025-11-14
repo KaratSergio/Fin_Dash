@@ -27,7 +27,6 @@ export class ChargesPage {
 
   charges = this.chargesService.charges;
   loading = this.chargesService.loading;
-  error = this.chargesService.error;
   // currencies = this.currenciesService.allCurrencies;
   selectedCurrencies = this.currenciesService.selectedCurrencies;
 

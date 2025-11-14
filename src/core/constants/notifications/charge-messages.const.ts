@@ -1,4 +1,4 @@
-export const CHARGES_NOTIFICATION_MESSAGES = {
+export const CHARGE_NOTIFICATION_MESSAGES = {
   SUCCESS: {
     LOAD: 'Charges loaded successfully',
     TEMPLATE_LOAD: 'Charge template loaded successfully',
