@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Loan } from '@domains/loans/interfaces/loan.interface';
+import { ReactiveFormsModule } from '@angular/forms';
 import { formatTimeline } from '@core/utils/date';
+
+import type { Loan } from '@domains/loans/interfaces/loan.interface';
+import type { LoanControls } from '@domains/loans/interfaces/controls/loan-controls.interface';
 
 @Component({
   selector: 'app-loan-table',
@@ -12,12 +14,7 @@ import { formatTimeline } from '@core/utils/date';
 })
 export class LoanTable {
   @Input() loans: Loan[] = [];
-  @Input() loanControls: Record<number,
-    {
-      principal: FormControl<number | null>;
-      expectedDisbursementDate: FormControl<string | null>;
-      status: FormControl<string | null>;
-    }> = {};
+  @Input() loanControls: LoanControls = {};
   @Input() activeLoanId: number | null = null;
 
   @Output() toggle = new EventEmitter<Loan>();

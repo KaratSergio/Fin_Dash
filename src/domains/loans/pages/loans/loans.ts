@@ -6,9 +6,7 @@ import { LoansService } from '@domains/loans/services/loans.service';
 import { LoanProductsService } from '@domains/loans/services/loan-products.service';
 import { ClientsService } from '@domains/clients/services/clients.service';
 
-import { FormUtils } from '@core/utils/form';
-import { formatDateForApi, parseApiDate } from '@core/utils/date';
-import { extractId, extractString } from '@core/utils/mappers';
+import { formatDateForApi, parseApiDate, extractId, extractString, FormUtils } from '@core/utils';
 import { APP_DEFAULTS } from '@core/constants/app.constants';
 
 import type { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
@@ -38,7 +36,6 @@ export class LoansPage {
   clients = this.clientsService.clients;
   loanProducts = computed(() => this.loanProductsService.loanProducts());
   loading = this.loansService.loading;
-  error = signal<string | null>(null);
 
   selectedLoanId = signal<number | null>(null);
   selectedLoanProduct = signal<LoanProduct | null>(null);

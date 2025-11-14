@@ -16,10 +16,6 @@ export class LoanProductDetails {
   @Input() productForm!: FormGroup;
   @Input() productId!: number;
 
-  @Output() save = new EventEmitter<void>();
+  @Output() update = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
-
-  onSubmit() {
-    if (this.productForm.valid) this.save.emit();
-  }
 }

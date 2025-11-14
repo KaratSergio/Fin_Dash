@@ -1,7 +1,7 @@
 <div class="loan-products-details">
   <h3>Editing Product #{{ productId }}</h3>
 
-  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="productForm" (ngSubmit)="update.emit()">
     <mat-form-field>
       <mat-label>Name</mat-label>
       <input matInput type="text" formControlName="name" />
@@ -23,7 +23,7 @@
     </mat-form-field>
 
     <div>
-      <button mat-raised-button color="primary" (click)="save.emit()">Save</button>
+      <button mat-raised-button color="primary" type="submit">Save</button>
       <button mat-stroked-button type="button" (click)="cancel.emit()">Reset</button>
     </div>
   </form>

@@ -12,11 +12,8 @@ import { MatNativeDateModule } from '@angular/material/core';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
+    MatFormFieldModule, MatInputModule, MatButtonModule,
+    MatDatepickerModule, MatNativeDateModule,
   ],
   templateUrl: './loans-details.html',
   styleUrls: ['./loans-details.scss'],

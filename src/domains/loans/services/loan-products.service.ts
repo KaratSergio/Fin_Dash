@@ -1,10 +1,13 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
+
 import type { LoanProduct } from '../interfaces/loan-product.interface';
 import type { LoanProductCreateDto, LoanProductUpdateDto } from '../interfaces/dto/loan-product.dto';
+
+import { NotificationService } from '@core/services/notification/notification.service';
+import { LOAN_PRODUCTS_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/loan-messages.const';
 
 // A Loan product is a template that is used when creating a loan.
 // Much of the template definition can be overridden during loan creation.
@@ -12,19 +15,19 @@ import type { LoanProductCreateDto, LoanProductUpdateDto } from '../interfaces/d
 @Injectable({ providedIn: 'root' })
 export class LoanProductsService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/loanproducts';
 
   readonly loanProducts = signal<LoanProduct[]>([]);
   readonly total = computed(() => this.loanProducts().length);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
 
   // Template signal
   readonly template = toSignal(
     this.http.get(`${this.baseUrl}/template`).pipe(
       catchError((err) => {
-        this.error.set(handleError(err, 'Failed to load loan product template'));
+        this.notificationService.error(MSG.ERROR.TEMPLATE_LOAD);
         return of(null);
       })
     ),
@@ -35,10 +38,7 @@ export class LoanProductsService {
   private loanProductsLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(() =>
         this.http.get<{ pageItems: LoanProduct[] } | LoanProduct[]>(this.baseUrl).pipe(
           tap((res: any) => {
@@ -46,7 +46,7 @@ export class LoanProductsService {
             this.loanProducts.set(items);
           }),
           catchError((err) => {
-            this.error.set(handleError(err, 'Failed to load loan products'));
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of({ pageItems: [] });
           })
         )
@@ -55,12 +55,6 @@ export class LoanProductsService {
     ),
     { initialValue: { pageItems: [] } }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[LoanProductsService]', err);
-  });
 
   // trigger reload
   refresh() {
@@ -73,9 +67,10 @@ export class LoanProductsService {
 
     try {
       await firstValueFrom(this.http.post<LoanProduct>(this.baseUrl, data));
+      this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create loan product'));
+      this.notificationService.error(MSG.ERROR.CREATE);
     } finally {
       this.loading.set(false);
     }
@@ -88,9 +83,10 @@ export class LoanProductsService {
       await firstValueFrom(
         this.http.put<LoanProduct>(`${this.baseUrl}/${productId}`, data)
       );
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update loan product'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -103,9 +99,10 @@ export class LoanProductsService {
       await firstValueFrom(
         this.http.put<LoanProduct>(`${this.baseUrl}/external-id/${externalId}`, data)
       );
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update loan product by external ID'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }

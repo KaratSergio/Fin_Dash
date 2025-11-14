@@ -1,10 +1,13 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
+
 import type { LoanCharge, LoanChargeTemplate } from '../interfaces/loan-charge.interface';
 import type { CreateLoanChargeDto, UpdateLoanChargeDto, PayLoanChargeDto, WaiveLoanChargeDto, AdjustLoanChargeDto } from '../interfaces/dto/loan-charge.dto';
+
+import { NotificationService } from '@core/services/notification/notification.service';
+import { LOAN_CHARGES_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/loan-messages.const';
 
 // Its typical for MFIs to add extra costs for their loan products.They can be either Fees or Penalties.
 
@@ -15,12 +18,12 @@ import type { CreateLoanChargeDto, UpdateLoanChargeDto, PayLoanChargeDto, WaiveL
 @Injectable({ providedIn: 'root' })
 export class LoanChargesService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/v1/loans';
 
   readonly charges = signal<LoanCharge[]>([]);
   readonly total = computed(() => this.charges().length);
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
   private readonly currentLoanId = signal<number | null>(null);
 
@@ -31,17 +34,14 @@ export class LoanChargesService {
       loanId: this.currentLoanId()
     }))).pipe(
       startWith({ reload: 0, loanId: null }),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(({ loanId }) => {
         if (!loanId) return of([]);
 
         return this.http.get<LoanCharge[]>(`${this.baseUrl}/${loanId}/charges`).pipe(
           tap((res) => this.charges.set(res || [])),
           catchError((err) => {
-            this.error.set(handleError(err, 'Failed to load loan charges'));
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of([]);
           })
         );
@@ -50,12 +50,6 @@ export class LoanChargesService {
     ),
     { initialValue: [] }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[LoanChargesService]', err);
-  });
 
   // Set current loan ID and trigger reload
   setLoanId(loanId: number) {
@@ -80,9 +74,10 @@ export class LoanChargesService {
       };
 
       await firstValueFrom(this.http.post<LoanCharge>(`${this.baseUrl}/${loanId}/charges`, payload));
+      this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create loan charge'));
+      this.notificationService.error(MSG.ERROR.CREATE);
     } finally {
       this.loading.set(false);
     }
@@ -101,9 +96,10 @@ export class LoanChargesService {
       await firstValueFrom(
         this.http.put<LoanCharge>(`${this.baseUrl}/${loanId}/charges/${chargeId}`, payload)
       );
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update loan charge'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false);
     }
@@ -114,9 +110,10 @@ export class LoanChargesService {
 
     try {
       await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${loanId}/charges/${chargeId}`));
+      this.notificationService.success(MSG.SUCCESS.DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete loan charge'));
+      this.notificationService.error(MSG.ERROR.DELETE);
     } finally {
       this.loading.set(false);
     }
@@ -144,9 +141,10 @@ export class LoanChargesService {
           `${this.baseUrl}/external-id/${loanExternalId}/charges/external-id/${loanChargeExternalId}`
         )
       );
+      this.notificationService.success(MSG.SUCCESS.DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete loan charge by external ID'));
+      this.notificationService.error(MSG.ERROR.DELETE);
     } finally {
       this.loading.set(false);
     }
@@ -166,9 +164,10 @@ export class LoanChargesService {
       await firstValueFrom(
         this.http.post(`${this.baseUrl}/${loanId}/charges/${chargeId}?command=pay`, payload)
       );
+      this.notificationService.success(MSG.SUCCESS.PAID);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to pay loan charge'));
+      this.notificationService.error(MSG.ERROR.PAY);
     } finally {
       this.loading.set(false);
     }
@@ -185,9 +184,10 @@ export class LoanChargesService {
       await firstValueFrom(
         this.http.post(`${this.baseUrl}/${loanId}/charges/${chargeId}?command=waive`, payload)
       );
+      this.notificationService.success(MSG.SUCCESS.WAIVED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to waive loan charge'));
+      this.notificationService.error(MSG.ERROR.WAIVE);
     } finally {
       this.loading.set(false);
     }
@@ -205,9 +205,10 @@ export class LoanChargesService {
       await firstValueFrom(
         this.http.post(`${this.baseUrl}/${loanId}/charges/${chargeId}?command=adjustment`, payload)
       );
+      this.notificationService.success(MSG.SUCCESS.ADJUSTED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to adjust loan charge'));
+      this.notificationService.error(MSG.ERROR.ADJUST);
     } finally {
       this.loading.set(false);
     }

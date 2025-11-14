@@ -26,7 +26,6 @@ export class LoanProductsPage {
 
   loanProducts = this.loanProductsService.loanProducts;
   loading = this.loanProductsService.loading;
-  error = this.loanProductsService.error;
 
   selectedProductId = signal<number | null>(null);
 
