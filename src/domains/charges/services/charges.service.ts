@@ -1,27 +1,30 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
-import { AppError, handleError } from '@core/utils/error';
-import { Charge, ChargeTemplate } from '../interfaces/charge.interface';
-import { ChargeCreateDto, ChargeUpdateDto, ChargeBaseFields } from '../interfaces/charge.dto';
+
+import type { Charge, ChargeTemplate } from '../interfaces/charge.interface';
+import type { ChargeCreateDto, ChargeUpdateDto, ChargeBaseFields } from '../interfaces/charge.dto';
+
+import { NotificationService } from '@core/services/notification/notification.service';
+import { CHARGES_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/charge-messages.const';
 
 @Injectable({ providedIn: 'root' })
 export class ChargesService {
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   private baseUrl = 'api/fineract/charges';
 
   readonly charges = signal<Charge[]>([]);
   readonly total = computed(() => this.charges().length)
   readonly loading = signal(false);
-  readonly error = signal<AppError | null>(null);
   private readonly reload = signal(0);
 
   // Get template
   readonly template = toSignal(
     this.http.get<ChargeTemplate>(`${this.baseUrl}/template`).pipe(
       catchError((err) => {
-        this.error.set(err.message || 'Failed to load charge template');
+        this.notificationService.error(MSG.ERROR.TEMPLATE_LOAD);
         return of(null);
       })
     ),
@@ -32,15 +35,12 @@ export class ChargesService {
   private chargesLoader = toSignal(
     toObservable(this.reload).pipe(
       startWith(0),
-      tap(() => {
-        this.loading.set(true);
-        this.error.set(null);
-      }),
+      tap(() => this.loading.set(true)),
       switchMap(() =>
         this.http.get<Charge[]>(this.baseUrl).pipe(
           tap((list) => this.charges.set(list)),
           catchError((err) => {
-            this.error.set(err.message || 'Failed to load charges');
+            this.notificationService.error(MSG.ERROR.LOAD);
             return of([]);
           })
         )
@@ -49,12 +49,6 @@ export class ChargesService {
     ),
     { initialValue: [] }
   );
-
-  // log errors
-  private logErrors = effect(() => {
-    const err = this.error();
-    if (err) console.warn('[ChargesService]', err);
-  });
 
   // trigger reload
   refresh() {
@@ -79,9 +73,10 @@ export class ChargesService {
       };
 
       await firstValueFrom(this.http.post<Charge>(this.baseUrl, payload))
+      this.notificationService.success(MSG.SUCCESS.CREATED);
       this.refresh()
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to create charge'));
+      this.notificationService.error(MSG.ERROR.CREATE);
     } finally {
       this.loading.set(false);
     }
@@ -104,9 +99,10 @@ export class ChargesService {
       };
 
       await firstValueFrom(this.http.put<Charge>(`${this.baseUrl}/${chargeId}`, payload));
+      this.notificationService.success(MSG.SUCCESS.UPDATED);
       this.refresh()
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to update charge'));
+      this.notificationService.error(MSG.ERROR.UPDATE);
     } finally {
       this.loading.set(false)
     }
@@ -117,9 +113,10 @@ export class ChargesService {
 
     try {
       await firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${chargeId}`));
+      this.notificationService.success(MSG.SUCCESS.DELETED);
       this.refresh();
     } catch (err) {
-      this.error.set(handleError(err, 'Failed to delete charge'));
+      this.notificationService.error(MSG.ERROR.DELETE);
     } finally {
       this.loading.set(false);
     };

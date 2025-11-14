@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Charge } from '@domains/charges/interfaces/charge.interface';
+
+import type { Charge } from '@domains/charges/interfaces/charge.interface';
+import type { ChargeControls } from '@domains/charges/interfaces/charge-controls.interface';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,14 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 })
 export class ChargesTable {
   @Input() charges: Charge[] = [];
-  @Input() chargeControls: Record<
-    number,
-    {
-      name: FormControl<string>;
-      amount: FormControl<number>;
-      currencyCode: FormControl<string>;
-    }
-  > = {};
+  @Input() chargeControls: ChargeControls = {};
   @Input() currencies: { code: string; displayLabel: string }[] = [];
 
   @Output() update = new EventEmitter<number>();
