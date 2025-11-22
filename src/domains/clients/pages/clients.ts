@@ -7,6 +7,7 @@ import { ClientsService } from '@domains/clients/services/clients.service';
 import { Client } from '@src/domains/clients/interfaces/client.interface';
 import { CreateClientDto, UpdateClientDto } from '@src/domains/clients/interfaces/client.dto';
 import { OfficesService } from '@domains/offices/services/offices.service';
+import { APP_DEFAULTS } from '@core/constants/app.constants';
 import { FormUtils } from '@core/utils/form';
 
 import { ClientForm } from '../components/clients-form/clients-form';
@@ -84,8 +85,8 @@ export class ClientsPage {
       legalFormId: Number(f.legalFormId),
       active: true,
       activationDate: new Date().toISOString().split('T')[0],
-      dateFormat: 'yyyy-MM-dd',
-      locale: 'en',
+      locale: APP_DEFAULTS.LOCALE,
+      dateFormat: APP_DEFAULTS.DATE_FORMAT_API
     };
     this.clientsService.createClient(payload)
     this.createClientForm.reset()

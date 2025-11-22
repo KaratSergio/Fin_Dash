@@ -4,8 +4,8 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { FormUtils } from '@core/utils/form';
 
 import { GLAccountsService } from '@domains/accounting/services/glaccounts.service';
-import type { GLAccountCreateDto, GLAccountUpdateDto } from '@domains/accounting/interfaces/gl-account.dto';
-import type { GLAccountControls } from '@domains/accounting/interfaces/gl-account-controls.interface';
+import type { GLAccountCreateDto, GLAccountUpdateDto } from '@src/domains/accounting/interfaces/gl-accounts/gl-account.dto';
+import type { GLAccountControls } from '@src/domains/accounting/interfaces/gl-accounts/gl-account-controls.interface';
 
 import { GLAccountsForm } from '@domains/accounting/components/gl-accounts-form/gl-accounts-form';
 import { GLAccountsTable } from '@domains/accounting/components/gl-accounts-table/gl-accounts-table';

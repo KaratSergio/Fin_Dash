@@ -109,7 +109,7 @@ export class LoansPage {
 
     const f = this.loanCreateForm.value;
     const product = this.selectedLoanProduct();
-    if (!product) return this.error.set('Loan product not selected');
+    if (!product) return;
 
     const expectedDate = formatDateForApi(f.expectedDisbursementDate!);
     const principal = f.principal ?? product.principal ?? 0;

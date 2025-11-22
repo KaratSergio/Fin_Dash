@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { GLAccount } from '@domains/accounting/interfaces/gl-account.interface';
+import { GLAccount } from '@src/domains/accounting/interfaces/gl-accounts/gl-account.interface';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';

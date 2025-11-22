@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
-import type { GLAccount } from '@domains/accounting/interfaces/gl-account.interface';
-import type { GLAccountControls } from '@domains/accounting/interfaces/gl-account-controls.interface';
+import type { GLAccount } from '@src/domains/accounting/interfaces/gl-accounts/gl-account.interface';
+import type { GLAccountControls } from '@src/domains/accounting/interfaces/gl-accounts/gl-account-controls.interface';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';

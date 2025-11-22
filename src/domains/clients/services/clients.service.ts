@@ -8,6 +8,7 @@ import type { ClientQueryParams, ClientsResponse, CreateClientDto, UpdateClientD
 
 import { NotificationService } from '@core/services/notification/notification.service';
 import { CLIENT_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/client-messages.const';
+import { APP_DEFAULTS } from '@core/constants/app.constants';
 import { genId } from '@core/utils';
 
 @Injectable({ providedIn: 'root' })
@@ -144,8 +145,8 @@ export class ClientsService {
       const payload: TransferClientDto = {
         destinationOfficeId,
         transferDate: new Date().toISOString().split('T')[0],
-        dateFormat: 'yyyy-MM-dd',
-        locale: 'en',
+        locale: APP_DEFAULTS.LOCALE,
+        dateFormat: APP_DEFAULTS.DATE_FORMAT_API
       };
 
       await firstValueFrom(
@@ -166,8 +167,8 @@ export class ClientsService {
       const payload: TransferClientDto = {
         destinationOfficeId,
         transferDate: new Date().toISOString().split('T')[0],
-        dateFormat: 'yyyy-MM-dd',
-        locale: 'en',
+        locale: APP_DEFAULTS.LOCALE,
+        dateFormat: APP_DEFAULTS.DATE_FORMAT_API
       };
 
       await firstValueFrom(

@@ -3,8 +3,8 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { tap, catchError, of, switchMap, startWith, firstValueFrom } from 'rxjs';
 
-import type { GLAccount } from '../interfaces/gl-account.interface';
-import type { GLAccountCreateDto, GLAccountUpdateDto, GLAccountsTemplateResponseDto } from '../interfaces/gl-account.dto';
+import type { GLAccount } from '../interfaces/gl-accounts/gl-account.interface';
+import type { GLAccountCreateDto, GLAccountUpdateDto, GLAccountsTemplateResponseDto } from '../interfaces/gl-accounts/gl-account.dto';
 
 import { NotificationService } from '@core/services/notification/notification.service';
 import { GL_ACCOUNT_NOTIFICATION_MESSAGES as MSG } from '@core/constants/notifications/gl-account-messages.const';

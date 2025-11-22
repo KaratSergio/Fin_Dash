@@ -6,6 +6,7 @@ import { FormUtils } from '@core/utils/form';
 import { LoanProductsService } from '@domains/loans/services/loan-products.service';
 import type { LoanProduct } from '@domains/loans/interfaces/loan-product.interface';
 import type { LoanProductCreateDto, LoanProductUpdateDto } from '@domains/loans/interfaces/dto/loan-product.dto';
+import { APP_DEFAULTS } from '@core/constants/app.constants';
 
 import { LoanProductForm } from '../../components/loan-products/loan-products-form/loan-products-form';
 import { LoanProductTable } from '../../components/loan-products/loan-products-table/loan-products-table';
@@ -86,8 +87,8 @@ export class LoanProductsPage {
       daysInYearType: 1,
       daysInMonthType: 1,
 
-      locale: 'en',
-      dateFormat: 'yyyy-MM-dd',
+      locale: APP_DEFAULTS.LOCALE,
+      dateFormat: APP_DEFAULTS.DATE_FORMAT_API
     };
 
     this.loanProductsService.createLoanProduct(dto)
