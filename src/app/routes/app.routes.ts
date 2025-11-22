@@ -74,6 +74,13 @@ export const routes: Routes = [
             (m) => m.GLAccountsPage,
           ),
       },
+      {
+        path: 'journal-entries',
+        loadComponent: () =>
+          import('../../domains/accounting/pages/journal-entries/journal-entries').then(
+            (m) => m.JournalEntriesPage,
+          ),
+      },
     ],
   },
 

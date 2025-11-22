@@ -30,6 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="sub-links">
             @if (menuState.accounts()) {
               <a routerLink="/accounts/gl-accounts" routerLinkActive="active-sub">GL Accounts</a>
+              <a routerLink="/accounts/journal-entries" routerLinkActive="active-sub">Journal Entries</a>
             }
           </div>
         </div>

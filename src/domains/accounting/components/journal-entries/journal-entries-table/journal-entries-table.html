@@ -1,0 +1,103 @@
+<div class="journal-entries-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Transaction ID</th>
+        <th>Date</th>
+        <th>GL Account</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Office</th>
+        <th>Reference</th>
+        <th>Comments</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (entry of journalEntries; track entry.id) {
+        <tr 
+          [class.selected]="selectedEntry?.id === entry.id"
+          (click)="select.emit(entry)"
+        >
+          <!-- Transaction ID -->
+          <td class="transaction-id">{{ entry.transactionId }}</td>
+          
+          <!-- Date -->
+          <td class="date">{{ entry.transactionDate }}</td>
+          
+          <!-- GL Account -->
+          <td class="gl-account">
+            {{ entry.glAccountCode }} - {{ entry.glAccountName }}
+          </td>
+          
+          <!-- Entry Type -->
+          <td class="entry-type">
+            <span [class]="'badge ' + getEntryTypeClass(entry.entryType.value)">
+              {{ entry.entryType.value }}
+            </span>
+          </td>
+          
+          <!-- Amount -->
+          <td 
+            class="amount" 
+            [class.credit-amount]="entry.entryType.value === 'CREDIT'"
+            [class.debit-amount]="entry.entryType.value === 'DEBIT'"
+          >
+            {{ entry.amount }}
+          </td>
+          
+          <!-- Office -->
+          <td class="office">{{ entry.officeName }}</td>
+          
+          <!-- Reference Number -->
+          <td class="reference">
+            <input 
+              matInput 
+              [formControl]="entryControls[entry.id]!.referenceNumber" 
+              (click)="$event.stopPropagation()"
+            />
+          </td>
+          
+          <!-- Comments -->
+          <td class="comments">
+            <input 
+              matInput 
+              [formControl]="entryControls[entry.id]!.comments" 
+              (click)="$event.stopPropagation()"
+            />
+          </td>
+          
+          <!-- Status -->
+          <td class="status">
+            <span [class]="'status-badge ' + (entry.reversed ? 'reversed' : 'active')">
+              {{ entry.reversed ? 'Reversed' : 'Active' }}
+            </span>
+          </td>
+          
+          <!-- Actions -->
+          <td class="actions">
+            @if (!entry.reversed) {
+              <button 
+                mat-raised-button 
+                color="warn" 
+                (click)="reverse.emit(entry.transactionId); $event.stopPropagation()"
+                class="reverse-btn"
+              >
+                <mat-icon>undo</mat-icon>
+                Reverse
+              </button>
+            }
+            @if (entry.reversed) {
+              <span class="reversed-text">Reversed</span>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="10" class="empty-state">No Journal Entries found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,102 @@
+.journal-entries-admin {
+  h1 {
+    margin: 0 0 1rem 0.5rem;
+  }
+
+  .title {
+    margin-left: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .search-filters {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+
+    .filter-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: end;
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 150px;
+
+        label {
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+          font-size: 0.875rem;
+        }
+
+        input, select {
+          padding: 0.5rem;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 0.875rem;
+        }
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+  }
+
+  .summary-cards {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    .summary-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex: 1;
+
+      .summary-label {
+        font-size: 0.875rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+
+      .summary-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+
+        &.credit {
+          color: #10b981;
+        }
+
+        &.debit {
+          color: #ef4444;
+        }
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+
+    .pagination-info {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}

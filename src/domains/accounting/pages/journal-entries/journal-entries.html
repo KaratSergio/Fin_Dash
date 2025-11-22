@@ -1,0 +1,111 @@
+<div class="journal-entries-admin">
+  <h1>Journal Entries</h1>
+
+  @if (loading()) {
+    <div>Loading journal entries...</div>
+  } @else {
+    <!-- Search Filters -->
+    <div class="search-filters">
+      <h3 class="title">Search Filters</h3>
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Transaction ID</label>
+          <input 
+            type="text" 
+            placeholder="Enter transaction ID"
+            [value]="searchFilters().transactionId || ''"
+            (input)="onTransactionIdChange($event)"
+          >
+        </div>
+        
+        <div class="filter-group">
+          <label>From Date</label>
+          <input 
+            type="date"
+            [value]="searchFilters().fromDate || ''"
+            (change)="onFromDateChange($event)"
+          >
+        </div>
+        
+        <div class="filter-group">
+          <label>To Date</label>
+          <input 
+            type="date"
+            [value]="searchFilters().toDate || ''"
+            (change)="onToDateChange($event)"
+          >
+        </div>
+        
+        <div class="filter-group">
+          <label>Entry Type</label>
+          <select 
+            [value]="searchFilters().entityType || ''"
+            (change)="onEntityTypeChange($event)"
+          >
+            <option value="">All Types</option>
+            <option value="1">Asset</option>
+            <option value="2">Liability</option>
+            <option value="3">Income</option>
+            <option value="4">Expense</option>
+            <option value="5">Equity</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button (click)="clearSearch()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-label">Total Entries</div>
+        <div class="summary-value">{{ totalFilteredRecords() }}</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Total Debits</div>
+        <div class="summary-value debit">{{ totalDebits() }}</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Total Credits</div>
+        <div class="summary-value credit">{{ totalCredits() }}</div>
+      </div>
+    </div>
+
+    <!-- Create New Journal Entry -->
+    <h2 class="title">Create New Journal Entry</h2>
+    <app-journal-entries-form
+      [form]="createForm"
+      (create)="createEntry()"
+    >
+    </app-journal-entries-form>
+
+    <!-- Journal Entries Table -->
+    <h2 class="title">Journal Entries</h2>
+    <app-journal-entries-table
+      [journalEntries]="journalEntries()"
+      [entryControls]="entryControls"
+      [selectedEntry]="selectedEntry()"
+      (reverse)="reverseEntry($event)"
+      (select)="selectEntry($event)"
+    >
+    </app-journal-entries-table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <div class="pagination-info">
+        Showing {{ journalEntries().length }} of {{ totalFilteredRecords() }} entries
+      </div>
+      <div class="pagination-controls">
+        <button (click)="previousPage()" [disabled]="(searchFilters().offset || 0) === 0">
+          Previous
+        </button>
+        <button (click)="nextPage()" 
+                [disabled]="journalEntries().length < (searchFilters().limit || 50)">
+          Next
+        </button>
+      </div>
+    </div>
+  }
+</div>

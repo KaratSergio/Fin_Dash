@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import type { GLAccount } from '@src/domains/accounting/interfaces/gl-accounts/gl-account.interface';
 import type { GLAccountControls } from '@src/domains/accounting/interfaces/gl-accounts/gl-account-controls.interface';

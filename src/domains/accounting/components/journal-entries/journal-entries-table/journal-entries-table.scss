@@ -1,0 +1,175 @@
+.journal-entries-table {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background: white;
+
+    th,
+    td {
+      padding: 0.5rem;
+      border: 1px solid #cccccc86;
+      vertical-align: top;
+    }
+
+    // Column widths
+    th:nth-child(1),
+    td:nth-child(1) { width: 120px; } // Transaction ID
+    th:nth-child(2),
+    td:nth-child(2) { width: 100px; } // Date
+    th:nth-child(3),
+    td:nth-child(3) { width: 180px; } // GL Account
+    th:nth-child(4),
+    td:nth-child(4) { width: 80px; }  // Type
+    th:nth-child(5),
+    td:nth-child(5) { width: 100px; } // Amount
+    th:nth-child(6),
+    td:nth-child(6) { width: 120px; } // Office
+    th:nth-child(7),
+    td:nth-child(7) { width: 120px; } // Reference
+    th:nth-child(8),
+    td:nth-child(8) { width: 200px; } // Comments
+    th:nth-child(9),
+    td:nth-child(9) { width: 80px; }  // Status
+    th:nth-child(10),
+    td:nth-child(10) { width: 100px; } // Actions
+
+    // Row selection
+    tr {
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+
+      &.selected {
+        background-color: #e3f2fd;
+        border-left: 3px solid #2196f3;
+      }
+    }
+
+    // Input styles
+    input {
+      width: 100%;
+      padding: 0.25rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.875rem;
+
+      &:focus {
+        outline: none;
+        border-color: #2196f3;
+        box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+      }
+    }
+
+    // Badge styles
+    .badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+
+      &.credit {
+        background-color: #e8f5e8;
+        color: #2e7d32;
+      }
+
+      &.debit {
+        background-color: #ffebee;
+        color: #c62828;
+      }
+    }
+
+    // Status badges
+    .status-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+
+      &.active {
+        background-color: #e8f5e8;
+        color: #2e7d32;
+      }
+
+      &.reversed {
+        background-color: #fff3e0;
+        color: #ef6c00;
+      }
+    }
+
+    // Amount colors
+    .credit-amount {
+      color: #2e7d32;
+      font-weight: 500;
+    }
+
+    .debit-amount {
+      color: #c62828;
+      font-weight: 500;
+    }
+
+    // Action buttons
+    .actions {
+      text-align: center;
+
+      .reverse-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .reversed-text {
+        color: #666;
+        font-style: italic;
+        font-size: 0.875rem;
+      }
+    }
+
+    // Empty state
+    .empty-state {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 2rem;
+    }
+
+    // Text alignment
+    .transaction-id,
+    .date,
+    .amount {
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    .gl-account {
+      font-size: 0.875rem;
+    }
+
+    .office {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 1200px) {
+  .journal-entries-table {
+    overflow-x: auto;
+    
+    table {
+      min-width: 1200px;
+    }
+  }
+}

@@ -1,0 +1,129 @@
+<form [formGroup]="form" (ngSubmit)="create.emit()" class="create-journal-entry">
+  <!-- Basic Information -->
+  <mat-form-field appearance="fill">
+    <mat-label>Office ID</mat-label>
+    <input matInput type="number" formControlName="officeId" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Transaction Date</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="transactionDate" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Currency Code</mat-label>
+    <mat-select formControlName="currencyCode">
+      <mat-option value="USD">USD - US Dollar</mat-option>
+      <mat-option value="EUR">EUR - Euro</mat-option>
+      <mat-option value="GBP">GBP - British Pound</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Reference Number</mat-label>
+    <input matInput formControlName="referenceNumber" />
+  </mat-form-field>
+
+  <!-- Payment Details -->
+  <mat-form-field appearance="fill">
+    <mat-label>Payment Type</mat-label>
+    <mat-select formControlName="paymentTypeId">
+      <mat-option value="1">Cash</mat-option>
+      <mat-option value="2">Check</mat-option>
+      <mat-option value="3">Bank Transfer</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Account Number</mat-label>
+    <input matInput formControlName="accountNumber" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Check Number</mat-label>
+    <input matInput formControlName="checkNumber" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Receipt Number</mat-label>
+    <input matInput formControlName="receiptNumber" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="comments-input">
+    <mat-label>Comments</mat-label>
+    <textarea matInput formControlName="comments" rows="3"></textarea>
+  </mat-form-field>
+
+  <!-- Entry Lines -->
+  <div class="entry-lines-section">
+    <div class="section-header">
+      <h3>Entry Lines</h3>
+      <button type="button" mat-raised-button color="accent" (click)="addEntryLine()">
+        <mat-icon>add</mat-icon>
+        Add Entry Line
+      </button>
+    </div>
+
+    <div formArrayName="entries">
+      @for (entry of entries.controls; track $index; let i = $index) {
+        <div [formGroupName]="i" class="entry-line">
+          <mat-form-field appearance="fill">
+            <mat-label>GL Account ID</mat-label>
+            <input matInput type="number" formControlName="glAccountId" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Entry Type</mat-label>
+            <mat-select formControlName="entryType">
+              <mat-option value="DEBIT">Debit</mat-option>
+              <mat-option value="CREDIT">Credit</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Comments</mat-label>
+            <input matInput formControlName="comments" />
+          </mat-form-field>
+
+          <button type="button" mat-icon-button color="warn" (click)="removeEntryLine(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Balance Summary -->
+    <div class="balance-summary">
+      <div class="balance-item">
+        <span>Total Debits:</span>
+        <strong>{{ getTotalDebits() }}</strong>
+      </div>
+      <div class="balance-item">
+        <span>Total Credits:</span>
+        <strong>{{ getTotalCredits() }}</strong>
+      </div>
+      <div class="balance-item" [class.balanced]="isBalanced()" [class.unbalanced]="!isBalanced()">
+        <span>Status:</span>
+        <strong>{{ isBalanced() ? 'BALANCED' : 'UNBALANCED' }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <button 
+    mat-raised-button 
+    color="primary" 
+    type="submit" 
+    [disabled]="form.invalid || !isBalanced() || entries.length === 0"
+    class="submit-button"
+  >
+    Create Journal Entry
+  </button>
+</form>

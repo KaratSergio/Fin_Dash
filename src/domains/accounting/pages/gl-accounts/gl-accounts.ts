@@ -7,8 +7,8 @@ import { GLAccountsService } from '@domains/accounting/services/glaccounts.servi
 import type { GLAccountCreateDto, GLAccountUpdateDto } from '@src/domains/accounting/interfaces/gl-accounts/gl-account.dto';
 import type { GLAccountControls } from '@src/domains/accounting/interfaces/gl-accounts/gl-account-controls.interface';
 
-import { GLAccountsForm } from '@domains/accounting/components/gl-accounts-form/gl-accounts-form';
-import { GLAccountsTable } from '@domains/accounting/components/gl-accounts-table/gl-accounts-table';
+import { GLAccountsForm } from '@src/domains/accounting/components/gl-accounts/gl-accounts-form/gl-accounts-form';
+import { GLAccountsTable } from '@src/domains/accounting/components/gl-accounts/gl-accounts-table/gl-accounts-table';
 
 @Component({
   selector: 'app-admin-gl-accounts',
