@@ -1,0 +1,67 @@
+<div class="search-filters">
+    <h2 class="title">Search Filters</h2>
+
+    <div class="filter-row">
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Transaction ID</mat-label>
+        <input 
+          matInput
+          type="text" 
+          placeholder="Enter transaction ID"
+          [value]="searchFilters().transactionId || ''"
+          (input)="onTransactionIdChange($event)"
+        >
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>From Date</mat-label>
+        <input 
+          matInput
+          [matDatepicker]="fromDatePicker"
+          [value]="searchFilters().fromDate || ''"
+          (dateChange)="onFromDateChange($event)"
+        >
+        <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromDatePicker></mat-datepicker>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>To Date</mat-label>
+        <input 
+          matInput
+          [matDatepicker]="toDatePicker"
+          [value]="searchFilters().toDate || ''"
+          (dateChange)="onToDateChange($event)"
+        >
+        <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #toDatePicker></mat-datepicker>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Entry Type</mat-label>
+        <mat-select 
+          [value]="searchFilters().entityType?.toString() || ''"
+          (selectionChange)="onEntityTypeChange($event)"
+        >
+          <mat-option value="">All Types</mat-option>
+          <mat-option value="1">Asset</mat-option>
+          <mat-option value="2">Liability</mat-option>
+          <mat-option value="3">Income</mat-option>
+          <mat-option value="4">Expense</mat-option>
+          <mat-option value="5">Equity</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="filter-actions">
+        <button 
+          mat-raised-button 
+          color="warn" 
+          (click)="onClearSearch()"
+        >
+          <mat-icon>clear</mat-icon>
+          Clear
+        </button>
+      </div>
+    </div>
+
+</div>

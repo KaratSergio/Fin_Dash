@@ -1,73 +1,43 @@
-.journal-entries-admin {
+.journal-entries {
   h1 {
     margin: 0 0 1rem 0.5rem;
   }
 
   .title {
     margin-left: 0.5rem;
-    margin-bottom: 1rem;
   }
 
-  .search-filters {
-    background: #f5f5f5;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-
-    .filter-row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: end;
-
-      .filter-group {
-        display: flex;
-        flex-direction: column;
-        min-width: 150px;
-
-        label {
-          font-weight: 500;
-          margin-bottom: 0.25rem;
-          font-size: 0.875rem;
-        }
-
-        input, select {
-          padding: 0.5rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 0.875rem;
-        }
-      }
-
-      .filter-actions {
-        display: flex;
-        gap: 0.5rem;
-      }
-    }
+  .loading-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    justify-content: center;
+    color: #666;
   }
 
   .summary-cards {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin: 0 1rem 1rem 1rem;
 
     .summary-card {
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      flex: 1;
-
+          background-color: #1b2735;
+      text-align: center;
+      
       .summary-label {
         font-size: 0.875rem;
         color: #666;
         margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .summary-value {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 600;
-        color: #333;
+        color: #fff;
 
         &.credit {
           color: #10b981;
@@ -80,23 +50,47 @@
     }
   }
 
-  .pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .pagination-card {
     margin-top: 1rem;
-    padding: 1rem;
-    background: #f5f5f5;
-    border-radius: 8px;
+    background-color: inherit;
 
-    .pagination-info {
-      font-size: 0.875rem;
-      color: #666;
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .pagination-info {
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      .pagination-controls {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .journal-entries {
+    padding: 0.5rem;
+
+    .search-filters {
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .pagination-controls {
-      display: flex;
-      gap: 0.5rem;
+    .summary-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .pagination {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
     }
   }
 }

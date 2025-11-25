@@ -10,11 +10,27 @@ import type { JournalEntryControls } from '@domains/accounting/interfaces/journa
 
 import { JournalEntriesForm } from '../../components/journal-entries/journal-entries-from/journal-entries-form';
 import { JournalEntriesTable } from '../../components/journal-entries/journal-entries-table/journal-entries-table';
+import { JournalEntriesFilters } from '../../components/journal-entries/journal-entries-filters/journal-entries-filters';
+
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-admin-journal-entries',
   standalone: true,
-  imports: [RouterModule, JournalEntriesForm, JournalEntriesTable],
+  imports: [
+    RouterModule, JournalEntriesForm, JournalEntriesTable, JournalEntriesFilters,
+    MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatDatepickerModule, MatNativeDateModule, MatButtonModule, MatIconModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './journal-entries.html',
   styleUrls: ['./journal-entries.scss'],
 })

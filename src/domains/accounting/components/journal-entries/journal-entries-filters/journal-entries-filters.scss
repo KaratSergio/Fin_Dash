@@ -1,0 +1,30 @@
+.search-filters {
+  h2 {
+    margin: 0 0 1rem 0.5rem;
+  }
+
+  .title {
+    margin-left: 0.5rem;
+  }
+
+  margin-bottom: 1rem;
+
+  .filter-row {
+    display: flex;
+    align-items: center;
+
+    .filter-field {
+      width: 300px;
+    }
+
+    .filter-actions {
+      margin-left: 1rem;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {}
